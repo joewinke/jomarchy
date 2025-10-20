@@ -84,6 +84,14 @@ else
     echo -e "${YELLOW}⚠${NC} web-apps-local.sh not found, skipping"
 fi
 
+# Daily Claude quote timer
+if [ -f "$SCRIPT_DIR/claude-daily-quote.sh" ]; then
+    echo -e "${GREEN}→${NC} Running claude-daily-quote.sh..."
+    bash "$SCRIPT_DIR/claude-daily-quote.sh"
+else
+    echo -e "${YELLOW}⚠${NC} claude-daily-quote.sh not found, skipping"
+fi
+
 echo ""
 echo -e "${GREEN}=========================================${NC}"
 echo -e "${GREEN}OMARCHY-DEV Installation Complete!${NC}"
@@ -96,11 +104,12 @@ echo "BASE (OMARCHY-ALL):"
 echo "  ✓ Core packages, ChezWizper, universal web apps, etc."
 echo ""
 echo "DEV ADDITIONS:"
-echo "  ✓ Dev tools (Stripe CLI, Supabase CLI, v4l2loopback-dkms)"
+echo "  ✓ Dev tools (Stripe CLI, Supabase CLI)"
 echo "  ✓ Work project repos (flush, chimaro, steelbridge)"
 echo "  ✓ Work project aliases (cf, cc, cs)"
 echo "  ✓ 3 work Claude launchers"
 echo "  ✓ 15 work-specific web apps"
+echo "  ✓ Daily Claude quote timer (9am EST)"
 echo ""
 
 echo "Next steps:"

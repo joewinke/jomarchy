@@ -87,6 +87,39 @@ Chrome web apps for work projects:
 
 ---
 
+## ⏰ Daily Claude Quotes
+
+A systemd user timer that runs `claude -p "Tell me an inspiring quote for today."` every morning at 9:00 AM EST.
+
+### What It Does
+- Runs daily at 8:00 AM America/New_York timezone (handles EST/EDT automatically)
+- Uses Claude Code to generate an inspiring quote
+- Quotes are logged to systemd journal
+- Timer is persistent (catches up if system was off)
+
+### Management Commands
+```bash
+# Check timer status and next run time
+systemctl --user status claude-daily-quote.timer
+
+# View daily quotes from journal
+journalctl --user -u claude-daily-quote.service
+
+# View only today's quotes
+journalctl --user -u claude-daily-quote.service --since today
+
+# Test quote generation manually
+systemctl --user start claude-daily-quote.service
+```
+
+### Files Created
+- **Service:** `~/.config/systemd/user/claude-daily-quote.service`
+- **Timer:** `~/.config/systemd/user/claude-daily-quote.timer`
+
+**Installation:** `scripts/install/claude-daily-quote.sh`
+
+---
+
 ## 📋 Installation Summary
 
 **What OMARCHY-DEV Adds:**
@@ -96,6 +129,7 @@ Chrome web apps for work projects:
 - **Aliases:** 3 work project Claude aliases (cf, cc, cs)
 - **Desktop launchers:** 3 work project Claude launchers
 - **Web apps:** 15 work-specific Chrome web apps
+- **Systemd timers:** 1 daily Claude quote timer
 
 **Total environment:** OMARCHY-ALL (base) + OMARCHY-DEV additions
 
