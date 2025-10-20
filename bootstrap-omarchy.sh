@@ -4,7 +4,7 @@
 # One-command installation for fresh Omarchy systems
 #
 # Usage:
-#   bash <(curl -sL https://raw.githubusercontent.com/joewinke/omarchy-install/main/bootstrap-omarchy.sh)
+#   bash <(curl -sL https://raw.githubusercontent.com/joewinke/omarchy-install/master/bootstrap-omarchy.sh)
 
 set -e  # Exit on error
 
@@ -52,7 +52,7 @@ if [ -d "$REPO_DIR" ]; then
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         echo -e "${BLUE}→${NC} Updating repository..."
         cd "$REPO_DIR"
-        git pull origin main
+        git pull origin master
         echo -e "${GREEN}✓${NC} Repository updated"
     fi
 else

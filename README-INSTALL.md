@@ -55,7 +55,7 @@ A 3-tier installation system for Omarchy Linux with clear separation between uni
 As soon as wifi is connected, run:
 
 ```bash
-bash <(curl -sL https://raw.githubusercontent.com/joewinke/omarchy-install/main/bootstrap-omarchy.sh)
+bash <(curl -sL https://raw.githubusercontent.com/joewinke/omarchy-install/master/bootstrap-omarchy.sh)
 ```
 
 This will:
