@@ -91,7 +91,7 @@ echo -e "${GREEN}✓${NC} chromium (pre-installed by Omarchy)"
 echo ""
 
 # Utilities (pacman)
-echo -e "${BLUE}[3/4] Utilities${NC}"
+echo -e "${BLUE}[3/5] Utilities${NC}"
 install_pacman \
     ydotool \
     yt-dlp \
@@ -101,8 +101,16 @@ install_pacman \
 
 echo ""
 
+# Graphics & Design (pacman)
+echo -e "${BLUE}[4/5] Graphics & Design Tools${NC}"
+install_pacman \
+    inkscape \
+    gimp
+
+echo ""
+
 # AUR Packages
-echo -e "${BLUE}[4/4] AUR Packages${NC}"
+echo -e "${BLUE}[5/5] AUR Packages${NC}"
 install_aur \
     sublime-text-4 \
     claude-code

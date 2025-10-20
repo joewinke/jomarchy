@@ -24,6 +24,10 @@ This document defines what gets installed on **ANY** Omarchy system (laptop, des
 - `nwg-displays` - Display configuration tool
 - `ttf-jetbrains-mono` - JetBrains Mono font
 
+### Graphics & Design
+- `inkscape` - Vector graphics editor
+- `gimp` - Image manipulation program
+
 **Installation:** `scripts/install/essential-packages.sh`
 
 ---
@@ -222,7 +226,7 @@ Icon=/home/jw/.local/share/applications/icons/Claude.png
 
 ## 📋 Installation Summary
 
-**Total packages:** ~15 core packages + 10 web apps + 3 extensions
+**Total packages:** ~17 core packages + 10 web apps + 3 extensions
 **Total scripts:** 9 installation scripts
 **Directories created:** ~/code/linux, ~/code/personal, ~/.claude
 **Aliases added:** cl, cp, tget (if Tailscale)
