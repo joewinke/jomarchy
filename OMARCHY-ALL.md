@@ -15,7 +15,7 @@ This document defines what gets installed on **ANY** Omarchy system (laptop, des
 
 ### Browsers
 - `firefox` - Alternative browser
-- `chromium` - Already in Omarchy defaults
+- `chromium` - Pre-installed by Omarchy (omarchy-chromium package)
 
 ### Utilities
 - `ydotool` - Input automation (required for ChezWizper)

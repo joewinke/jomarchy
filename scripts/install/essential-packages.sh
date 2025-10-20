@@ -85,13 +85,8 @@ echo -e "${BLUE}[2/4] Browsers${NC}"
 install_pacman \
     firefox
 
-# Note: chromium should already be in Omarchy defaults
-if ! pacman -Qi chromium &> /dev/null; then
-    echo -e "${BLUE}→${NC} Installing chromium (not found in defaults)..."
-    install_pacman chromium
-else
-    echo -e "${GREEN}✓${NC} chromium (already installed)"
-fi
+# Note: chromium is pre-installed by Omarchy (omarchy-chromium package)
+echo -e "${GREEN}✓${NC} chromium (pre-installed by Omarchy)"
 
 echo ""
 
