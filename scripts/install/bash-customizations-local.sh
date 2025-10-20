@@ -34,10 +34,13 @@ if [ -d ~/code/flush ]; then
     echo -e "${YELLOW}→${NC} flush (already exists, skipping clone)"
 else
     echo -e "${BLUE}→${NC} Cloning flush repository..."
-    echo -e "${YELLOW}NOTE: Update this URL with your actual repository${NC}"
-    # git clone https://github.com/yourusername/flush.git ~/code/flush
-    mkdir -p ~/code/flush
-    echo -e "${YELLOW}→${NC} Created ~/code/flush directory (update clone URL in script)"
+    if git clone git@github.com:joewinke/flush.git ~/code/flush 2>/dev/null; then
+        echo -e "${GREEN}✓${NC} flush repository cloned"
+    else
+        echo -e "${YELLOW}→${NC} Could not clone flush (check SSH key or network)"
+        mkdir -p ~/code/flush
+        echo -e "${YELLOW}→${NC} Created ~/code/flush directory"
+    fi
 fi
 
 # Chimaro
@@ -45,21 +48,28 @@ if [ -d ~/code/chimaro ]; then
     echo -e "${YELLOW}→${NC} chimaro (already exists, skipping clone)"
 else
     echo -e "${BLUE}→${NC} Cloning chimaro repository..."
-    echo -e "${YELLOW}NOTE: Update this URL with your actual repository${NC}"
-    # git clone https://github.com/yourusername/chimaro.git ~/code/chimaro
-    mkdir -p ~/code/chimaro
-    echo -e "${YELLOW}→${NC} Created ~/code/chimaro directory (update clone URL in script)"
+    if git clone git@github.com:joewinke/chimaro.git ~/code/chimaro 2>/dev/null; then
+        echo -e "${GREEN}✓${NC} chimaro repository cloned"
+    else
+        echo -e "${YELLOW}→${NC} Could not clone chimaro (check SSH key or network)"
+        mkdir -p ~/code/chimaro
+        echo -e "${YELLOW}→${NC} Created ~/code/chimaro directory"
+    fi
 fi
 
 # Steelbridge
 if [ -d ~/code/steelbridge ]; then
     echo -e "${YELLOW}→${NC} steelbridge (already exists, skipping clone)"
 else
-    echo -e "${BLUE}→${NC} Cloning steelbridge repository..."
-    echo -e "${YELLOW}NOTE: Update this URL with your actual repository${NC}"
-    # git clone https://github.com/yourusername/steelbridge.git ~/code/steelbridge
-    mkdir -p ~/code/steelbridge
-    echo -e "${YELLOW}→${NC} Created ~/code/steelbridge directory (update clone URL in script)"
+    echo -e "${BLUE}→${NC} Checking for steelbridge repository..."
+    # Try to clone, but steelbridge may not exist yet
+    if git clone git@github.com:joewinke/steelbridge.git ~/code/steelbridge 2>/dev/null; then
+        echo -e "${GREEN}✓${NC} steelbridge repository cloned"
+    else
+        echo -e "${YELLOW}→${NC} steelbridge repo not found (may not exist yet)"
+        mkdir -p ~/code/steelbridge
+        echo -e "${YELLOW}→${NC} Created ~/code/steelbridge directory"
+    fi
 fi
 
 echo ""
@@ -100,15 +110,16 @@ echo "  cc - Claude in ~/code/chimaro"
 echo "  cs - Claude in ~/code/steelbridge"
 echo ""
 
-echo "Created directories:"
+echo "Work project directories:"
 echo "  ~/code/flush"
 echo "  ~/code/chimaro"
 echo "  ~/code/steelbridge"
 echo ""
 
-echo "IMPORTANT: Update repository URLs in this script!"
-echo "Edit: scripts/install/bash-customizations-local.sh"
-echo "Uncomment and update the git clone commands with your actual repo URLs"
+echo "Note: Repositories are cloned via SSH (git@github.com)"
+echo "If cloning failed, ensure your SSH key is added to GitHub:"
+echo "  ssh-keygen -t ed25519 -C \"your_email@example.com\""
+echo "  cat ~/.ssh/id_ed25519.pub  # Add to GitHub settings"
 echo ""
 
 echo "Restart your shell to use the new aliases:"
