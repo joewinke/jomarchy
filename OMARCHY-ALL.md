@@ -149,6 +149,26 @@ alias tget='sudo tailscale file get -wait ~/Downloads/'
 
 ---
 
+## 🔌 Claude Code MCP Configuration
+
+### Model Context Protocol (MCP) Servers
+
+Configures Claude Code with MCP servers for enhanced capabilities.
+
+**Configured Servers:**
+- **Chrome DevTools MCP** - Browser automation and debugging tools
+
+**Location:** `~/.claude/mcp.json`
+
+**What it does:**
+- Enables Claude Code to interact with Chrome browser
+- Provides DevTools integration
+- Automatically uses latest version via npx
+
+**Installation:** `scripts/install/claude-code-mcp.sh`
+
+---
+
 ## 🚀 Claude Desktop Launchers (2 launchers)
 
 Terminal launchers matching aliases:
@@ -171,10 +191,11 @@ Icon=/home/jw/.local/share/applications/icons/Claude.png
 ## 📋 Installation Summary
 
 **Total packages:** ~15 core packages + 10 web apps + 3 extensions
-**Total scripts:** 8 installation scripts
-**Directories created:** ~/code/linux, ~/code/personal
+**Total scripts:** 9 installation scripts
+**Directories created:** ~/code/linux, ~/code/personal, ~/.claude
 **Aliases added:** cl, cp, tget (if Tailscale)
 **Desktop launchers:** 2 (Claude Linux, Claude Personal)
+**MCP servers:** 1 (Chrome DevTools)
 
 ---
 

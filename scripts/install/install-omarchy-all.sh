@@ -85,6 +85,13 @@ else
     echo -e "${YELLOW}⚠${NC} claude-launchers-universal.sh not found, skipping"
 fi
 
+if [ -f "$SCRIPT_DIR/claude-code-mcp.sh" ]; then
+    echo -e "${GREEN}→${NC} Running claude-code-mcp.sh..."
+    bash "$SCRIPT_DIR/claude-code-mcp.sh"
+else
+    echo -e "${YELLOW}⚠${NC} claude-code-mcp.sh not found, skipping"
+fi
+
 echo ""
 
 # Phase 3: Customizations
@@ -121,6 +128,7 @@ echo "✓ Waybar customizations (clock, ChezWizper)"
 echo "✓ Custom scripts (toggle-zoom, screensaver-enable)"
 echo "✓ Bash customizations (cl, cp aliases + ~/code/{linux,personal})"
 echo "✓ 2 Claude desktop launchers"
+echo "✓ Claude Code MCP configuration (Chrome DevTools)"
 echo ""
 
 echo "Next steps:"
