@@ -108,9 +108,41 @@ Auto-install on first Chrome launch:
 **Location:** `~/.local/bin/`
 
 1. **toggle-zoom** - Super+Z for 2x screen magnification
-2. **screensaver-enable** - Super+L for lock/screensaver
+2. **file-search** - F4 for fuzzy file finder with preview
+3. **screensaver** - Super+L for lock/screensaver (Omarchy built-in)
 
 **Installation:** `scripts/install/custom-scripts-universal.sh`
+
+---
+
+## 🌅 Blue Light Filter (Hyprsunset)
+
+Automatic blue light filtering based on time of day for better sleep.
+
+### Schedule
+- **6:30 AM**: Normal daylight (6500K) - no color adjustment
+- **7:00 PM**: Sunset warmth (5000K) - slight warm tint
+- **9:00 PM**: Bedtime mode (3400K) - warm orange tint for better sleep
+
+### What It Does
+- Automatically adjusts screen color temperature throughout the day
+- Reduces blue light in evenings to help with sleep
+- Runs continuously in background
+- Config file: `~/.config/hypr/hyprsunset.conf`
+
+### Management
+```bash
+# Check status
+systemctl --user status hyprsunset.service
+
+# Restart if needed
+systemctl --user restart hyprsunset.service
+
+# Disable temporarily
+systemctl --user stop hyprsunset.service
+```
+
+**Installation:** `scripts/install/custom-scripts-universal.sh` (auto-starts service)
 
 ---
 
