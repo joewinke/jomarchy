@@ -33,7 +33,11 @@ install_pacman() {
             echo -e "${GREEN}✓${NC} $package (already installed)"
         else
             echo -e "${BLUE}→${NC} Installing $package..."
-            sudo pacman -S --noconfirm "$package"
+            if sudo pacman -S --noconfirm "$package"; then
+                echo -e "${GREEN}✓${NC} $package installed successfully"
+            else
+                echo -e "${RED}✗${NC} $package failed to install (skipping)"
+            fi
         fi
     done
 }
@@ -45,9 +49,9 @@ install_aur() {
 
     # Check if yay is installed
     if ! command -v yay &> /dev/null; then
-        echo -e "${RED}ERROR: yay is not installed${NC}"
-        echo "Please install yay first: https://github.com/Jguer/yay"
-        exit 1
+        echo -e "${RED}WARNING: yay is not installed${NC}"
+        echo "Skipping AUR packages. Install yay first: https://github.com/Jguer/yay"
+        return 1
     fi
 
     for package in "${packages[@]}"; do
@@ -55,7 +59,11 @@ install_aur() {
             echo -e "${GREEN}✓${NC} $package (already installed)"
         else
             echo -e "${BLUE}→${NC} Installing $package..."
-            yay -S --noconfirm "$package"
+            if yay -S --noconfirm "$package"; then
+                echo -e "${GREEN}✓${NC} $package installed successfully"
+            else
+                echo -e "${RED}✗${NC} $package failed to install (skipping)"
+            fi
         fi
     done
 }
