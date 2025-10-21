@@ -25,77 +25,155 @@ echo ""
 mkdir -p "$WAYBAR_SCRIPTS"
 
 # ============================================================================
-# 1. Install Custom Clock Script
+# 0. Add @selected-text to all theme waybar.css files
 # ============================================================================
 
-echo "Installing custom clock script..."
+echo "Adding @selected-text to theme waybar.css files..."
 
-cat > "$WAYBAR_SCRIPTS/custom-clock.sh" << 'EOF'
-#!/bin/bash
+THEME_DIR="$HOME/.config/omarchy/themes"
+if [ -d "$THEME_DIR" ]; then
+    for theme_path in "$THEME_DIR"/*; do
+        if [ -d "$theme_path" ]; then
+            theme_name=$(basename "$theme_path")
+            walker_css="$theme_path/walker.css"
+            waybar_css="$theme_path/waybar.css"
 
-# Get date components
-month=$(date +%m)
-day=$(date +%d)
-weekday=$(date +%a)
-time=$(date +%H:%M)
+            # Check if walker.css exists and has selected-text
+            if [ -f "$walker_css" ]; then
+                selected_text=$(grep "@define-color selected-text" "$walker_css" 2>/dev/null)
 
-# Format: 01-08 Wed 14:28
-echo "$month-$day $weekday $time"
-EOF
+                # If selected-text exists in walker.css and waybar.css exists
+                if [ -n "$selected_text" ] && [ -f "$waybar_css" ]; then
+                    # Check if waybar.css already has it
+                    if ! grep -q "selected-text" "$waybar_css" 2>/dev/null; then
+                        echo "$selected_text" >> "$waybar_css"
+                        echo "  ✓ Added to $theme_name"
+                    fi
+                fi
+            fi
+        fi
+    done
+    echo "✓ Theme accent colors configured"
+else
+    echo "  ⊘ Themes directory not found, skipping"
+fi
 
-chmod +x "$WAYBAR_SCRIPTS/custom-clock.sh"
-
-echo "✓ Custom clock script installed"
 echo ""
 
 # ============================================================================
-# 2. Add Custom CSS to style.css
+# 1. Run intelligent workspace detection
 # ============================================================================
 
-echo "Adding custom CSS to Waybar style..."
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Check if custom CSS already exists
-if grep -q "Color coding for different monitor ranges" "$WAYBAR_STYLE" 2>/dev/null; then
-    echo "  ⊘ Custom CSS already exists, skipping"
+if [ -f "$SCRIPT_DIR/waybar-workspace-detection.sh" ]; then
+    echo "Running intelligent workspace detection..."
+    bash "$SCRIPT_DIR/waybar-workspace-detection.sh"
+    echo ""
 else
-    # Backup existing style.css
-    cp "$WAYBAR_STYLE" "${WAYBAR_STYLE}.bak.$(date +%s)"
+    echo "⚠ Workspace detection script not found, skipping..."
+    echo "  Waybar will use default workspace configuration"
+    echo ""
+fi
 
-    # Append custom CSS
+# ============================================================================
+# 2. Add Comprehensive Waybar Styling
+# ============================================================================
+
+echo "Adding comprehensive Waybar styling..."
+
+# Backup existing style.css
+if [ -f "$WAYBAR_STYLE" ]; then
+    cp "$WAYBAR_STYLE" "$WAYBAR_STYLE.bak.$(date +%s)"
+    echo "  ✓ Backed up existing style.css"
+fi
+
+# Check if our custom styling already exists
+if grep -q "CUSTOM: Theme-Aware Accent Colors" "$WAYBAR_STYLE" 2>/dev/null; then
+    echo "  ⊘ Custom styling already exists, skipping"
+else
+    # Append comprehensive custom CSS
     cat >> "$WAYBAR_STYLE" << 'EOF'
 
 /* ============================================================================
-   CUSTOM: Monitor Color Coding & Visual Enhancements
+   CUSTOM: Theme-Aware Accent Colors
    ============================================================================ */
 
-/* Visual separator between workspace ranges */
-#workspaces button.persistent:nth-child(10n+1) {
-  margin-left: 8px;
+/* Base module styling with accent colors */
+#clock,
+#custom-omarchy,
+#custom-update {
+  font-size: 12px;
+  margin: 0;
+  padding: 4px 9px;
+  color: @selected-text;
 }
 
-/* Color coding for different monitor ranges */
-#workspaces button.persistent:nth-child(n+1):nth-child(-n+10) {
-  /* Left monitor workspaces 1-10 */
-  color: #99d9ab;
+#tray,
+#cpu,
+#battery,
+#network,
+#bluetooth,
+#pulseaudio {
+  font-size: 18px;
+  margin: 0;
+  padding: 4px 9px;
+  color: @selected-text;
 }
 
-#workspaces button.persistent:nth-child(n+11):nth-child(-n+20) {
-  /* Center monitor workspaces 11-20 */
-  color: #00ffcc;
+#clock {
+  font-weight: 600;
 }
 
-#workspaces button.persistent:nth-child(n+21):nth-child(-n+30) {
-  /* Right monitor workspaces 21-30 */
-  color: #ff00ff;
+#custom-update {
+  font-weight: 900;
+  font-size: 15px;
 }
 
-/* Window title styling - integrated with workspaces */
+/* Bluetooth states */
+#bluetooth.connected {
+  color: @selected-text;
+}
+
+#bluetooth.disabled,
+#bluetooth.off {
+  opacity: 0.5;
+}
+
+/* Network states */
+#network.disconnected {
+  opacity: 0.5;
+}
+
+/* Pulseaudio states */
+#pulseaudio.bluetooth {
+  color: @selected-text;
+}
+
+#pulseaudio.muted {
+  opacity: 0.5;
+}
+
+/* Battery states - keep universal colors for status */
+#battery.critical {
+  color: #ff3333;
+}
+
+#battery.warning {
+  color: #ff9933;
+}
+
+#battery.charging {
+  color: #33ff33;
+}
+
+/* Window title styling */
 #window {
-  color: rgba(255, 255, 255, 0.9);
+  color: @selected-text;
   font-size: 12px;
   margin-left: 4px;
   padding-left: 4px;
-  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  border-left: 1px solid alpha(@selected-text, 0.3);
 }
 
 #window.empty {
@@ -103,49 +181,70 @@ else
   padding: 0;
   border: none;
 }
+
+/* Active workspace highlighting - must come AFTER workspace color coding */
+/* Higher specificity with :nth-child(n+1) to override range selectors */
+#workspaces button.persistent:nth-child(n+1).active,
+#workspaces button.active {
+  color: @selected-text;
+  background: alpha(@selected-text, 0.2);
+  border-radius: 3px;
+  font-weight: bold;
+}
 EOF
 
-    echo "✓ Custom CSS added to style.css"
-    echo "  Backup created: ${WAYBAR_STYLE}.bak.$(date +%s)"
+    echo "✓ Theme-aware styling added"
 fi
 
 echo ""
 
 # ============================================================================
-# 3. Add Custom Clock Module to config.jsonc
+# 3. Update Clock Format in config.jsonc
 # ============================================================================
 
-echo "Configuring custom clock module..."
+echo "Updating clock format..."
 
-# Check if custom clock module already exists
-if grep -q '"custom/clock"' "$WAYBAR_CONFIG" 2>/dev/null; then
-    echo "  ⊘ Custom clock module already exists, skipping"
+if [ -f "$WAYBAR_CONFIG" ]; then
+    # Check if clock format is already customized
+    if grep -q '"%m-%d %a %H:%M"' "$WAYBAR_CONFIG" 2>/dev/null; then
+        echo "  ⊘ Clock format already customized, skipping"
+    else
+        # Try to update clock format using sed
+        if grep -q '"clock":' "$WAYBAR_CONFIG" 2>/dev/null; then
+            # Create backup
+            cp "$WAYBAR_CONFIG" "$WAYBAR_CONFIG.bak.$(date +%s)"
+
+            # Update clock format (handles different formatting styles)
+            sed -i 's/"format": *"{[^}]*}"/"format": "{:%m-%d %a %H:%M}"/g' "$WAYBAR_CONFIG"
+
+            echo "  ✓ Clock format updated to show date (mm-dd weekday time)"
+        else
+            echo "  ⊘ Clock module not found in config, skipping"
+        fi
+    fi
 else
-    echo "  ⚠ Custom clock module not found - you may need to add it manually"
-    echo "    Add this to your config.jsonc modules-center:"
-    echo '    "custom/clock",'
-    echo ""
-    echo "    And add this module definition:"
-    cat << 'EOF'
-    "custom/clock": {
-      "exec": "~/.config/waybar/scripts/custom-clock.sh",
-      "interval": 10,
-      "format": "{}",
-      "tooltip": false,
-      "on-click-right": "~/.local/share/omarchy/bin/omarchy-cmd-tzupdate"
-    }
-EOF
+    echo "  ⊘ Waybar config not found, skipping"
 fi
 
 echo ""
 
 # ============================================================================
-# 4. Window Title Rewrite Rules (informational)
+# 4. Ensure hyprland/window module is in config
 # ============================================================================
 
-echo "Window title rewrite rules..."
-echo "  ℹ These should already exist in Omarchy's default config"
-echo "  If window titles look ugly, add rewrite rules to hyprland/window module"
+echo "Checking window title module..."
+
+if [ -f "$WAYBAR_CONFIG" ]; then
+    if grep -q '"hyprland/window"' "$WAYBAR_CONFIG" 2>/dev/null; then
+        echo "  ✓ Window title module already configured"
+    else
+        echo "  ⚠ Add 'hyprland/window' to modules-left in config.jsonc"
+        echo '    Example: "modules-left": ["custom/omarchy", "hyprland/workspaces", "hyprland/window"]'
+    fi
+else
+    echo "  ⊘ Waybar config not found, skipping"
+fi
+
 echo ""
 
 # ============================================================================
@@ -157,11 +256,22 @@ echo "  ✓ Waybar Customizations Installed"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 echo "Changes made:"
-echo "  • Custom clock script installed"
-echo "  • Monitor color coding added (green/cyan/magenta)"
-echo "  • Visual separators between workspace groups"
-echo "  • Window title styling enhanced"
+echo "  • Theme accent colors added to all themes (@selected-text)"
+echo "  • Intelligent workspace detection (1-3 monitors supported)"
+echo "  • Workspace color coding (adapts to monitor count)"
+echo "  • Active workspace highlighting with accent colors"
+echo "  • All icons styled with theme accent colors"
+echo "  • Clock format updated (mm-dd weekday time)"
+echo "  • Window title styling with accent colors"
+echo "  • Hyprland workspace bindings configured"
 echo ""
-echo "Reload Waybar to see changes:"
-echo "  pkill -SIGUSR2 waybar"
+echo "Visual effects:"
+echo "  • Kanagawa theme: Orange accents"
+echo "  • Gruvbox theme: Yellow accents"
+echo "  • Tokyo Night theme: Cyan accents"
+echo "  • All themes automatically adapt"
+echo ""
+echo "Reload to apply changes:"
+echo "  pkill waybar && waybar &"
+echo "  hyprctl reload"
 echo ""
