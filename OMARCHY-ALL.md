@@ -98,12 +98,37 @@ Auto-install on first Chrome launch:
 
 ## 📊 Waybar Customizations
 
+### Intelligent Multi-Monitor Workspace Configuration
+
+Automatically detects and configures workspaces based on monitor count:
+
+**1 Monitor:**
+- Workspaces 1-10 (green)
+
+**2 Monitors:**
+- Left: Workspaces 1-10 (green)
+- Right: Workspaces 11-20 (cyan)
+
+**3 Monitors:**
+- Left: Workspaces 1-10 (green)
+- Center: Workspaces 11-20 (cyan)
+- Right: Workspaces 21-30 (magenta)
+
+### Features
+- Color-coded workspace numbers for easy identification
+- Visual separators between workspace groups
+- Automatic Hyprland workspace-to-monitor bindings
+- Persistent workspace configuration
+- Adapts automatically when monitors are added/removed
+
 ### Visual Enhancements
 - Custom clock format (mm-dd dow HH:MM)
 - Window title rewriting for clean app names
 - ChezWizper integration (6 scripts + CSS animations)
 
 **Installation:** `scripts/install/waybar-customizations-universal.sh` ✅
+
+**Re-run anytime** to detect monitor changes and reconfigure workspaces
 
 ---
 
