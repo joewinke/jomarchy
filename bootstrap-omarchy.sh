@@ -4,7 +4,7 @@
 # One-command installation for fresh Omarchy systems
 #
 # Usage:
-#   bash <(curl -sL https://raw.githubusercontent.com/joewinke/omarchy-install/master/bootstrap-omarchy.sh)
+#   bash <(curl -sL https://raw.githubusercontent.com/joewinke/jomarchy/master/bootstrap-omarchy.sh)
 
 set -e  # Exit on error
 
@@ -42,8 +42,8 @@ else
 fi
 
 # Clone repository
-REPO_URL="https://github.com/joewinke/omarchy-install.git"
-REPO_DIR="$HOME/code/omarchy-install"
+REPO_URL="https://github.com/joewinke/jomarchy.git"
+REPO_DIR="$HOME/code/jomarchy"
 
 if [ -d "$REPO_DIR" ]; then
     echo -e "${YELLOW}→${NC} Repository already exists at $REPO_DIR"

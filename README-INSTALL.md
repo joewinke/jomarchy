@@ -55,12 +55,12 @@ A 3-tier installation system for Omarchy Linux with clear separation between uni
 As soon as wifi is connected, run:
 
 ```bash
-bash <(curl -sL https://raw.githubusercontent.com/joewinke/omarchy-install/master/bootstrap-omarchy.sh)
+bash <(curl -sL https://raw.githubusercontent.com/joewinke/jomarchy/master/bootstrap-omarchy.sh)
 ```
 
 This will:
 1. Install git if needed
-2. Clone the repository to ~/code/omarchy-install
+2. Clone the repository to ~/code/jomarchy
 3. Present an interactive menu to select your tier
 4. Run the appropriate installation script
 
@@ -68,19 +68,19 @@ This will:
 
 #### For Any Omarchy System (Laptop, VM, etc.)
 ```bash
-cd ~/code/omarchy-install
+cd ~/code/jomarchy
 ./scripts/install/install-omarchy-all.sh
 ```
 
 #### For Development Workstation
 ```bash
-cd ~/code/omarchy-install
+cd ~/code/jomarchy
 ./scripts/install/install-omarchy-dev.sh
 ```
 
 #### For Beelink SER9 Pro (This Machine)
 ```bash
-cd ~/code/omarchy-install
+cd ~/code/jomarchy
 ./scripts/install/install-omarchy-beelink.sh
 ```
 
