@@ -214,8 +214,8 @@ if [ -f "$WAYBAR_CONFIG" ]; then
             # Create backup
             cp "$WAYBAR_CONFIG" "$WAYBAR_CONFIG.bak.$(date +%s)"
 
-            # Update clock format (handles different formatting styles)
-            sed -i 's/"format": *"{[^}]*}"/"format": "{:%m-%d %a %H:%M}"/g' "$WAYBAR_CONFIG"
+            # Update clock format only within the clock section (no /g flag to only replace first match after "clock")
+            sed -i '/"clock":/,/}/ s/"format": *"{[^}]*}"/"format": "{:%m-%d %a %H:%M}"/' "$WAYBAR_CONFIG"
 
             echo "  ✓ Clock format updated to show date (mm-dd weekday time)"
         else
