@@ -120,6 +120,32 @@ else
     echo -e "${GREEN}✓${NC} Hyprsunset enabled for auto-start"
 fi
 
+# 5. Configure Jomarchy screensaver branding
+echo -e "${BLUE}→${NC} Configuring Jomarchy screensaver branding..."
+
+# Create branding directory if it doesn't exist
+mkdir -p ~/.config/omarchy/branding
+
+# Create jomarchy.txt ASCII art
+cat > ~/.config/omarchy/branding/jomarchy.txt << 'EOF'
+.·:''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''':·.
+: :                                                                                                                 : :
+: :      oooo   .oooooo.   ooo        ooooo       .o.       ooooooooo.     .oooooo.   ooooo   ooooo oooooo   oooo   : :
+: :      `888  d8P'  `Y8b  `88.       .888'      .888.      `888   `Y88.  d8P'  `Y8b  `888'   `888'  `888.   .8'    : :
+: :       888 888      888  888b     d'888      .8"888.      888   .d88' 888           888     888    `888. .8'     : :
+: :       888 888      888  8 Y88. .P  888     .8' `888.     888ooo88P'  888           888ooooo888     `888.8'      : :
+: :       888 888      888  8  `888'   888    .88ooo8888.    888`88b.    888           888     888      `888'       : :
+: :       888 `88b    d88'  8    Y     888   .8'     `888.   888  `88b.  `88b    ooo   888     888       888        : :
+: :   .o. 88P  `Y8bood8P'  o8o        o888o o88o     o8888o o888o  o888o  `Y8bood8P'  o888o   o888o     o888o       : :
+: :   `Y888P                                                                                                        : :
+: :                                                                                                                 : :
+'·:.................................................................................................................:·'
+EOF
+
+# Copy jomarchy.txt to screensaver.txt
+cp ~/.config/omarchy/branding/jomarchy.txt ~/.config/omarchy/branding/screensaver.txt
+echo -e "${GREEN}✓${NC} Jomarchy screensaver branding configured"
+
 echo ""
 echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}Custom Scripts Installation Complete!${NC}"
@@ -130,6 +156,7 @@ echo "Installed scripts:"
 echo "  ✓ toggle-zoom - Super+Z for 2x screen magnification"
 echo "  ✓ file-search - F4 for fuzzy file finder"
 echo "  ✓ Hyprsunset - Blue light filter (auto-adjusts by time)"
+echo "  ✓ Jomarchy screensaver - Super+L to activate"
 echo ""
 
 echo "Hyprsunset schedule:"
