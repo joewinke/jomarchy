@@ -56,13 +56,27 @@ install_aur_package() {
     fi
 }
 
+# Install GitHub CLI (needed for repo selection)
+echo -e "${BLUE}[1/3] GitHub CLI${NC}"
+if pacman -Qi github-cli &> /dev/null; then
+    echo -e "${GREEN}✓${NC} github-cli (already installed)"
+else
+    echo -e "${BLUE}→${NC} Installing github-cli..."
+    if sudo pacman -S --noconfirm github-cli; then
+        echo -e "${GREEN}✓${NC} github-cli installed successfully"
+    else
+        echo -e "${RED}✗${NC} github-cli failed to install"
+    fi
+fi
+echo ""
+
 # Install Stripe CLI
-echo -e "${BLUE}[1/2] Stripe CLI${NC}"
+echo -e "${BLUE}[2/3] Stripe CLI${NC}"
 install_aur_package "stripe-cli"
 echo ""
 
 # Install Supabase CLI
-echo -e "${BLUE}[2/2] Supabase CLI${NC}"
+echo -e "${BLUE}[3/3] Supabase CLI${NC}"
 install_aur_package "supabase-bin"
 echo ""
 
@@ -72,11 +86,13 @@ echo -e "${GREEN}========================================${NC}"
 echo ""
 
 echo "Installed tools:"
+echo "  ✓ github-cli - GitHub CLI for repo management"
 echo "  ✓ stripe-cli - Stripe API CLI tool"
 echo "  ✓ supabase-bin - Supabase CLI"
 echo ""
 
 echo "Verify installations:"
+echo "  gh --version"
 echo "  stripe --version"
 echo "  supabase --version"
 echo ""
