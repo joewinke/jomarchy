@@ -1,16 +1,16 @@
 #!/bin/bash
 
-# OMARCHY-DEV Installation Script
-# Installs development environment (includes OMARCHY-ALL base)
+# JOMARCHY-DEV Installation Script
+# Installs development environment (includes JOMARCHY base)
 
 set -e  # Exit on error
 
 echo "=========================================="
-echo "OMARCHY-DEV: Development Environment"
+echo "JOMARCHY-DEV: Development Environment"
 echo "=========================================="
 echo ""
 echo "This will install the base system + development additions."
-echo "See OMARCHY-DEV.md for details."
+echo "See JOMARCHY-DEV.md for details."
 echo ""
 
 # Color codes
@@ -30,20 +30,20 @@ if [ "$EUID" -eq 0 ]; then
     exit 1
 fi
 
-# First, install OMARCHY-ALL base if not already done
+# First, install JOMARCHY base if not already done
 echo -e "${BLUE}Step 1: Ensuring base system is installed...${NC}"
 echo ""
 
-if [ -f "$SCRIPT_DIR/install-omarchy-all.sh" ]; then
-    read -p "Run OMARCHY-ALL installation? (y/n) " -n 1 -r
+if [ -f "$SCRIPT_DIR/install-jomarchy.sh" ]; then
+    read -p "Run JOMARCHY installation? (y/n) " -n 1 -r
     echo ""
     if [[ $REPLY =~ ^[Yy]$ ]]; then
-        bash "$SCRIPT_DIR/install-omarchy-all.sh"
+        bash "$SCRIPT_DIR/install-jomarchy.sh"
     else
         echo -e "${YELLOW}→${NC} Skipping base installation (assuming already installed)"
     fi
 else
-    echo -e "${RED}ERROR: install-omarchy-all.sh not found${NC}"
+    echo -e "${RED}ERROR: install-jomarchy.sh not found${NC}"
     echo "Cannot proceed without base system installation"
     exit 1
 fi
@@ -94,29 +94,29 @@ fi
 
 echo ""
 echo -e "${GREEN}=========================================${NC}"
-echo -e "${GREEN}OMARCHY-DEV Installation Complete!${NC}"
+echo -e "${GREEN}JOMARCHY-DEV Installation Complete!${NC}"
 echo -e "${GREEN}=========================================${NC}"
 echo ""
 
 echo "What was installed:"
 echo ""
-echo "BASE (OMARCHY-ALL):"
+echo "BASE (JOMARCHY):"
 echo "  ✓ Core packages, ChezWizper, universal web apps, etc."
 echo ""
 echo "DEV ADDITIONS:"
-echo "  ✓ Dev tools (Stripe CLI, Supabase CLI)"
-echo "  ✓ Work project repos (flush, chimaro, steelbridge)"
-echo "  ✓ Work project aliases (cf, cc, cs)"
-echo "  ✓ 3 work Claude launchers"
-echo "  ✓ 15 work-specific web apps"
+echo "  ✓ Dev tools (GitHub CLI, Stripe CLI, Supabase CLI)"
+echo "  ✓ GitHub repository selection (your choice)"
+echo "  ✓ Auto-generated Claude aliases for selected repos"
+echo "  ✓ Work-specific web apps"
 echo "  ✓ Daily Claude quote timer (9am EST)"
 echo ""
 
 echo "Next steps:"
 echo ""
 echo "1. Restart your shell: source ~/.bashrc"
-echo "2. Test work aliases: cf, cc, cs"
-echo "3. Review: cat ~/code/linux/OMARCHY-DEV.md"
+echo "2. Test your Claude aliases (based on repos selected)"
+echo "3. Review: cat ~/code/jomarchy/JOMARCHY-DEV.md"
 echo ""
-echo "For Beelink hardware config, run: ./install-omarchy-beelink.sh"
+echo "Hardware-specific configurations:"
+echo "  For Beelink SER9 Pro: https://github.com/joewinke/jomarchy-beelink"
 echo ""

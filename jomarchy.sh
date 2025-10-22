@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# Omarchy Bootstrap Installer
+# Jomarchy Bootstrap Installer
 # One-command installation for fresh Omarchy systems
 #
 # Usage:
-#   bash <(curl -sL https://raw.githubusercontent.com/joewinke/jomarchy/master/bootstrap-omarchy.sh)
+#   bash <(curl -sL https://raw.githubusercontent.com/joewinke/jomarchy/master/jomarchy.sh)
 
 set -e  # Exit on error
 
@@ -17,11 +17,24 @@ CYAN='\033[0;36m'
 BOLD='\033[1m'
 NC='\033[0m'
 
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${CYAN}${BOLD}  Omarchy Bootstrap Installer${NC}"
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+# Display Jomarchy ASCII art
+cat << 'EOF'
+.·:''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''':·.
+: :                                                                                                                 : :
+: :      oooo   .oooooo.   ooo        ooooo       .o.       ooooooooo.     .oooooo.   ooooo   ooooo oooooo   oooo   : :
+: :      `888  d8P'  `Y8b  `88.       .888'      .888.      `888   `Y88.  d8P'  `Y8b  `888'   `888'  `888.   .8'    : :
+: :       888 888      888  888b     d'888      .8"888.      888   .d88' 888           888     888    `888. .8'     : :
+: :       888 888      888  8 Y88. .P  888     .8' `888.     888ooo88P'  888           888ooooo888     `888.8'      : :
+: :       888 888      888  8  `888'   888    .88ooo8888.    888`88b.    888           888     888      `888'       : :
+: :       888 `88b    d88'  8    Y     888   .8'     `888.   888  `88b.  `88b    ooo   888     888       888        : :
+: :   .o. 88P  `Y8bood8P'  o8o        o888o o88o     o8888o o888o  o888o  `Y8bood8P'  o888o   o888o     o888o       : :
+: :   `Y888P                                                                                                        : :
+: :                                                                                                                 : :
+'·:.................................................................................................................:·'
+EOF
+
 echo ""
-echo "This will install a complete Omarchy configuration."
+echo -e "${CYAN}${BOLD}Joe's complete Omarchy configuration system${NC}"
 echo ""
 
 # Check if running as root
@@ -67,47 +80,40 @@ cd "$REPO_DIR"
 # Interactive menu
 echo ""
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BOLD}Select Installation Tier:${NC}"
+echo -e "${BOLD}Select Installation:${NC}"
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
-echo "  [A] OMARCHY-ALL     - Base system (any machine)"
-echo "      → Core packages, ChezWizper, 10 web apps, cl/cp aliases"
+echo "  [J] JOMARCHY (Default) ⭐"
+echo "      → Complete configuration for any Omarchy system"
+echo "      → ChezWizper, dev tools, web apps, custom scripts"
 echo ""
-echo "  [D] OMARCHY-DEV     - Development workstation (includes ALL)"
-echo "      → + Dev tools, work projects, 15 work web apps"
+echo "  [D] JOMARCHY + DEV"
+echo "      → Everything in JOMARCHY plus work-specific tools"
+echo "      → GitHub repo selection, dev aliases, work projects"
 echo ""
-echo "  [B] OMARCHY-BEELINK - This specific hardware (includes ALL + DEV)"
-echo "      → + 3-monitor config, printer, camera, virtual webcam"
-echo ""
-echo "  [Q] Quit            - Exit without installing"
+echo "  [Q] Quit"
+echo "      → Exit without installing"
 echo ""
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
 while true; do
-    read -p "Select tier [A/D/B/Q]: " -n 1 -r choice
+    read -p "Select installation [J/D/Q]: " -n 1 -r choice
     echo ""
 
     case $choice in
-        [Aa])
+        [Jj])
             echo ""
-            echo -e "${GREEN}→${NC} Installing OMARCHY-ALL (Base System)..."
+            echo -e "${GREEN}→${NC} Installing JOMARCHY (Default Configuration)..."
             echo ""
-            bash scripts/install/install-omarchy-all.sh
+            bash scripts/install/install-jomarchy.sh
             break
             ;;
         [Dd])
             echo ""
-            echo -e "${GREEN}→${NC} Installing OMARCHY-DEV (Development Environment)..."
+            echo -e "${GREEN}→${NC} Installing JOMARCHY + DEV (With Work Tools)..."
             echo ""
-            bash scripts/install/install-omarchy-dev.sh
-            break
-            ;;
-        [Bb])
-            echo ""
-            echo -e "${GREEN}→${NC} Installing OMARCHY-BEELINK (Hardware-Specific)..."
-            echo ""
-            bash scripts/install/install-omarchy-beelink.sh
+            bash scripts/install/install-jomarchy-dev.sh
             break
             ;;
         [Qq])
@@ -116,23 +122,26 @@ while true; do
             exit 0
             ;;
         *)
-            echo -e "${RED}→${NC} Invalid choice. Please select A, D, B, or Q."
+            echo -e "${RED}→${NC} Invalid choice. Please select J, D, or Q."
             ;;
     esac
 done
 
 echo ""
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${GREEN}${BOLD}  Bootstrap Complete!${NC}"
+echo -e "${GREEN}${BOLD}  Installation Complete!${NC}"
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 echo "Documentation:"
-echo "  • Base system: cat ~/code/linux/OMARCHY-ALL.md"
-echo "  • Development: cat ~/code/linux/OMARCHY-DEV.md"
-echo "  • Hardware: cat ~/code/linux/OMARCHY-BEELINK.md"
+echo "  • Default system: cat ~/code/jomarchy/JOMARCHY.md"
+echo "  • Development: cat ~/code/jomarchy/JOMARCHY-DEV.md"
 echo ""
 echo "Next steps:"
 echo "  1. Restart your shell: source ~/.bashrc"
 echo "  2. Test ChezWizper: Press Super+R"
-echo "  3. Launch apps: Super+Space"
+echo "  3. Test file search: Press F4"
+echo "  4. Launch apps: Super+Space"
+echo ""
+echo "Hardware-specific configurations:"
+echo "  For Beelink SER9 Pro, see: https://github.com/joewinke/jomarchy-beelink"
 echo ""

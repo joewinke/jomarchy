@@ -1,16 +1,16 @@
 #!/bin/bash
 
-# OMARCHY-ALL Installation Script
+# JOMARCHY Installation Script
 # Installs base system for any Omarchy installation
 
 set -e  # Exit on error
 
 echo "=========================================="
-echo "OMARCHY-ALL: Base System Installation"
+echo "JOMARCHY: Base System Installation"
 echo "=========================================="
 echo ""
 echo "This will install the universal base system."
-echo "See OMARCHY-ALL.md for details."
+echo "See JOMARCHY.md for details."
 echo ""
 
 # Color codes
@@ -30,7 +30,7 @@ if [ "$EUID" -eq 0 ]; then
     exit 1
 fi
 
-echo -e "${BLUE}Installing OMARCHY-ALL base system...${NC}"
+echo -e "${BLUE}Installing JOMARCHY base system...${NC}"
 echo ""
 
 # Phase 1: Core System
@@ -114,7 +114,7 @@ fi
 
 echo ""
 echo -e "${GREEN}=========================================${NC}"
-echo -e "${GREEN}OMARCHY-ALL Installation Complete!${NC}"
+echo -e "${GREEN}JOMARCHY Installation Complete!${NC}"
 echo -e "${GREEN}=========================================${NC}"
 echo ""
 
@@ -137,7 +137,7 @@ echo "Next steps:"
 echo ""
 echo "1. Restart your shell: source ~/.bashrc"
 echo "2. Test ChezWizper: Press Super+R"
-echo "3. Review: cat ~/code/linux/OMARCHY-ALL.md"
+echo "3. Review: cat ~/code/linux/JOMARCHY.md"
 echo ""
 echo "For development machines, run: ./install-omarchy-dev.sh"
 echo ""

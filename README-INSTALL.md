@@ -1,50 +1,21 @@
-# Omarchy Post-Install System
+```
+.·:''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''':·.
+: :                                                                                                                 : :
+: :      oooo   .oooooo.   ooo        ooooo       .o.       ooooooooo.     .oooooo.   ooooo   ooooo oooooo   oooo   : :
+: :      `888  d8P'  `Y8b  `88.       .888'      .888.      `888   `Y88.  d8P'  `Y8b  `888'   `888'  `888.   .8'    : :
+: :       888 888      888  888b     d'888      .8"888.      888   .d88' 888           888     888    `888. .8'     : :
+: :       888 888      888  8 Y88. .P  888     .8' `888.     888ooo88P'  888           888ooooo888     `888.8'      : :
+: :       888 888      888  8  `888'   888    .88ooo8888.    888`88b.    888           888     888      `888'       : :
+: :       888 `88b    d88'  8    Y     888   .8'     `888.   888  `88b.  `88b    ooo   888     888       888        : :
+: :   .o. 88P  `Y8bood8P'  o8o        o888o o88o     o8888o o888o  o888o  `Y8bood8P'  o888o   o888o     o888o       : :
+: :   `Y888P                                                                                                        : :
+: :                                                                                                                 : :
+'·:.................................................................................................................:·'
+```
 
-A 3-tier installation system for Omarchy Linux with clear separation between universal, development, and hardware-specific configurations.
+# Jomarchy - Joe's Omarchy Configuration
 
----
-
-## 📚 Documentation Files
-
-### 1. [OMARCHY-ALL.md](OMARCHY-ALL.md) - Base System
-**What:** Universal installation for any Omarchy system
-**Includes:**
-- Core packages (VS Code, Node.js, Firefox, claude-code, Sublime, Tailscale, etc.)
-- ChezWizper voice transcription
-- 10 universal web apps
-- 3 Chrome extensions
-- Waybar customizations
-- cl/cp aliases + Claude launchers
-- Custom scripts
-
-**Install:** `./scripts/install/install-omarchy-all.sh`
-
----
-
-### 2. [OMARCHY-DEV.md](OMARCHY-DEV.md) - Development Environment
-**What:** Additional tools for development workstations (adds to ALL)
-**Includes:**
-- Dev tools (Stripe CLI, Supabase CLI, v4l2loopback-dkms)
-- Work project repos (flush, chimaro, steelbridge)
-- cf/cc/cs aliases + work Claude launchers
-- 15 work-specific web apps
-
-**Install:** `./scripts/install/install-omarchy-dev.sh`
-(Automatically includes OMARCHY-ALL)
-
----
-
-### 3. [OMARCHY-BEELINK.md](OMARCHY-BEELINK.md) - Hardware-Specific
-**What:** Beelink SER9 Pro specific configuration (adds to DEV)
-**Includes:**
-- 30-workspace configuration (3 monitors)
-- Waybar monitor color coding
-- Brother printer driver
-- Camera support
-- Monitor hardware config
-
-**Install:** `./scripts/install/install-omarchy-beelink.sh`
-(Automatically includes OMARCHY-ALL + OMARCHY-DEV)
+A modular post-install system for Omarchy Linux that transforms a fresh installation into a fully-configured development workstation.
 
 ---
 
@@ -55,147 +26,166 @@ A 3-tier installation system for Omarchy Linux with clear separation between uni
 As soon as wifi is connected, run:
 
 ```bash
-bash <(curl -sL https://raw.githubusercontent.com/joewinke/jomarchy/master/bootstrap-omarchy.sh)
+bash <(curl -sL https://raw.githubusercontent.com/joewinke/jomarchy/master/jomarchy.sh)
 ```
 
 This will:
 1. Install git if needed
 2. Clone the repository to ~/code/jomarchy
-3. Present an interactive menu to select your tier
-4. Run the appropriate installation script
+3. Run the default JOMARCHY installation
+4. Optionally install DEV or BEELINK add-ons
+
+---
+
+## 📚 What Is Jomarchy?
+
+**Jomarchy** is the default configuration - a complete Omarchy setup with:
+- Core development tools
+- Voice transcription (ChezWizper)
+- Essential web apps
+- Custom scripts and shortcuts
+- Claude Code integration
+
+**Optional add-ons:**
+- **JOMARCHY-DEV**: Work-specific projects and tools
+- **JOMARCHY-BEELINK**: Hardware-specific config for Beelink SER9 Pro
+
+---
+
+## 📚 Documentation Files
+
+### [JOMARCHY.md](JOMARCHY.md) - Default Installation ⭐
+**What:** Complete Omarchy configuration for any system
+**Includes:**
+- Core packages (VS Code, Node.js, Firefox, claude-code, Sublime, Tailscale, etc.)
+- ChezWizper voice transcription
+- 10 universal web apps
+- 3 Chrome extensions
+- Waybar customizations
+- cl/cp aliases + Claude launchers
+- Custom scripts (zoom, screensaver, file search)
+
+**Install:** `./scripts/install/install-jomarchy.sh`
+
+---
+
+### [JOMARCHY-DEV.md](JOMARCHY-DEV.md) - Development Add-on
+**What:** Work-specific tools and projects (adds to JOMARCHY)
+**Includes:**
+- Dev tools (GitHub CLI, Stripe CLI, Supabase CLI)
+- Interactive GitHub repository selection
+- Auto-generated Claude aliases for your repos
+- Work-specific web apps
+- Daily Claude quote timer
+
+**Install:** `./scripts/install/install-jomarchy-dev.sh`
+
+---
+
+## 🔄 Installation Model
+
+```
+JOMARCHY (Default)
+    ↓ optional
+JOMARCHY-DEV (Work Projects)
+```
+
+- **JOMARCHY** = Standalone complete system (recommended for most)
+- **JOMARCHY-DEV** = Optional work-specific additions
+
+---
+
+## 💻 Manual Installation
 
 ### Already Have Repository Cloned
 
-#### For Any Omarchy System (Laptop, VM, etc.)
+#### Default Installation (Recommended)
 ```bash
 cd ~/code/jomarchy
-./scripts/install/install-omarchy-all.sh
+./scripts/install/install-jomarchy.sh
 ```
 
-#### For Development Workstation
+#### With Development Add-on
 ```bash
 cd ~/code/jomarchy
-./scripts/install/install-omarchy-dev.sh
-```
-
-#### For Beelink SER9 Pro (This Machine)
-```bash
-cd ~/code/jomarchy
-./scripts/install/install-omarchy-beelink.sh
+./scripts/install/install-jomarchy-dev.sh
 ```
 
 ---
 
-## 🔄 Inheritance Model
+## 📊 What Gets Installed
 
-```
-OMARCHY-ALL (Base)
-    ↓ includes
-OMARCHY-DEV (Development)
-    ↓ includes
-OMARCHY-BEELINK (Hardware-Specific)
-```
-
-Each tier builds on the previous one:
-- **ALL** = Standalone base system
-- **DEV** = ALL + development additions
-- **BEELINK** = ALL + DEV + hardware configuration
-
----
-
-## 📊 What Gets Installed Where
-
-### OMARCHY-ALL (Any System)
+### JOMARCHY (Default - Everyone Gets This)
 - ✅ 15 core packages
 - ✅ ChezWizper + 6 Waybar scripts
 - ✅ 10 universal web apps
 - ✅ 3 Chrome extensions
 - ✅ 2 Claude launchers (Linux, Personal)
-- ✅ 2 custom scripts (zoom, screensaver)
+- ✅ 3 custom scripts (zoom, screensaver, file search)
 - ✅ Bash: ~/code/linux, ~/code/personal
 
-### OMARCHY-DEV (Development Workstation)
-- ➕ 3 dev tools (AUR)
-- ➕ 3 work project repos
-- ➕ 3 work Claude launchers
-- ➕ 15 work web apps
-- ➕ cf/cc/cs aliases
-
-### OMARCHY-BEELINK (This Machine)
-- ➕ 30-workspace config (3 monitors)
-- ➕ Waybar color coding
-- ➕ Printer driver
-- ➕ Camera support
-- ➕ Monitor config (3x 3440x1440)
+### JOMARCHY-DEV (Optional - Work Projects)
+- ➕ 3 dev tools (GitHub CLI, Stripe CLI, Supabase CLI)
+- ➕ Interactive GitHub repo selection
+- ➕ Auto-generated Claude aliases (based on your repos)
+- ➕ Work-specific web apps
+- ➕ Daily Claude quote timer
 
 ---
 
-## 📁 File Structure
+## 📁 Repository Structure
 
 ```
-~/code/linux/
-├── OMARCHY-ALL.md              # Base system documentation
-├── OMARCHY-DEV.md              # Development additions documentation
-├── OMARCHY-BEELINK.md          # Hardware-specific documentation
+~/code/jomarchy/
+├── JOMARCHY.md                 # Default installation documentation
+├── JOMARCHY-DEV.md             # Development add-on documentation
 ├── README-INSTALL.md           # This file
-├── POST-INSTALL-PLAN.md        # Original planning document (reference)
+├── jomarchy.sh                 # One-command installer
 └── scripts/install/
-    ├── install-omarchy-all.sh      # Base installation script
-    ├── install-omarchy-dev.sh      # Dev installation script
-    ├── install-omarchy-beelink.sh  # Hardware installation script
-    ├── essential-packages.sh       # Core packages
+    ├── install-jomarchy.sh             # Default installation
+    ├── install-jomarchy-dev.sh         # Dev add-on
+    ├── essential-packages.sh
     ├── bash-customizations-universal.sh
+    ├── bash-customizations-local.sh
     ├── chrome-extensions.sh
-    ├── chezwizper.sh
-    ├── web-apps-universal.sh
     ├── claude-launchers-universal.sh
-    ├── waybar-customizations-universal.sh
+    ├── claude-launchers-local.sh
     ├── custom-scripts-universal.sh
     ├── dev-tools-local.sh
-    ├── bash-customizations-local.sh
-    ├── claude-launchers-local.sh
-    ├── web-apps-local.sh
-    ├── hyprland-workspace-config-local.sh
-    └── hardware-specific.sh
+    ├── waybar-customizations-universal.sh
+    ├── web-apps-universal.sh
+    └── web-apps-local.sh
 ```
 
 ---
 
 ## ✅ Benefits of This Structure
 
-1. **Clear Separation** - Easy to understand what each tier provides
-2. **Reusable** - Use OMARCHY-ALL on any machine without dev clutter
-3. **Portable** - Install just what you need for each machine type
-4. **Maintainable** - Update one tier without affecting others
-5. **Documented** - Each tier has its own clear documentation
+1. **Simple Default** - One installation that works for everyone
+2. **Optional Extensions** - Add work/hardware configs only if needed
+3. **Clear Separation** - Easy to understand what each piece provides
+4. **Portable** - Use JOMARCHY on any machine
+5. **Documented** - Each component has clear documentation
 
 ---
 
-## 🔍 Reviewing the Deltas
-
-Want to see what differentiates each tier?
+## 🔍 Reviewing What's Included
 
 ```bash
-# View base system
-cat OMARCHY-ALL.md
+# View default installation
+cat JOMARCHY.md
 
-# View development additions
-cat OMARCHY-DEV.md
-
-# View hardware-specific additions
-cat OMARCHY-BEELINK.md
+# View development add-on
+cat JOMARCHY-DEV.md
 ```
-
-Each file is standalone and shows exactly what that tier adds.
 
 ---
 
 ## 📝 Notes
 
-- All scripts check for prerequisites and can be run multiple times safely
-- Scripts will prompt before re-installing base tiers
-- Installation order is enforced automatically by the inheritance model
-- See individual .md files for detailed package lists and configurations
+- Scripts can be run multiple times safely
+- Add-ons automatically install base requirements
+- All configurations are modular and optional beyond the base
 
 ---
 
@@ -204,7 +194,17 @@ Each file is standalone and shows exactly what that tier adds.
 1. Restart your shell: `source ~/.bashrc`
 2. Test ChezWizper: Press `Super+R`
 3. Test Claude aliases: `cl`, `cp` (and `cf`, `cc`, `cs` if DEV installed)
-4. Review what was installed: `cat OMARCHY-[tier].md`
+4. Launch file search: Press `F4`
+5. Review what was installed: `cat JOMARCHY.md`
+
+---
+
+## 🖥️ Hardware-Specific Configurations
+
+Looking for hardware-specific setups (monitor configs, printer drivers, etc.)?
+
+These are maintained in separate repositories to keep Jomarchy universal:
+- **Beelink SER9 Pro**: [jomarchy-beelink](https://github.com/joewinke/jomarchy-beelink)
 
 ---
 
