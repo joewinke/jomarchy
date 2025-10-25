@@ -25,14 +25,7 @@ fi
 # Component selection with gum
 SELECTED_COMPONENTS=$(gum choose --no-limit \
     --header "Select DEV components to install (SPACE to toggle, ENTER to confirm, all selected by default)" \
-    --selected "VS Code, Node.js, npm" \
-    --selected "GitHub CLI" \
-    --selected "Stripe CLI" \
-    --selected "Supabase CLI" \
-    --selected "Development web apps (GitHub, Cloudflare, Supabase, etc)" \
-    --selected "GitHub repository cloning" \
-    --selected "Claude project launchers" \
-    --selected "Daily Claude quote timer" \
+    --selected "*" \
     "VS Code, Node.js, npm" \
     "GitHub CLI" \
     "Stripe CLI" \

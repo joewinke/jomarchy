@@ -25,9 +25,7 @@ echo ""
 # Component selection with gum
 SELECTED_COMPONENTS=$(gum choose --no-limit \
     --header "Select FINANCE components to install (SPACE to toggle, ENTER to confirm, all selected by default)" \
-    --selected "Bank of America" \
-    --selected "Chase Bank" \
-    --selected "Capital One" \
+    --selected "*" \
     "Bank of America" \
     "Chase Bank" \
     "Capital One")

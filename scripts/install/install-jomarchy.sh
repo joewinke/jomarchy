@@ -25,25 +25,7 @@ fi
 # Component selection with gum
 SELECTED_COMPONENTS=$(gum choose --no-limit \
     --header "Select BASE components to install (SPACE to toggle, ENTER to confirm, all selected by default)" \
-    --selected "Firefox" \
-    --selected "Sublime Text 4" \
-    --selected "Claude Code" \
-    --selected "yt-dlp (video downloader)" \
-    --selected "Tailscale (VPN)" \
-    --selected "nwg-displays (display manager)" \
-    --selected "JetBrains Mono font" \
-    --selected "Bash customizations" \
-    --selected "Chrome extensions (Copy on Select, Dark Reader, 1Password)" \
-    --selected "ChezWizper (voice transcription - includes ydotool)" \
-    --selected "Proton Mail" \
-    --selected "Kagi (search)" \
-    --selected "YouTube" \
-    --selected "X (Twitter)" \
-    --selected "Zoom" \
-    --selected "Claude launchers (Linux, Personal)" \
-    --selected "Claude Code MCP configuration" \
-    --selected "Waybar customizations" \
-    --selected "Custom scripts (zoom toggle, file search, screensaver)" \
+    --selected "*" \
     "Firefox" \
     "Sublime Text 4" \
     "Claude Code" \

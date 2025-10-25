@@ -25,13 +25,7 @@ echo ""
 # Component selection with gum
 SELECTED_COMPONENTS=$(gum choose --no-limit \
     --header "Select MEDIA components to install (SPACE to toggle, ENTER to confirm, all selected by default)" \
-    --selected "GIMP (image editing)" \
-    --selected "Inkscape (vector graphics)" \
-    --selected "OBS Studio (screen recording/streaming)" \
-    --selected "Shotcut (video editing - lightweight)" \
-    --selected "Kdenlive (video editing - advanced)" \
-    --selected "Blender (3D modeling/animation)" \
-    --selected "Audacity (audio editing)" \
+    --selected "*" \
     "GIMP (image editing)" \
     "Inkscape (vector graphics)" \
     "OBS Studio (screen recording/streaming)" \
