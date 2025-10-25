@@ -25,20 +25,42 @@ fi
 # Component selection with gum
 SELECTED_COMPONENTS=$(gum choose --no-limit \
     --header "Select BASE components to install (SPACE to toggle, ENTER to confirm, all selected by default)" \
-    --selected "Essential packages (browsers, utilities, text editor, Claude Code)" \
+    --selected "Firefox" \
+    --selected "Sublime Text 4" \
+    --selected "Claude Code" \
+    --selected "ydotool (keyboard/mouse automation)" \
+    --selected "yt-dlp (video downloader)" \
+    --selected "Tailscale (VPN)" \
+    --selected "nwg-displays (display manager)" \
+    --selected "JetBrains Mono font" \
     --selected "Bash customizations" \
     --selected "Chrome extensions (Copy on Select, Dark Reader, 1Password)" \
     --selected "ChezWizper (voice transcription)" \
-    --selected "Universal web apps (Proton Mail, Kagi, YouTube, X, Zoom)" \
+    --selected "Proton Mail" \
+    --selected "Kagi (search)" \
+    --selected "YouTube" \
+    --selected "X (Twitter)" \
+    --selected "Zoom" \
     --selected "Claude launchers (Linux, Personal)" \
     --selected "Claude Code MCP configuration" \
     --selected "Waybar customizations" \
     --selected "Custom scripts (zoom toggle, file search, screensaver)" \
-    "Essential packages (browsers, utilities, text editor, Claude Code)" \
+    "Firefox" \
+    "Sublime Text 4" \
+    "Claude Code" \
+    "ydotool (keyboard/mouse automation)" \
+    "yt-dlp (video downloader)" \
+    "Tailscale (VPN)" \
+    "nwg-displays (display manager)" \
+    "JetBrains Mono font" \
     "Bash customizations" \
     "Chrome extensions (Copy on Select, Dark Reader, 1Password)" \
     "ChezWizper (voice transcription)" \
-    "Universal web apps (Proton Mail, Kagi, YouTube, X, Zoom)" \
+    "Proton Mail" \
+    "Kagi (search)" \
+    "YouTube" \
+    "X (Twitter)" \
+    "Zoom" \
     "Claude launchers (Linux, Personal)" \
     "Claude Code MCP configuration" \
     "Waybar customizations" \
@@ -52,9 +74,12 @@ echo ""
 echo -e "${BLUE}=== Phase 1: Core System ===${NC}"
 echo ""
 
-if echo "$SELECTED_COMPONENTS" | grep -q "Essential packages"; then
+# Check if any essential packages were selected
+if echo "$SELECTED_COMPONENTS" | grep -qE "(Firefox|Sublime Text|Claude Code|ydotool|yt-dlp|Tailscale|nwg-displays|JetBrains Mono)"; then
     if [ -f "$SCRIPT_DIR/essential-packages.sh" ]; then
         echo -e "${GREEN}→${NC} Running essential-packages.sh..."
+        # TODO: Make essential-packages.sh accept parameters for selective installation
+        # For now, it installs all packages if any are selected
         bash "$SCRIPT_DIR/essential-packages.sh"
     fi
 fi
@@ -86,9 +111,12 @@ if echo "$SELECTED_COMPONENTS" | grep -q "ChezWizper"; then
     fi
 fi
 
-if echo "$SELECTED_COMPONENTS" | grep -q "Universal web apps"; then
+# Check if any universal web apps were selected
+if echo "$SELECTED_COMPONENTS" | grep -qE "(Proton Mail|Kagi|YouTube|X \(Twitter\)|Zoom)"; then
     if [ -f "$SCRIPT_DIR/web-apps-universal.sh" ]; then
         echo -e "${GREEN}→${NC} Running web-apps-universal.sh..."
+        # TODO: Make web-apps-universal.sh accept parameters for selective installation
+        # For now, it installs all web apps if any are selected
         bash "$SCRIPT_DIR/web-apps-universal.sh"
     fi
 fi
