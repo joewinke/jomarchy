@@ -28,14 +28,13 @@ SELECTED_COMPONENTS=$(gum choose --no-limit \
     --selected "Firefox" \
     --selected "Sublime Text 4" \
     --selected "Claude Code" \
-    --selected "ydotool (required by ChezWizper)" \
     --selected "yt-dlp (video downloader)" \
     --selected "Tailscale (VPN)" \
     --selected "nwg-displays (display manager)" \
     --selected "JetBrains Mono font" \
     --selected "Bash customizations" \
     --selected "Chrome extensions (Copy on Select, Dark Reader, 1Password)" \
-    --selected "ChezWizper (voice transcription)" \
+    --selected "ChezWizper (voice transcription - includes ydotool)" \
     --selected "Proton Mail" \
     --selected "Kagi (search)" \
     --selected "YouTube" \
@@ -48,14 +47,13 @@ SELECTED_COMPONENTS=$(gum choose --no-limit \
     "Firefox" \
     "Sublime Text 4" \
     "Claude Code" \
-    "ydotool (required by ChezWizper)" \
     "yt-dlp (video downloader)" \
     "Tailscale (VPN)" \
     "nwg-displays (display manager)" \
     "JetBrains Mono font" \
     "Bash customizations" \
     "Chrome extensions (Copy on Select, Dark Reader, 1Password)" \
-    "ChezWizper (voice transcription)" \
+    "ChezWizper (voice transcription - includes ydotool)" \
     "Proton Mail" \
     "Kagi (search)" \
     "YouTube" \
@@ -75,11 +73,11 @@ echo -e "${BLUE}=== Phase 1: Core System ===${NC}"
 echo ""
 
 # Check if any essential packages were selected
-if echo "$SELECTED_COMPONENTS" | grep -qE "(Firefox|Sublime Text|Claude Code|ydotool|yt-dlp|Tailscale|nwg-displays|JetBrains Mono)"; then
+if echo "$SELECTED_COMPONENTS" | grep -qE "(Firefox|Sublime Text|Claude Code|yt-dlp|Tailscale|nwg-displays|JetBrains Mono|ChezWizper)"; then
     if [ -f "$SCRIPT_DIR/essential-packages.sh" ]; then
         echo -e "${GREEN}→${NC} Running essential-packages.sh..."
         # TODO: Make essential-packages.sh accept parameters for selective installation
-        # For now, it installs all packages if any are selected
+        # For now, it installs all packages if any are selected (ydotool auto-included for ChezWizper)
         bash "$SCRIPT_DIR/essential-packages.sh"
     fi
 fi
