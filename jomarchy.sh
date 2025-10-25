@@ -54,6 +54,15 @@ else
     echo -e "${GREEN}✓${NC} git found"
 fi
 
+# gum should already be installed by Omarchy
+if ! command -v gum &> /dev/null; then
+    echo -e "${YELLOW}→${NC} gum not found, installing..."
+    sudo pacman -S --noconfirm gum
+    echo -e "${GREEN}✓${NC} gum installed"
+else
+    echo -e "${GREEN}✓${NC} gum found"
+fi
+
 # Clone repository
 REPO_URL="https://github.com/joewinke/jomarchy.git"
 REPO_DIR="$HOME/code/jomarchy"
@@ -77,60 +86,119 @@ fi
 
 cd "$REPO_DIR"
 
-# Interactive menu
+# STEP 1: Profile Selection
 echo ""
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BOLD}Select Installation:${NC}"
+echo -e "${BOLD}Step 1: Select Installation Profiles${NC}"
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
-echo "  [J] JOMARCHY (Default) ⭐"
-echo "      → Complete configuration for any Omarchy system"
-echo "      → ChezWizper, dev tools, web apps, custom scripts"
+echo "BASE profile is always installed. Select additional profiles:"
 echo ""
-echo "  [D] JOMARCHY + DEV"
-echo "      → Everything in JOMARCHY plus work-specific tools"
-echo "      → GitHub repo selection, dev aliases, work projects"
+
+# Use gum choose for multi-select
+SELECTED=$(gum choose --no-limit \
+    --header "Select additional profiles (SPACE to select, ENTER to confirm)" \
+    "DEV - Software development (VS Code, Node, CLIs, dev web apps)" \
+    "MEDIA - Creative tools (GIMP, Inkscape, OBS, Blender, Audacity, Kdenlive)" \
+    "FINANCE - Banking web apps (Bank of America, Chase, Capital One)" \
+    "COMMUNICATIONS - Messaging apps (Discord, WhatsApp, Slack, Gmail)")
+
+# Check if user cancelled (Ctrl+C)
+if [ $? -ne 0 ]; then
+    echo ""
+    echo -e "${YELLOW}→${NC} Installation cancelled"
+    exit 0
+fi
+
+# Always start with BASE
+SELECTED_PROFILES=("BASE")
+
+# Parse selected profiles (extract profile name before -)
+while IFS= read -r line; do
+    if [ -n "$line" ]; then
+        profile=$(echo "$line" | cut -d'-' -f1 | xargs)
+        SELECTED_PROFILES+=("$profile")
+    fi
+done <<< "$SELECTED"
+
 echo ""
-echo "  [Q] Quit"
-echo "      → Exit without installing"
+echo -e "${GREEN}→${NC} Selected profiles: ${SELECTED_PROFILES[*]}"
 echo ""
+
+# STEP 2: Component Selection for Each Profile
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${BOLD}Step 2: Select Components for Each Profile${NC}"
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
-while true; do
-    read -p "Select installation [J/D/Q]: " -n 1 -r choice
+# Collect component selections for each profile
+for profile in "${SELECTED_PROFILES[@]}"; do
+    echo -e "${BLUE}→ ${profile} Profile Components:${NC}"
     echo ""
 
-    case $choice in
-        [Jj])
-            echo ""
-            echo -e "${GREEN}→${NC} Installing JOMARCHY (Default Configuration)..."
-            echo ""
-            bash scripts/install/install-jomarchy.sh
-            break
+    case "$profile" in
+        "BASE")
+            # BASE component selection is handled by install-jomarchy.sh
+            # We'll run it in non-install mode just to get selections
+            # For now, keep the selection in the installer itself
             ;;
-        [Dd])
-            echo ""
-            echo -e "${GREEN}→${NC} Installing JOMARCHY + DEV (With Work Tools)..."
-            echo ""
-            bash scripts/install/install-jomarchy-dev.sh
-            break
-            ;;
-        [Qq])
-            echo ""
-            echo -e "${YELLOW}→${NC} Installation cancelled"
-            exit 0
-            ;;
-        *)
-            echo -e "${RED}→${NC} Invalid choice. Please select J, D, or Q."
+        "DEV"|"MEDIA"|"FINANCE"|"COMMUNICATIONS")
+            # Component selection will be handled by each installer
+            # We're showing this step exists but keeping selection in installers for now
+            echo -e "${YELLOW}  Components will be selected during ${profile} installation${NC}"
             ;;
     esac
+done
+
+echo ""
+echo -e "${GREEN}✓${NC} Ready to install with selected profiles and components"
+echo ""
+
+# STEP 3: Installation
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${BOLD}Step 3: Installing Selected Profiles${NC}"
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+
+# Install BASE profile first
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${BOLD}Installing BASE Profile${NC}"
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+bash scripts/install/install-jomarchy.sh
+
+# Install additional profiles
+for profile in "${SELECTED_PROFILES[@]}"; do
+    if [ "$profile" != "BASE" ]; then
+        echo ""
+        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${BOLD}Installing $profile Profile${NC}"
+        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo ""
+
+        case "$profile" in
+            "DEV")
+                bash scripts/install/install-jomarchy-dev.sh
+                ;;
+            "MEDIA")
+                bash scripts/install/install-jomarchy-media.sh
+                ;;
+            "FINANCE")
+                bash scripts/install/install-jomarchy-finance.sh
+                ;;
+            "COMMUNICATIONS")
+                bash scripts/install/install-jomarchy-communications.sh
+                ;;
+        esac
+    fi
 done
 
 echo ""
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo -e "${GREEN}${BOLD}  Installation Complete!${NC}"
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+echo "Installed profiles: ${SELECTED_PROFILES[*]}"
 echo ""
 echo "Documentation:"
 echo "  • Default system: cat ~/code/jomarchy/JOMARCHY.md"
