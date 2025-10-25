@@ -99,7 +99,7 @@ SELECTED=$(gum choose --no-limit \
     "BASE - Core system (browsers, text editor, web apps, ChezWizper)" \
     "DEV - Software development (VS Code, Node, CLIs, dev web apps)" \
     "MEDIA - Creative tools (GIMP, Inkscape, OBS, Blender, Audacity, Kdenlive)" \
-    "FINANCE - Banking web apps (Bank of America, Chase, Capital One)" \
+    "FINANCE - Banking/accounting web apps (Bank of America, Chase, Capital One, QuickBooks)" \
     "COMMUNICATIONS - Messaging apps (Discord, WhatsApp, Slack, Gmail)")
 
 # Check if user cancelled (Ctrl+C)
