@@ -30,25 +30,50 @@ if [ "$EUID" -eq 0 ]; then
     exit 1
 fi
 
-echo -e "${BLUE}Installing JOMARCHY base system...${NC}"
+echo ""
+
+# Component selection with gum
+SELECTED_COMPONENTS=$(gum choose --no-limit \
+    --header "Select BASE components to install (SPACE to toggle, ENTER to confirm, all selected by default)" \
+    --selected "Essential packages (browsers, utilities, text editor, Claude Code)" \
+    --selected "Bash customizations" \
+    --selected "Chrome extensions (Copy on Select, Dark Reader, 1Password)" \
+    --selected "ChezWizper (voice transcription)" \
+    --selected "Universal web apps (Proton Mail, Kagi, YouTube, X, Zoom)" \
+    --selected "Claude launchers (Linux, Personal)" \
+    --selected "Claude Code MCP configuration" \
+    --selected "Waybar customizations" \
+    --selected "Custom scripts (zoom toggle, file search, screensaver)" \
+    "Essential packages (browsers, utilities, text editor, Claude Code)" \
+    "Bash customizations" \
+    "Chrome extensions (Copy on Select, Dark Reader, 1Password)" \
+    "ChezWizper (voice transcription)" \
+    "Universal web apps (Proton Mail, Kagi, YouTube, X, Zoom)" \
+    "Claude launchers (Linux, Personal)" \
+    "Claude Code MCP configuration" \
+    "Waybar customizations" \
+    "Custom scripts (zoom toggle, file search, screensaver)")
+
+echo ""
+echo -e "${BLUE}Installing selected BASE components...${NC}"
 echo ""
 
 # Phase 1: Core System
 echo -e "${BLUE}=== Phase 1: Core System ===${NC}"
 echo ""
 
-if [ -f "$SCRIPT_DIR/essential-packages.sh" ]; then
-    echo -e "${GREEN}→${NC} Running essential-packages.sh..."
-    bash "$SCRIPT_DIR/essential-packages.sh"
-else
-    echo -e "${YELLOW}⚠${NC} essential-packages.sh not found, skipping"
+if echo "$SELECTED_COMPONENTS" | grep -q "Essential packages"; then
+    if [ -f "$SCRIPT_DIR/essential-packages.sh" ]; then
+        echo -e "${GREEN}→${NC} Running essential-packages.sh..."
+        bash "$SCRIPT_DIR/essential-packages.sh"
+    fi
 fi
 
-if [ -f "$SCRIPT_DIR/bash-customizations-universal.sh" ]; then
-    echo -e "${GREEN}→${NC} Running bash-customizations-universal.sh..."
-    bash "$SCRIPT_DIR/bash-customizations-universal.sh"
-else
-    echo -e "${YELLOW}⚠${NC} bash-customizations-universal.sh not found, skipping"
+if echo "$SELECTED_COMPONENTS" | grep -q "Bash customizations"; then
+    if [ -f "$SCRIPT_DIR/bash-customizations-universal.sh" ]; then
+        echo -e "${GREEN}→${NC} Running bash-customizations-universal.sh..."
+        bash "$SCRIPT_DIR/bash-customizations-universal.sh"
+    fi
 fi
 
 echo ""
@@ -57,39 +82,39 @@ echo ""
 echo -e "${BLUE}=== Phase 2: Applications ===${NC}"
 echo ""
 
-if [ -f "$SCRIPT_DIR/chrome-extensions.sh" ]; then
-    echo -e "${GREEN}→${NC} Running chrome-extensions.sh..."
-    bash "$SCRIPT_DIR/chrome-extensions.sh"
-else
-    echo -e "${YELLOW}⚠${NC} chrome-extensions.sh not found, skipping"
+if echo "$SELECTED_COMPONENTS" | grep -q "Chrome extensions"; then
+    if [ -f "$SCRIPT_DIR/chrome-extensions.sh" ]; then
+        echo -e "${GREEN}→${NC} Running chrome-extensions.sh..."
+        bash "$SCRIPT_DIR/chrome-extensions.sh"
+    fi
 fi
 
-if [ -f "$SCRIPT_DIR/chezwizper.sh" ]; then
-    echo -e "${GREEN}→${NC} Running chezwizper.sh..."
-    bash "$SCRIPT_DIR/chezwizper.sh"
-else
-    echo -e "${YELLOW}⚠${NC} chezwizper.sh not found, skipping"
+if echo "$SELECTED_COMPONENTS" | grep -q "ChezWizper"; then
+    if [ -f "$SCRIPT_DIR/chezwizper.sh" ]; then
+        echo -e "${GREEN}→${NC} Running chezwizper.sh..."
+        bash "$SCRIPT_DIR/chezwizper.sh"
+    fi
 fi
 
-if [ -f "$SCRIPT_DIR/web-apps-universal.sh" ]; then
-    echo -e "${GREEN}→${NC} Running web-apps-universal.sh..."
-    bash "$SCRIPT_DIR/web-apps-universal.sh"
-else
-    echo -e "${YELLOW}⚠${NC} web-apps-universal.sh not found, skipping"
+if echo "$SELECTED_COMPONENTS" | grep -q "Universal web apps"; then
+    if [ -f "$SCRIPT_DIR/web-apps-universal.sh" ]; then
+        echo -e "${GREEN}→${NC} Running web-apps-universal.sh..."
+        bash "$SCRIPT_DIR/web-apps-universal.sh"
+    fi
 fi
 
-if [ -f "$SCRIPT_DIR/claude-launchers-universal.sh" ]; then
-    echo -e "${GREEN}→${NC} Running claude-launchers-universal.sh..."
-    bash "$SCRIPT_DIR/claude-launchers-universal.sh"
-else
-    echo -e "${YELLOW}⚠${NC} claude-launchers-universal.sh not found, skipping"
+if echo "$SELECTED_COMPONENTS" | grep -q "Claude launchers"; then
+    if [ -f "$SCRIPT_DIR/claude-launchers-universal.sh" ]; then
+        echo -e "${GREEN}→${NC} Running claude-launchers-universal.sh..."
+        bash "$SCRIPT_DIR/claude-launchers-universal.sh"
+    fi
 fi
 
-if [ -f "$SCRIPT_DIR/claude-code-mcp.sh" ]; then
-    echo -e "${GREEN}→${NC} Running claude-code-mcp.sh..."
-    bash "$SCRIPT_DIR/claude-code-mcp.sh"
-else
-    echo -e "${YELLOW}⚠${NC} claude-code-mcp.sh not found, skipping"
+if echo "$SELECTED_COMPONENTS" | grep -q "Claude Code MCP"; then
+    if [ -f "$SCRIPT_DIR/claude-code-mcp.sh" ]; then
+        echo -e "${GREEN}→${NC} Running claude-code-mcp.sh..."
+        bash "$SCRIPT_DIR/claude-code-mcp.sh"
+    fi
 fi
 
 echo ""
@@ -98,18 +123,18 @@ echo ""
 echo -e "${BLUE}=== Phase 3: Customizations ===${NC}"
 echo ""
 
-if [ -f "$SCRIPT_DIR/waybar-customizations-universal.sh" ]; then
-    echo -e "${GREEN}→${NC} Running waybar-customizations-universal.sh..."
-    bash "$SCRIPT_DIR/waybar-customizations-universal.sh"
-else
-    echo -e "${YELLOW}⚠${NC} waybar-customizations-universal.sh not found, skipping"
+if echo "$SELECTED_COMPONENTS" | grep -q "Waybar customizations"; then
+    if [ -f "$SCRIPT_DIR/waybar-customizations-universal.sh" ]; then
+        echo -e "${GREEN}→${NC} Running waybar-customizations-universal.sh..."
+        bash "$SCRIPT_DIR/waybar-customizations-universal.sh"
+    fi
 fi
 
-if [ -f "$SCRIPT_DIR/custom-scripts-universal.sh" ]; then
-    echo -e "${GREEN}→${NC} Running custom-scripts-universal.sh..."
-    bash "$SCRIPT_DIR/custom-scripts-universal.sh"
-else
-    echo -e "${YELLOW}⚠${NC} custom-scripts-universal.sh not found, skipping"
+if echo "$SELECTED_COMPONENTS" | grep -q "Custom scripts"; then
+    if [ -f "$SCRIPT_DIR/custom-scripts-universal.sh" ]; then
+        echo -e "${GREEN}→${NC} Running custom-scripts-universal.sh..."
+        bash "$SCRIPT_DIR/custom-scripts-universal.sh"
+    fi
 fi
 
 echo ""
