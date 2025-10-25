@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Universal Web Apps Installation Script
-# Installs universal web apps for all Jomarchy systems
+# Finance Web Apps Installation Script
+# Installs banking web apps: Bank of America, Chase, Capital One
 
 set -e  # Exit on error
 
 echo "========================================"
-echo "Universal Web Apps Installation"
+echo "Finance Web Apps Installation"
 echo "========================================"
 echo ""
 
@@ -45,41 +45,23 @@ install_webapp() {
     fi
 }
 
-echo "Installing universal web apps..."
+echo "Installing finance web apps..."
 echo ""
 
-# Communication
-echo -e "${BLUE}=== Communication ===${NC}"
-install_webapp "Proton Mail" "https://mail.proton.me" "protonmail"
-echo ""
+install_webapp "Bank of America" "https://www.bankofamerica.com" "bankofamerica"
+install_webapp "Chase Bank" "https://www.chase.com" "chase"
+install_webapp "Capital One" "https://www.capitalone.com" "capitalone"
 
-# Search
-echo -e "${BLUE}=== Search ===${NC}"
-install_webapp "Kagi" "https://kagi.com" "kagi"
 echo ""
-
-# Social & Media
-echo -e "${BLUE}=== Social & Media ===${NC}"
-install_webapp "YouTube" "https://youtube.com" "youtube"
-install_webapp "X" "https://x.com" "twitter"
-echo ""
-
-# Productivity
-echo -e "${BLUE}=== Productivity ===${NC}"
-install_webapp "Zoom" "https://zoom.us" "zoom"
-echo ""
-
 echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}Universal Web Apps Installation Complete!${NC}"
+echo -e "${GREEN}Finance Web Apps Installation Complete!${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 
-echo "Installed web apps:"
-echo ""
-echo "  ✓ Proton Mail"
-echo "  ✓ Kagi"
-echo "  ✓ YouTube, X"
-echo "  ✓ Zoom"
+echo "Installed finance web apps (3 total):"
+echo "  ✓ Bank of America"
+echo "  ✓ Chase Bank"
+echo "  ✓ Capital One"
 echo ""
 echo "Icons downloaded from: https://dashboardicons.com"
 echo "Access via: Super + Space (app launcher)"

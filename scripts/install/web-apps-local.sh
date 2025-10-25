@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Work-Specific Web Apps Installation Script
-# Installs 15 work-specific web apps for development machines
+# Development Web Apps Installation Script
+# Installs development-specific web apps for development machines
 
 set -e  # Exit on error
 
 echo "========================================"
-echo "Work-Specific Web Apps Installation"
+echo "Development Web Apps Installation"
 echo "========================================"
 echo ""
 
@@ -45,7 +45,14 @@ install_webapp() {
     fi
 }
 
-echo "Installing 15 work-specific web apps..."
+echo "Installing development web apps..."
+echo ""
+
+# Development Platforms
+echo -e "${BLUE}=== Development Platforms ===${NC}"
+install_webapp "GitHub" "https://github.com" "github"
+install_webapp "Cloudflare" "https://dash.cloudflare.com" "cloudflare"
+install_webapp "Supabase" "https://supabase.com/dashboard" "supabase"
 echo ""
 
 # Development Projects
@@ -61,13 +68,6 @@ install_webapp "Supabase Flush" "https://supabase.com/dashboard/project/PROJECT_
 install_webapp "Supabase Steelbridge" "https://supabase.com/dashboard/project/PROJECT_ID" "supabase"
 echo ""
 
-# Work Communication
-echo -e "${BLUE}=== Work Communication ===${NC}"
-install_webapp "DMT Mail" "https://mail.google.com/mail/u/0/#inbox" "gmail"
-install_webapp "PEMail" "https://mail.google.com/mail/u/0/#inbox" "gmail"
-install_webapp "PE Slack" "https://slack.com/signin" "slack"
-echo ""
-
 # Development Tools
 echo -e "${BLUE}=== Development Tools ===${NC}"
 install_webapp "Marduk" "https://mm.marduk.app" "marduk"
@@ -77,35 +77,20 @@ install_webapp "DaisyUI" "https://daisyui.com" "daisyui"
 install_webapp "Docker" "https://localhost:9443" "docker"
 echo ""
 
-# Financial
-echo -e "${BLUE}=== Financial ===${NC}"
-install_webapp "Bank of America" "https://www.bankofamerica.com" "bankofamerica"
-install_webapp "Chase Bank" "https://www.chase.com" "chase"
-install_webapp "Capital One" "https://www.capitalone.com" "capitalone"
-echo ""
-
-echo -e "${YELLOW}NOTE: QuickBooks Online (QBO) requires manual setup${NC}"
-echo ""
-
 echo -e "${GREEN}========================================${NC}"
-echo -e "${GREEN}Work Web Apps Installation Complete!${NC}"
+echo -e "${GREEN}Development Web Apps Installation Complete!${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 
-echo "Installed work web apps (15 total):"
+echo "Installed development web apps:"
 echo ""
+echo "  ✓ GitHub, Cloudflare, Supabase"
 echo "  ✓ Chimaro Local"
 echo "  ✓ 3x Supabase projects (update IDs manually)"
-echo "  ✓ Work emails (DMT Mail, PEMail)"
-echo "  ✓ PE Slack"
 echo "  ✓ Dev tools (Marduk, Dev Tracker, Apify, DaisyUI, Docker)"
-echo "  ✓ 3x Banking apps"
 echo ""
 echo "Next steps:"
 echo "  1. Update Supabase project IDs in .desktop files"
-echo "  2. Update email account numbers if needed"
-echo "  3. Update PE Slack workspace URL"
-echo "  4. Add QBO manually if needed"
 echo ""
 echo "Icons downloaded from: https://dashboardicons.com"
 echo "Access via: Super + Space (app launcher)"

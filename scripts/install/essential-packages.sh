@@ -71,17 +71,8 @@ install_aur() {
 echo "Starting installation..."
 echo ""
 
-# Development Tools (pacman)
-echo -e "${BLUE}[1/4] Development Tools${NC}"
-install_pacman \
-    code \
-    nodejs \
-    npm
-
-echo ""
-
 # Browsers (pacman)
-echo -e "${BLUE}[2/4] Browsers${NC}"
+echo -e "${BLUE}[1/3] Browsers${NC}"
 install_pacman \
     firefox
 
@@ -91,7 +82,7 @@ echo -e "${GREEN}✓${NC} chromium (pre-installed by Omarchy)"
 echo ""
 
 # Utilities (pacman)
-echo -e "${BLUE}[3/5] Utilities${NC}"
+echo -e "${BLUE}[2/3] Utilities${NC}"
 install_pacman \
     ydotool \
     yt-dlp \
@@ -101,16 +92,8 @@ install_pacman \
 
 echo ""
 
-# Graphics & Design (pacman)
-echo -e "${BLUE}[4/5] Graphics & Design Tools${NC}"
-install_pacman \
-    inkscape \
-    gimp
-
-echo ""
-
 # AUR Packages
-echo -e "${BLUE}[5/5] AUR Packages${NC}"
+echo -e "${BLUE}[3/3] AUR Packages${NC}"
 install_aur \
     sublime-text-4 \
     claude-code
@@ -134,5 +117,5 @@ echo "3. JetBrains Mono font: Run fonts.sh to set as default"
 echo ""
 echo "4. Claude Code: Run 'claude --version' to verify installation"
 echo ""
-echo "5. VS Code: Launch with 'code' command"
+echo "5. Sublime Text: Launch with 'subl' command"
 echo ""
