@@ -28,7 +28,7 @@ SELECTED_COMPONENTS=$(gum choose --no-limit \
     --selected "Firefox" \
     --selected "Sublime Text 4" \
     --selected "Claude Code" \
-    --selected "ydotool (keyboard/mouse automation)" \
+    --selected "ydotool (required by ChezWizper)" \
     --selected "yt-dlp (video downloader)" \
     --selected "Tailscale (VPN)" \
     --selected "nwg-displays (display manager)" \
@@ -48,7 +48,7 @@ SELECTED_COMPONENTS=$(gum choose --no-limit \
     "Firefox" \
     "Sublime Text 4" \
     "Claude Code" \
-    "ydotool (keyboard/mouse automation)" \
+    "ydotool (required by ChezWizper)" \
     "yt-dlp (video downloader)" \
     "Tailscale (VPN)" \
     "nwg-displays (display manager)" \
