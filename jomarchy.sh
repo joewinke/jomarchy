@@ -100,7 +100,7 @@ SELECTED=$(gum choose --no-limit \
     "DEV - Software development (VS Code, Node, CLIs, dev web apps)" \
     "MEDIA - Creative tools (GIMP, Inkscape, OBS, Blender, Audacity, Kdenlive)" \
     "FINANCE - Banking/accounting web apps (Bank of America, Chase, Capital One, QuickBooks)" \
-    "COMMUNICATIONS - Messaging apps (Discord, WhatsApp, Slack, Gmail)")
+    "COMMUNICATIONS - Messaging apps (Discord, WhatsApp, Slack, Gmail, Zoom)")
 
 # Check if user cancelled (Ctrl+C)
 if [ $? -ne 0 ]; then
