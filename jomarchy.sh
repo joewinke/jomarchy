@@ -92,12 +92,11 @@ echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━�
 echo -e "${BOLD}Step 1: Select Installation Profiles${NC}"
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
-echo "BASE profile is always installed. Select additional profiles:"
-echo ""
 
 # Use gum choose for multi-select
 SELECTED=$(gum choose --no-limit \
-    --header "Select additional profiles (SPACE to select, ENTER to confirm)" \
+    --header "Select profiles to install (SPACE to select, ENTER to confirm)" \
+    "BASE - Core system (browsers, text editor, web apps, ChezWizper)" \
     "DEV - Software development (VS Code, Node, CLIs, dev web apps)" \
     "MEDIA - Creative tools (GIMP, Inkscape, OBS, Blender, Audacity, Kdenlive)" \
     "FINANCE - Banking web apps (Bank of America, Chase, Capital One)" \
@@ -110,16 +109,21 @@ if [ $? -ne 0 ]; then
     exit 0
 fi
 
-# Always start with BASE
-SELECTED_PROFILES=("BASE")
-
 # Parse selected profiles (extract profile name before -)
+SELECTED_PROFILES=()
 while IFS= read -r line; do
     if [ -n "$line" ]; then
         profile=$(echo "$line" | cut -d'-' -f1 | xargs)
         SELECTED_PROFILES+=("$profile")
     fi
 done <<< "$SELECTED"
+
+# Check if no profiles selected
+if [ ${#SELECTED_PROFILES[@]} -eq 0 ]; then
+    echo ""
+    echo -e "${YELLOW}→${NC} No profiles selected, exiting"
+    exit 0
+fi
 
 echo ""
 echo -e "${GREEN}→${NC} Selected profiles: ${SELECTED_PROFILES[*]}"
@@ -160,37 +164,31 @@ echo -e "${BOLD}Step 3: Installing Selected Profiles${NC}"
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
-# Install BASE profile first
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BOLD}Installing BASE Profile${NC}"
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo ""
-bash scripts/install/install-jomarchy.sh
-
-# Install additional profiles
+# Install each selected profile
 for profile in "${SELECTED_PROFILES[@]}"; do
-    if [ "$profile" != "BASE" ]; then
-        echo ""
-        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-        echo -e "${BOLD}Installing $profile Profile${NC}"
-        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-        echo ""
+    echo ""
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${BOLD}Installing $profile Profile${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
 
-        case "$profile" in
-            "DEV")
-                bash scripts/install/install-jomarchy-dev.sh
-                ;;
-            "MEDIA")
-                bash scripts/install/install-jomarchy-media.sh
-                ;;
-            "FINANCE")
-                bash scripts/install/install-jomarchy-finance.sh
-                ;;
-            "COMMUNICATIONS")
-                bash scripts/install/install-jomarchy-communications.sh
-                ;;
-        esac
-    fi
+    case "$profile" in
+        "BASE")
+            bash scripts/install/install-jomarchy.sh
+            ;;
+        "DEV")
+            bash scripts/install/install-jomarchy-dev.sh
+            ;;
+        "MEDIA")
+            bash scripts/install/install-jomarchy-media.sh
+            ;;
+        "FINANCE")
+            bash scripts/install/install-jomarchy-finance.sh
+            ;;
+        "COMMUNICATIONS")
+            bash scripts/install/install-jomarchy-communications.sh
+            ;;
+    esac
 done
 
 echo ""
