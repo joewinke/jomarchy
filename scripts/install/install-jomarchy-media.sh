@@ -11,12 +11,6 @@ BLUE='\033[0;34m'
 RED='\033[0;31m'
 NC='\033[0m'
 
-echo ""
-echo -e "${BLUE}========================================${NC}"
-echo -e "${BLUE}    JOMARCHY-MEDIA INSTALLATION        ${NC}"
-echo -e "${BLUE}========================================${NC}"
-echo ""
-
 # Get script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -26,8 +20,6 @@ if [ "$EUID" -eq 0 ]; then
     echo "Run as normal user - sudo will be used when needed"
     exit 1
 fi
-
-echo "Select MEDIA components to install..."
 echo ""
 
 # Component selection with gum
