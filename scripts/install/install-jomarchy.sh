@@ -5,14 +5,6 @@
 
 set -e  # Exit on error
 
-echo "=========================================="
-echo "JOMARCHY: Base System Installation"
-echo "=========================================="
-echo ""
-echo "This will install the universal base system."
-echo "See JOMARCHY.md for details."
-echo ""
-
 # Color codes
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
@@ -29,8 +21,6 @@ if [ "$EUID" -eq 0 ]; then
     echo "Run as normal user - sudo will be used when needed"
     exit 1
 fi
-
-echo ""
 
 # Component selection with gum
 SELECTED_COMPONENTS=$(gum choose --no-limit \
