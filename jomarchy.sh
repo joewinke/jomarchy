@@ -198,16 +198,18 @@ echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━�
 echo ""
 echo "Installed profiles: ${SELECTED_PROFILES[*]}"
 echo ""
-echo "Documentation:"
-echo "  • Default system: cat ~/code/jomarchy/JOMARCHY.md"
-echo "  • Development: cat ~/code/jomarchy/JOMARCHY-DEV.md"
+echo "Documentation: https://github.com/joewinke/jomarchy"
 echo ""
-echo "Next steps:"
-echo "  1. Restart your shell: source ~/.bashrc"
-echo "  2. Test ChezWizper: Press Super+R"
-echo "  3. Test file search: Press F4"
-echo "  4. Launch apps: Super+Space"
-echo ""
-echo "Hardware-specific configurations:"
-echo "  For Beelink SER9 Pro, see: https://github.com/joewinke/jomarchy-beelink"
+
+# Auto-source bashrc if bash customizations were installed
+if [[ " ${SELECTED_PROFILES[*]} " =~ " BASE " ]] || [[ " ${SELECTED_PROFILES[*]} " =~ " DEV " ]]; then
+    echo "Reloading shell configuration..."
+    if [ -f "$HOME/.bashrc" ]; then
+        source "$HOME/.bashrc"
+        echo -e "${GREEN}✓${NC} Shell configuration reloaded"
+    fi
+    echo ""
+fi
+
+echo "Installation complete. Enjoy Jomarchy!"
 echo ""
