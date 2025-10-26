@@ -24,7 +24,6 @@ fi
 
 # Component selection with gum
 SELECTED_COMPONENTS=$(gum choose --no-limit \
-    --header "Select DEV components to install (SPACE to toggle, ENTER to confirm, all selected by default)" \
     --selected "*" \
     "VS Code, Node.js, npm" \
     "GitHub CLI" \

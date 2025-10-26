@@ -24,7 +24,6 @@ echo ""
 
 # Component selection with gum
 SELECTED_COMPONENTS=$(gum choose --no-limit \
-    --header "Select COMMUNICATIONS components to install (SPACE to toggle, ENTER to confirm, all selected by default)" \
     --selected "*" \
     "Discord" \
     "WhatsApp" \

@@ -89,13 +89,12 @@ cd "$REPO_DIR"
 # STEP 1: Profile Selection
 echo ""
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BOLD}Step 1: Select Installation Profiles${NC}"
+echo -e "${BOLD}Select Bundles to Install${NC}"
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
 # Use gum choose for multi-select
 SELECTED=$(gum choose --no-limit \
-    --header "Select profiles to install (SPACE to select, ENTER to confirm)" \
     "BASE - Core system (browsers, text editor, web apps, ChezWizper)" \
     "DEV - Software development (VS Code, Node, CLIs, dev web apps)" \
     "MEDIA - Creative tools (GIMP, Inkscape, OBS, Blender, Audacity, Kdenlive)" \

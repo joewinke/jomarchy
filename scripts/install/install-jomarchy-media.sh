@@ -24,7 +24,6 @@ echo ""
 
 # Component selection with gum
 SELECTED_COMPONENTS=$(gum choose --no-limit \
-    --header "Select MEDIA components to install (SPACE to toggle, ENTER to confirm, all selected by default)" \
     --selected "*" \
     "GIMP (image editing)" \
     "Inkscape (vector graphics)" \

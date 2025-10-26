@@ -24,7 +24,6 @@ fi
 
 # Component selection with gum
 SELECTED_COMPONENTS=$(gum choose --no-limit \
-    --header "Select BASE components to install (SPACE to toggle, ENTER to confirm, all selected by default)" \
     --selected "*" \
     "Firefox" \
     "Sublime Text 4" \
