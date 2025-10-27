@@ -45,7 +45,7 @@ SELECTED_COMPONENTS=$(gum choose --no-limit \
     "  Svelte" \
     "━━━ CUSTOMIZATIONS ━━━" \
     "  GitHub repository cloning" \
-    "  Claude project launchers" \
+    "  Claude desktop shortcuts (per project)" \
     "  Daily Claude quote timer")
 
 echo ""
@@ -76,7 +76,7 @@ if echo "$SELECTED_COMPONENTS" | grep -q "  GitHub repository cloning"; then
     fi
 fi
 
-if echo "$SELECTED_COMPONENTS" | grep -q "  Claude project launchers"; then
+if echo "$SELECTED_COMPONENTS" | grep -q "  Claude desktop shortcuts"; then
     if [ -f "$SCRIPT_DIR/claude-launchers-local.sh" ]; then
         echo -e "${GREEN}→${NC} Running claude-launchers-local.sh..."
         bash "$SCRIPT_DIR/claude-launchers-local.sh"
@@ -117,7 +117,7 @@ echo "DEV PROFILE:"
 echo "  ✓ Dev packages (VS Code, Node.js, npm)"
 echo "  ✓ Dev tools (GitHub CLI, Stripe CLI, Supabase CLI)"
 echo "  ✓ GitHub repository selection (your choice)"
-echo "  ✓ Auto-generated Claude aliases for selected repos"
+echo "  ✓ Project shortcuts (automatically generated from your repos)"
 echo "  ✓ Development web apps (GitHub, Cloudflare, Supabase)"
 echo "  ✓ Dev docs (Tailwind CSS, DaisyUI, Svelte)"
 echo "  ✓ Daily Claude quote timer (9am EST)"

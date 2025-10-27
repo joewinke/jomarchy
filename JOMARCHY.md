@@ -1,6 +1,8 @@
-# OMARCHY-ALL: Base System Installation
+# Jomarchy: Complete Project Documentation
 
-This document defines what gets installed on **ANY** Omarchy system (laptop, desktop, VM, etc.).
+**View online:** [github.com/joewinke/jomarchy](https://github.com/joewinke/jomarchy)
+
+This document defines the complete Jomarchy installation system and all available profiles.
 
 ---
 
@@ -230,9 +232,9 @@ Configures Claude Code with MCP servers for enhanced capabilities.
 
 ---
 
-## 🚀 Claude Desktop Launchers (2 launchers)
+## 🚀 Claude Desktop Shortcuts (2 shortcuts)
 
-Terminal launchers matching aliases:
+Desktop shortcuts matching terminal aliases:
 
 - **Claude Linux** → `cl` → ~/code/linux
 - **Claude Personal** → `cp` → ~/code/personal
@@ -255,7 +257,7 @@ Icon=/home/jw/.local/share/applications/icons/Claude.png
 **Total scripts:** 9 installation scripts
 **Directories created:** ~/code/linux, ~/code/personal, ~/.claude
 **Aliases added:** cl, cp, tget (if Tailscale)
-**Desktop launchers:** 2 (Claude Linux, Claude Personal)
+**Desktop shortcuts:** 2 (Claude Linux, Claude Personal)
 **MCP servers:** 1 (Chrome DevTools)
 
 ---
@@ -264,11 +266,11 @@ Icon=/home/jw/.local/share/applications/icons/Claude.png
 
 Run the master installation script:
 ```bash
-cd ~/code/linux
-./scripts/install/install-omarchy-all.sh
+cd ~/code/jomarchy
+./scripts/install/install-jomarchy.sh
 ```
 
-This will execute all 8 universal installation scripts in the correct order.
+This will execute all BASE profile installation scripts in the correct order.
 
 ---
 

@@ -29,7 +29,7 @@ echo ""
 SELECTED_COMPONENTS=$(gum choose --no-limit \
     --height=25 \
     --selected "*" \
-    "━━━ CORE PACKAGES ━━━" \
+    "━━━ PACKAGES (installed software) ━━━" \
     "  Firefox" \
     "  Sublime Text 4" \
     "  Claude Code" \
@@ -37,21 +37,20 @@ SELECTED_COMPONENTS=$(gum choose --no-limit \
     "  Tailscale (VPN)" \
     "  nwg-displays (display manager)" \
     "  JetBrains Mono font" \
-    "━━━ CUSTOMIZATIONS ━━━" \
-    "  Bash customizations" \
+    "━━━ SYSTEM CUSTOMIZATIONS (configs, themes, keybindings) ━━━" \
+    "  Bash aliases (cl, cp shortcuts + directory setup)" \
     "  Waybar customizations" \
-    "  Custom scripts (zoom toggle, file search, screensaver)" \
-    "━━━ APPLICATIONS ━━━" \
+    "  Utility keybindings (Super+Z zoom, F4 file search, Super+L screensaver)" \
+    "━━━ DESKTOP APPS (shortcuts and integrations) ━━━" \
     "  Chrome extensions (Copy on Select, Dark Reader, 1Password)" \
-    "  ChezWizper (voice transcription - includes ydotool)" \
-    "  Claude launchers (Linux, Personal)" \
-    "  Claude Code MCP configuration" \
-    "━━━ WEB APPS ━━━" \
+    "  ChezWizper (voice transcription via Super+R)" \
+    "  Claude desktop shortcuts (Linux, Personal)" \
+    "  Claude Code browser tools (Chrome DevTools integration)" \
+    "━━━ WEB APPS (browser-based applications) ━━━" \
     "  Proton Mail" \
     "  Kagi (search)" \
     "  YouTube" \
-    "  X (Twitter)" \
-    "  Zoom")
+    "  X (Twitter)")
 
 echo ""
 echo -e "${BLUE}Installing selected BASE components...${NC}"
@@ -71,7 +70,7 @@ if echo "$SELECTED_COMPONENTS" | grep -qE "(  Firefox|  Sublime Text|  Claude Co
     fi
 fi
 
-if echo "$SELECTED_COMPONENTS" | grep -q "  Bash customizations"; then
+if echo "$SELECTED_COMPONENTS" | grep -q "  Bash aliases"; then
     if [ -f "$SCRIPT_DIR/bash-customizations-universal.sh" ]; then
         echo -e "${GREEN}→${NC} Running bash-customizations-universal.sh..."
         bash "$SCRIPT_DIR/bash-customizations-universal.sh"
@@ -99,7 +98,7 @@ if echo "$SELECTED_COMPONENTS" | grep -q "  ChezWizper"; then
 fi
 
 # Check if any universal web apps were selected
-if echo "$SELECTED_COMPONENTS" | grep -qE "(  Proton Mail|  Kagi|  YouTube|  X \(Twitter\)|  Zoom)"; then
+if echo "$SELECTED_COMPONENTS" | grep -qE "(  Proton Mail|  Kagi|  YouTube|  X \(Twitter\))"; then
     if [ -f "$SCRIPT_DIR/web-apps-universal.sh" ]; then
         echo -e "${GREEN}→${NC} Running web-apps-universal.sh..."
         # TODO: Make web-apps-universal.sh accept parameters for selective installation
@@ -108,14 +107,14 @@ if echo "$SELECTED_COMPONENTS" | grep -qE "(  Proton Mail|  Kagi|  YouTube|  X \
     fi
 fi
 
-if echo "$SELECTED_COMPONENTS" | grep -q "  Claude launchers"; then
+if echo "$SELECTED_COMPONENTS" | grep -q "  Claude desktop shortcuts"; then
     if [ -f "$SCRIPT_DIR/claude-launchers-universal.sh" ]; then
         echo -e "${GREEN}→${NC} Running claude-launchers-universal.sh..."
         bash "$SCRIPT_DIR/claude-launchers-universal.sh"
     fi
 fi
 
-if echo "$SELECTED_COMPONENTS" | grep -q "  Claude Code MCP"; then
+if echo "$SELECTED_COMPONENTS" | grep -q "  Claude Code browser tools"; then
     if [ -f "$SCRIPT_DIR/claude-code-mcp.sh" ]; then
         echo -e "${GREEN}→${NC} Running claude-code-mcp.sh..."
         bash "$SCRIPT_DIR/claude-code-mcp.sh"
@@ -135,7 +134,7 @@ if echo "$SELECTED_COMPONENTS" | grep -q "  Waybar customizations"; then
     fi
 fi
 
-if echo "$SELECTED_COMPONENTS" | grep -q "  Custom scripts"; then
+if echo "$SELECTED_COMPONENTS" | grep -q "  Utility keybindings"; then
     if [ -f "$SCRIPT_DIR/custom-scripts-universal.sh" ]; then
         echo -e "${GREEN}→${NC} Running custom-scripts-universal.sh..."
         bash "$SCRIPT_DIR/custom-scripts-universal.sh"
@@ -167,7 +166,7 @@ echo "✓ Waybar customizations (clock, ChezWizper, color-coded workspaces)"
 echo "✓ Custom scripts (toggle-zoom Super+Z, file-search F4)"
 echo "✓ Hyprsunset blue light filter (auto-adjusts by time)"
 echo "✓ Bash customizations (cl, cp aliases + ~/code/{linux,personal})"
-echo "✓ 2 Claude desktop launchers"
+echo "✓ Claude desktop shortcuts (Linux, Personal)"
 echo "✓ Claude Code MCP configuration (Chrome DevTools)"
 echo ""
 
@@ -175,7 +174,7 @@ echo "Next steps:"
 echo ""
 echo "1. Restart your shell: source ~/.bashrc"
 echo "2. Test ChezWizper: Press Super+R"
-echo "3. Review: cat ~/code/linux/JOMARCHY.md"
+echo "3. Review: cat ~/code/jomarchy/JOMARCHY.md"
 echo ""
-echo "For development machines, run: ./install-omarchy-dev.sh"
+echo "For development tools, run: jomarchy --install (select DEV profile)"
 echo ""
