@@ -317,7 +317,7 @@ cd "$REPO_DIR"
 # STEP 1: Profile Selection
 echo ""
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BOLD}Press SPACE to Select Bundles to Install${NC}"
+echo -e "${BOLD}Select Profiles to Install (SPACE to toggle, ENTER to confirm)${NC}"
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
@@ -356,39 +356,12 @@ echo ""
 echo -e "${GREEN}→${NC} Selected profiles: ${SELECTED_PROFILES[*]}"
 echo ""
 
-# STEP 2: Component Selection for Each Profile
+# Installation
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BOLD}Step 2: Select Components for Each Profile${NC}"
+echo -e "${BOLD}Installing Selected Profiles${NC}"
 echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
-
-# Collect component selections for each profile
-for profile in "${SELECTED_PROFILES[@]}"; do
-    echo -e "${BLUE}→ ${profile} Profile Components:${NC}"
-    echo ""
-
-    case "$profile" in
-        "BASE")
-            # BASE component selection is handled by install-jomarchy.sh
-            # We'll run it in non-install mode just to get selections
-            # For now, keep the selection in the installer itself
-            ;;
-        "DEV"|"MEDIA"|"FINANCE"|"COMMUNICATIONS")
-            # Component selection will be handled by each installer
-            # We're showing this step exists but keeping selection in installers for now
-            echo -e "${YELLOW}  Components will be selected during ${profile} installation${NC}"
-            ;;
-    esac
-done
-
-echo ""
-echo -e "${GREEN}✓${NC} Ready to install with selected profiles and components"
-echo ""
-
-# STEP 3: Installation
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${BOLD}Step 3: Installing Selected Profiles${NC}"
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${YELLOW}Note: Each profile will prompt you to select components during installation${NC}"
 echo ""
 
 # Install each selected profile
