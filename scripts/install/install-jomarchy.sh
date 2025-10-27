@@ -23,28 +23,35 @@ if [ "$EUID" -eq 0 ]; then
 fi
 
 # Component selection with gum
+echo -e "${BLUE}Select BASE components to install:${NC}"
+echo ""
+
 SELECTED_COMPONENTS=$(gum choose --no-limit \
-    --height=20 \
+    --height=25 \
     --selected "*" \
-    "Firefox" \
-    "Sublime Text 4" \
-    "Claude Code" \
-    "yt-dlp (video downloader)" \
-    "Tailscale (VPN)" \
-    "nwg-displays (display manager)" \
-    "JetBrains Mono font" \
-    "Bash customizations" \
-    "Chrome extensions (Copy on Select, Dark Reader, 1Password)" \
-    "ChezWizper (voice transcription - includes ydotool)" \
-    "Proton Mail" \
-    "Kagi (search)" \
-    "YouTube" \
-    "X (Twitter)" \
-    "Zoom" \
-    "Claude launchers (Linux, Personal)" \
-    "Claude Code MCP configuration" \
-    "Waybar customizations" \
-    "Custom scripts (zoom toggle, file search, screensaver)")
+    "━━━ CORE PACKAGES ━━━" \
+    "  Firefox" \
+    "  Sublime Text 4" \
+    "  Claude Code" \
+    "  yt-dlp (video downloader)" \
+    "  Tailscale (VPN)" \
+    "  nwg-displays (display manager)" \
+    "  JetBrains Mono font" \
+    "━━━ CUSTOMIZATIONS ━━━" \
+    "  Bash customizations" \
+    "  Waybar customizations" \
+    "  Custom scripts (zoom toggle, file search, screensaver)" \
+    "━━━ APPLICATIONS ━━━" \
+    "  Chrome extensions (Copy on Select, Dark Reader, 1Password)" \
+    "  ChezWizper (voice transcription - includes ydotool)" \
+    "  Claude launchers (Linux, Personal)" \
+    "  Claude Code MCP configuration" \
+    "━━━ WEB APPS ━━━" \
+    "  Proton Mail" \
+    "  Kagi (search)" \
+    "  YouTube" \
+    "  X (Twitter)" \
+    "  Zoom")
 
 echo ""
 echo -e "${BLUE}Installing selected BASE components...${NC}"
@@ -55,7 +62,7 @@ echo -e "${BLUE}=== Phase 1: Core System ===${NC}"
 echo ""
 
 # Check if any essential packages were selected
-if echo "$SELECTED_COMPONENTS" | grep -qE "(Firefox|Sublime Text|Claude Code|yt-dlp|Tailscale|nwg-displays|JetBrains Mono|ChezWizper)"; then
+if echo "$SELECTED_COMPONENTS" | grep -qE "(  Firefox|  Sublime Text|  Claude Code|  yt-dlp|  Tailscale|  nwg-displays|  JetBrains Mono|  ChezWizper)"; then
     if [ -f "$SCRIPT_DIR/essential-packages.sh" ]; then
         echo -e "${GREEN}→${NC} Running essential-packages.sh..."
         # TODO: Make essential-packages.sh accept parameters for selective installation
@@ -64,7 +71,7 @@ if echo "$SELECTED_COMPONENTS" | grep -qE "(Firefox|Sublime Text|Claude Code|yt-
     fi
 fi
 
-if echo "$SELECTED_COMPONENTS" | grep -q "Bash customizations"; then
+if echo "$SELECTED_COMPONENTS" | grep -q "  Bash customizations"; then
     if [ -f "$SCRIPT_DIR/bash-customizations-universal.sh" ]; then
         echo -e "${GREEN}→${NC} Running bash-customizations-universal.sh..."
         bash "$SCRIPT_DIR/bash-customizations-universal.sh"
@@ -77,14 +84,14 @@ echo ""
 echo -e "${BLUE}=== Phase 2: Applications ===${NC}"
 echo ""
 
-if echo "$SELECTED_COMPONENTS" | grep -q "Chrome extensions"; then
+if echo "$SELECTED_COMPONENTS" | grep -q "  Chrome extensions"; then
     if [ -f "$SCRIPT_DIR/chrome-extensions.sh" ]; then
         echo -e "${GREEN}→${NC} Running chrome-extensions.sh..."
         bash "$SCRIPT_DIR/chrome-extensions.sh"
     fi
 fi
 
-if echo "$SELECTED_COMPONENTS" | grep -q "ChezWizper"; then
+if echo "$SELECTED_COMPONENTS" | grep -q "  ChezWizper"; then
     if [ -f "$SCRIPT_DIR/chezwizper.sh" ]; then
         echo -e "${GREEN}→${NC} Running chezwizper.sh..."
         bash "$SCRIPT_DIR/chezwizper.sh"
@@ -92,7 +99,7 @@ if echo "$SELECTED_COMPONENTS" | grep -q "ChezWizper"; then
 fi
 
 # Check if any universal web apps were selected
-if echo "$SELECTED_COMPONENTS" | grep -qE "(Proton Mail|Kagi|YouTube|X \(Twitter\)|Zoom)"; then
+if echo "$SELECTED_COMPONENTS" | grep -qE "(  Proton Mail|  Kagi|  YouTube|  X \(Twitter\)|  Zoom)"; then
     if [ -f "$SCRIPT_DIR/web-apps-universal.sh" ]; then
         echo -e "${GREEN}→${NC} Running web-apps-universal.sh..."
         # TODO: Make web-apps-universal.sh accept parameters for selective installation
@@ -101,14 +108,14 @@ if echo "$SELECTED_COMPONENTS" | grep -qE "(Proton Mail|Kagi|YouTube|X \(Twitter
     fi
 fi
 
-if echo "$SELECTED_COMPONENTS" | grep -q "Claude launchers"; then
+if echo "$SELECTED_COMPONENTS" | grep -q "  Claude launchers"; then
     if [ -f "$SCRIPT_DIR/claude-launchers-universal.sh" ]; then
         echo -e "${GREEN}→${NC} Running claude-launchers-universal.sh..."
         bash "$SCRIPT_DIR/claude-launchers-universal.sh"
     fi
 fi
 
-if echo "$SELECTED_COMPONENTS" | grep -q "Claude Code MCP"; then
+if echo "$SELECTED_COMPONENTS" | grep -q "  Claude Code MCP"; then
     if [ -f "$SCRIPT_DIR/claude-code-mcp.sh" ]; then
         echo -e "${GREEN}→${NC} Running claude-code-mcp.sh..."
         bash "$SCRIPT_DIR/claude-code-mcp.sh"
@@ -121,14 +128,14 @@ echo ""
 echo -e "${BLUE}=== Phase 3: Customizations ===${NC}"
 echo ""
 
-if echo "$SELECTED_COMPONENTS" | grep -q "Waybar customizations"; then
+if echo "$SELECTED_COMPONENTS" | grep -q "  Waybar customizations"; then
     if [ -f "$SCRIPT_DIR/waybar-customizations-universal.sh" ]; then
         echo -e "${GREEN}→${NC} Running waybar-customizations-universal.sh..."
         bash "$SCRIPT_DIR/waybar-customizations-universal.sh"
     fi
 fi
 
-if echo "$SELECTED_COMPONENTS" | grep -q "Custom scripts"; then
+if echo "$SELECTED_COMPONENTS" | grep -q "  Custom scripts"; then
     if [ -f "$SCRIPT_DIR/custom-scripts-universal.sh" ]; then
         echo -e "${GREEN}→${NC} Running custom-scripts-universal.sh..."
         bash "$SCRIPT_DIR/custom-scripts-universal.sh"

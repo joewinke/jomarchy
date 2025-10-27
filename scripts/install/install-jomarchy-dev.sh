@@ -23,59 +23,76 @@ if [ "$EUID" -eq 0 ]; then
 fi
 
 # Component selection with gum
+echo -e "${BLUE}Select DEV components to install:${NC}"
+echo ""
+
 SELECTED_COMPONENTS=$(gum choose --no-limit \
-    --height=10 \
+    --height=25 \
     --selected "*" \
-    "VS Code, Node.js, npm" \
-    "GitHub CLI" \
-    "Stripe CLI" \
-    "Supabase CLI" \
-    "Development web apps (GitHub, Cloudflare, Supabase, etc)" \
-    "GitHub repository cloning" \
-    "Claude project launchers" \
-    "Daily Claude quote timer")
+    "━━━ CORE PACKAGES ━━━" \
+    "  VS Code" \
+    "  Node.js & npm" \
+    "━━━ CLI TOOLS ━━━" \
+    "  GitHub CLI" \
+    "  Stripe CLI" \
+    "  Supabase CLI" \
+    "━━━ WEB APPS ━━━" \
+    "  GitHub" \
+    "  Cloudflare" \
+    "  Supabase" \
+    "  Tailwind CSS" \
+    "  DaisyUI" \
+    "  Svelte" \
+    "━━━ CUSTOMIZATIONS ━━━" \
+    "  GitHub repository cloning" \
+    "  Claude project launchers" \
+    "  Daily Claude quote timer")
 
 echo ""
 echo -e "${BLUE}Installing selected DEV components...${NC}"
 echo ""
 
 # Install based on selections
-if echo "$SELECTED_COMPONENTS" | grep -q "VS Code, Node.js, npm"; then
+if echo "$SELECTED_COMPONENTS" | grep -qE "(  VS Code|  Node.js & npm)"; then
     if [ -f "$SCRIPT_DIR/dev-packages.sh" ]; then
         echo -e "${GREEN}→${NC} Running dev-packages.sh..."
+        # TODO: Make dev-packages.sh accept parameters for selective installation
+        # For now, it installs all packages if any are selected
         bash "$SCRIPT_DIR/dev-packages.sh"
     fi
 fi
 
-if echo "$SELECTED_COMPONENTS" | grep -qE "(GitHub CLI|Stripe CLI|Supabase CLI)"; then
+if echo "$SELECTED_COMPONENTS" | grep -qE "(  GitHub CLI|  Stripe CLI|  Supabase CLI)"; then
     if [ -f "$SCRIPT_DIR/dev-tools-local.sh" ]; then
         echo -e "${GREEN}→${NC} Running dev-tools-local.sh..."
         bash "$SCRIPT_DIR/dev-tools-local.sh"
     fi
 fi
 
-if echo "$SELECTED_COMPONENTS" | grep -q "GitHub repository cloning"; then
+if echo "$SELECTED_COMPONENTS" | grep -q "  GitHub repository cloning"; then
     if [ -f "$SCRIPT_DIR/bash-customizations-local.sh" ]; then
         echo -e "${GREEN}→${NC} Running bash-customizations-local.sh..."
         bash "$SCRIPT_DIR/bash-customizations-local.sh"
     fi
 fi
 
-if echo "$SELECTED_COMPONENTS" | grep -q "Claude project launchers"; then
+if echo "$SELECTED_COMPONENTS" | grep -q "  Claude project launchers"; then
     if [ -f "$SCRIPT_DIR/claude-launchers-local.sh" ]; then
         echo -e "${GREEN}→${NC} Running claude-launchers-local.sh..."
         bash "$SCRIPT_DIR/claude-launchers-local.sh"
     fi
 fi
 
-if echo "$SELECTED_COMPONENTS" | grep -q "Development web apps"; then
+if echo "$SELECTED_COMPONENTS" | grep -qE "(  GitHub|  Cloudflare|  Supabase|  Tailwind CSS|  DaisyUI|  Svelte)"; then
     if [ -f "$SCRIPT_DIR/web-apps-local.sh" ]; then
         echo -e "${GREEN}→${NC} Running web-apps-local.sh..."
+        # TODO: Make web-apps-local.sh accept parameters for selective installation
+        # For now, it installs all web apps if any are selected
         bash "$SCRIPT_DIR/web-apps-local.sh"
     fi
 fi
 
-if echo "$SELECTED_COMPONENTS" | grep -q "Daily Claude quote timer"; then
+if echo "$SELECTED_COMPONENTS" | grep -q "  Daily Claude quote timer"; then
     if [ -f "$SCRIPT_DIR/claude-daily-quote.sh" ]; then
         echo -e "${GREEN}→${NC} Running claude-daily-quote.sh..."
         bash "$SCRIPT_DIR/claude-daily-quote.sh"
@@ -90,15 +107,13 @@ echo ""
 
 echo "What was installed:"
 echo ""
-echo "BASE (JOMARCHY):"
-echo "  ✓ Core packages, ChezWizper, universal web apps, etc."
-echo ""
-echo "DEV ADDITIONS:"
+echo "DEV PROFILE:"
 echo "  ✓ Dev packages (VS Code, Node.js, npm)"
 echo "  ✓ Dev tools (GitHub CLI, Stripe CLI, Supabase CLI)"
 echo "  ✓ GitHub repository selection (your choice)"
 echo "  ✓ Auto-generated Claude aliases for selected repos"
-echo "  ✓ Development web apps (GitHub, Cloudflare, Supabase, project apps)"
+echo "  ✓ Development web apps (GitHub, Cloudflare, Supabase)"
+echo "  ✓ Dev docs (Tailwind CSS, DaisyUI, Svelte)"
 echo "  ✓ Daily Claude quote timer (9am EST)"
 echo ""
 
@@ -108,6 +123,7 @@ echo "1. Restart your shell: source ~/.bashrc"
 echo "2. Test your Claude aliases (based on repos selected)"
 echo "3. Review: cat ~/code/jomarchy/JOMARCHY-DEV.md"
 echo ""
-echo "Hardware-specific configurations:"
-echo "  For Beelink SER9 Pro: https://github.com/joewinke/jomarchy-beelink"
+echo "For personal project apps (Chimaro, Marduk, etc.):"
+echo "  Install jomarchy-machines JOE-PERSONAL profile"
+echo "  https://github.com/joewinke/jomarchy-machines"
 echo ""
