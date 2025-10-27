@@ -84,6 +84,28 @@ else
     echo ""
 fi
 
+# Install jomarchy management command
+echo -e "${BLUE}Installing jomarchy management command...${NC}"
+
+# Get the jomarchy.sh location (two directories up from scripts/install/)
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+JOMARCHY_SCRIPT="$SCRIPT_DIR/../../jomarchy.sh"
+
+if [ -f "$JOMARCHY_SCRIPT" ]; then
+    # Create symlink in ~/.local/bin
+    mkdir -p ~/.local/bin
+
+    if [ -L ~/.local/bin/jomarchy ] || [ -f ~/.local/bin/jomarchy ]; then
+        echo -e "${YELLOW}→${NC} jomarchy command already exists"
+    else
+        ln -sf "$JOMARCHY_SCRIPT" ~/.local/bin/jomarchy
+        echo -e "${GREEN}✓${NC} Installed jomarchy command to ~/.local/bin"
+    fi
+else
+    echo -e "${YELLOW}⚠${NC} jomarchy.sh not found, skipping"
+fi
+echo ""
+
 echo -e "${GREEN}=======================================${NC}"
 echo -e "${GREEN}Installation Complete!${NC}"
 echo -e "${GREEN}=======================================${NC}"
@@ -98,7 +120,13 @@ echo "4. Alias: cp (cd to ~/code/personal + launch Claude with YOLO mode)"
 if command -v tailscale &> /dev/null; then
     echo "5. Alias: tget (Tailscale file download to ~/Downloads/)"
 fi
+if [ -L ~/.local/bin/jomarchy ] || [ -f ~/.local/bin/jomarchy ]; then
+    echo "6. Command: jomarchy (interactive management menu)"
+fi
 echo ""
 echo "To use immediately, run: source ~/.bashrc"
 echo "Or simply start a new terminal session"
+echo ""
+echo "Management:"
+echo "  Run 'jomarchy' to access the interactive management menu"
 echo ""
