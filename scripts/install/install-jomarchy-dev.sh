@@ -105,6 +105,12 @@ echo -e "${GREEN}JOMARCHY-DEV Installation Complete!${NC}"
 echo -e "${GREEN}=========================================${NC}"
 echo ""
 
+# Mark profile as installed
+if [ -f "$SCRIPT_DIR/../lib/common.sh" ]; then
+    source "$SCRIPT_DIR/../lib/common.sh"
+    add_installed_profile "DEV"
+fi
+
 echo "What was installed:"
 echo ""
 echo "DEV PROFILE:"
@@ -121,9 +127,5 @@ echo "Next steps:"
 echo ""
 echo "1. Restart your shell: source ~/.bashrc"
 echo "2. Test your Claude aliases (based on repos selected)"
-echo "3. Review: cat ~/code/jomarchy/JOMARCHY-DEV.md"
-echo ""
-echo "For personal project apps (Chimaro, Marduk, etc.):"
-echo "  Install jomarchy-machines JOE-PERSONAL profile"
-echo "  https://github.com/joewinke/jomarchy-machines"
+echo "3. Run 'jomarchy' to access the management menu"
 echo ""

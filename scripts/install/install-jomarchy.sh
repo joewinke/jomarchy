@@ -148,6 +148,14 @@ echo -e "${GREEN}JOMARCHY Installation Complete!${NC}"
 echo -e "${GREEN}=========================================${NC}"
 echo ""
 
+# Mark profile as installed
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+if [ -f "$SCRIPT_DIR/../lib/common.sh" ]; then
+    source "$SCRIPT_DIR/../lib/common.sh"
+    add_installed_profile "BASE"
+fi
+
+
 echo "What was installed:"
 echo ""
 echo "✓ Core packages (VS Code, Node.js, Firefox, claude-code, Sublime, Tailscale, etc.)"

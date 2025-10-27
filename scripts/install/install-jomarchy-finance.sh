@@ -51,6 +51,13 @@ echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}JOMARCHY-FINANCE Installation Complete!${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
+
+# Mark profile as installed
+if [ -f "$SCRIPT_DIR/../lib/common.sh" ]; then
+    source "$SCRIPT_DIR/../lib/common.sh"
+    add_installed_profile "FINANCE"
+fi
+
 echo "Installed finance web apps:"
 echo "  ✓ Bank of America"
 echo "  ✓ Chase Bank"

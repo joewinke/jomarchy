@@ -52,6 +52,13 @@ echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}JOMARCHY-COMMUNICATIONS Installation Complete!${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
+
+# Mark profile as installed
+if [ -f "$SCRIPT_DIR/../lib/common.sh" ]; then
+    source "$SCRIPT_DIR/../lib/common.sh"
+    add_installed_profile "COMMUNICATIONS"
+fi
+
 echo "Installed communications web apps:"
 echo "  ✓ Discord"
 echo "  ✓ WhatsApp"

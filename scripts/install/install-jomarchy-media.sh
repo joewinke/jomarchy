@@ -58,6 +58,13 @@ echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}JOMARCHY-MEDIA Installation Complete!${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
+
+# Mark profile as installed
+if [ -f "$SCRIPT_DIR/../lib/common.sh" ]; then
+    source "$SCRIPT_DIR/../lib/common.sh"
+    add_installed_profile "MEDIA"
+fi
+
 echo "Installed media applications:"
 echo "  ✓ GIMP (image editing)"
 echo "  ✓ Inkscape (vector graphics)"
