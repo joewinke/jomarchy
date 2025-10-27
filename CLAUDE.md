@@ -400,6 +400,52 @@ cd ~/code/jomarchy-machines
 git push origin master
 ```
 
+## Script Design Principles
+
+### Idempotence
+All configuration-modifying scripts follow idempotent patterns:
+
+**Conditional Backups:**
+```bash
+# Check if changes are needed first
+if grep -q "MARKER" "$FILE" 2>/dev/null; then
+    echo "  ⊘ Already configured, skipping"
+else
+    # Only backup if making changes
+    cp "$FILE" "$FILE.bak.$(date +%s)"
+    echo "  ✓ Backed up existing file"
+
+    # Make changes
+    echo "MARKER" >> "$FILE"
+    echo "  ✓ Configuration added"
+fi
+```
+
+**Normalized Comparisons:**
+```bash
+# Compare normalized content
+CURRENT=$(extract_current | tr -d ' \n\t')
+EXPECTED=$(generate_expected | tr -d ' \n\t')
+
+if [ "$CURRENT" = "$EXPECTED" ]; then
+    echo "  ⊘ Already correct, no changes needed"
+else
+    # Backup and update
+fi
+```
+
+**Scripts with Conditional Backups:**
+- `waybar-workspace-detection.sh` - All 4 config sections
+- `waybar-customizations-universal.sh` - Style and config updates
+- `bash-customizations-universal.sh` - Prompts before replacing
+
+**Scripts with Built-in Idempotence:**
+- Package installers check if already installed
+- Web app installers overwrite safely (Omarchy handles)
+- Desktop launchers overwrite .desktop files safely
+
+**Result:** Re-running scripts creates no backups if already configured
+
 ## Troubleshooting
 
 ### Gum Selection Not Working
@@ -415,6 +461,12 @@ git push origin master
 - Verify icon slug exists at dashboardicons.com
 - Check URL is accessible
 - Ensure omarchy-webapp-install is available
+
+### Unexpected Backup Files
+If you're seeing multiple `.bak.<timestamp>` files:
+- Old behavior: Scripts always created backups
+- New behavior (Oct 2025): Conditional backups only when needed
+- Safe to delete old duplicate backups with identical content
 
 ## Future Enhancements
 
@@ -437,6 +489,6 @@ git push origin master
 
 ---
 
-**Last Updated:** October 25, 2025
+**Last Updated:** October 27, 2025
 **Maintained By:** Joe Winke
 **Generated With:** Claude Code

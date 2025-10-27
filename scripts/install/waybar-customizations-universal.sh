@@ -82,16 +82,16 @@ fi
 
 echo "Adding comprehensive Waybar styling..."
 
-# Backup existing style.css
-if [ -f "$WAYBAR_STYLE" ]; then
-    cp "$WAYBAR_STYLE" "$WAYBAR_STYLE.bak.$(date +%s)"
-    echo "  ✓ Backed up existing style.css"
-fi
-
 # Check if our custom styling already exists
 if grep -q "CUSTOM: Theme-Aware Accent Colors" "$WAYBAR_STYLE" 2>/dev/null; then
     echo "  ⊘ Custom styling already exists, skipping"
 else
+    # Backup before making changes
+    if [ -f "$WAYBAR_STYLE" ]; then
+        cp "$WAYBAR_STYLE" "$WAYBAR_STYLE.bak.$(date +%s)"
+        echo "  ✓ Backed up existing style.css"
+    fi
+
     # Append comprehensive custom CSS
     cat >> "$WAYBAR_STYLE" << 'EOF'
 
@@ -193,7 +193,7 @@ else
 }
 EOF
 
-    echo "✓ Theme-aware styling added"
+    echo "  ✓ Theme-aware styling added"
 fi
 
 echo ""
@@ -205,8 +205,8 @@ echo ""
 echo "Updating clock format..."
 
 if [ -f "$WAYBAR_CONFIG" ]; then
-    # Check if clock format is already customized
-    if grep -q '"%m-%d %a %H:%M"' "$WAYBAR_CONFIG" 2>/dev/null; then
+    # Check if clock format is already customized (matches our target format with colon)
+    if grep -q '"{:%m-%d %a %H:%M}"' "$WAYBAR_CONFIG" 2>/dev/null; then
         echo "  ⊘ Clock format already customized, skipping"
     else
         # Try to update clock format using sed

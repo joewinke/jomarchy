@@ -78,10 +78,7 @@ echo ""
 
 echo "Updating Waybar config..."
 
-# Backup existing config
-cp "$WAYBAR_CONFIG" "${WAYBAR_CONFIG}.bak.$(date +%s)"
-
-# Create a temporary file with the new workspace config
+# Create the expected workspace config
 cat > /tmp/waybar_workspace_update.json << EOF
   "hyprland/workspaces": {
     "on-click": "activate",
@@ -93,11 +90,28 @@ cat > /tmp/waybar_workspace_update.json << EOF
   },
 EOF
 
-# Replace the hyprland/workspaces section
-# Use perl for multi-line replacement
-perl -i -0pe 's/"hyprland\/workspaces":\s*\{[^}]*"persistent-workspaces":\s*\{[^}]*\}\s*\},/`cat \/tmp\/waybar_workspace_update.json`/se' "$WAYBAR_CONFIG"
+# Check if current config matches what we'd generate
+# Extract the hyprland/workspaces section including nested braces
+CURRENT_WORKSPACE_SECTION=$(perl -0777 -ne 'print $& if /"hyprland\/workspaces":\s*\{(?:[^{}]|\{[^}]*\})*\},/s' "$WAYBAR_CONFIG" 2>/dev/null || echo "")
+EXPECTED_WORKSPACE_SECTION=$(cat /tmp/waybar_workspace_update.json)
 
-echo "✓ Waybar config updated"
+# Normalize whitespace for comparison
+CURRENT_NORMALIZED=$(echo "$CURRENT_WORKSPACE_SECTION" | tr -d ' \n\t')
+EXPECTED_NORMALIZED=$(echo "$EXPECTED_WORKSPACE_SECTION" | tr -d ' \n\t')
+
+if [ "$CURRENT_NORMALIZED" = "$EXPECTED_NORMALIZED" ]; then
+    echo "  ⊘ Workspace config already correct, no changes needed"
+else
+    # Backup before making changes
+    cp "$WAYBAR_CONFIG" "${WAYBAR_CONFIG}.bak.$(date +%s)"
+    echo "  ✓ Backed up existing config"
+
+    # Replace the hyprland/workspaces section
+    perl -i -0777 -pe 's/"hyprland\/workspaces":\s*\{(?:[^{}]|\{[^}]*\})*\},/`cat \/tmp\/waybar_workspace_update.json`/se' "$WAYBAR_CONFIG"
+
+    echo "  ✓ Waybar config updated"
+fi
+
 echo ""
 
 # ============================================================================
@@ -112,49 +126,69 @@ if [ ! -f "$HYPR_MONITORS" ]; then
     touch "$HYPR_MONITORS"
 fi
 
-# Remove old workspace bindings
-sed -i '/^workspace = /d' "$HYPR_MONITORS"
-
-# Add workspace bindings based on monitor count
-echo "" >> "$HYPR_MONITORS"
-echo "# Workspace-to-monitor bindings (auto-generated)" >> "$HYPR_MONITORS"
+# Generate expected workspace bindings
+EXPECTED_BINDINGS=$(mktemp)
+echo "" >> "$EXPECTED_BINDINGS"
+echo "# Workspace-to-monitor bindings (auto-generated)" >> "$EXPECTED_BINDINGS"
 
 case $MONITOR_COUNT in
     1)
         for i in {1..10}; do
-            echo "workspace = $i, monitor:${MONITORS[0]}" >> "$HYPR_MONITORS"
+            echo "workspace = $i, monitor:${MONITORS[0]}" >> "$EXPECTED_BINDINGS"
         done
         ;;
     2)
-        echo "# Monitor 1: workspaces 1-10" >> "$HYPR_MONITORS"
+        echo "# Monitor 1: workspaces 1-10" >> "$EXPECTED_BINDINGS"
         for i in {1..10}; do
-            echo "workspace = $i, monitor:${MONITORS[0]}" >> "$HYPR_MONITORS"
+            echo "workspace = $i, monitor:${MONITORS[0]}" >> "$EXPECTED_BINDINGS"
         done
-        echo "" >> "$HYPR_MONITORS"
-        echo "# Monitor 2: workspaces 11-20" >> "$HYPR_MONITORS"
+        echo "" >> "$EXPECTED_BINDINGS"
+        echo "# Monitor 2: workspaces 11-20" >> "$EXPECTED_BINDINGS"
         for i in {11..20}; do
-            echo "workspace = $i, monitor:${MONITORS[1]}" >> "$HYPR_MONITORS"
+            echo "workspace = $i, monitor:${MONITORS[1]}" >> "$EXPECTED_BINDINGS"
         done
         ;;
     *)
-        echo "# Monitor 1: workspaces 1-10" >> "$HYPR_MONITORS"
+        echo "# Monitor 1: workspaces 1-10" >> "$EXPECTED_BINDINGS"
         for i in {1..10}; do
-            echo "workspace = $i, monitor:${MONITORS[0]}" >> "$HYPR_MONITORS"
+            echo "workspace = $i, monitor:${MONITORS[0]}" >> "$EXPECTED_BINDINGS"
         done
-        echo "" >> "$HYPR_MONITORS"
-        echo "# Monitor 2: workspaces 11-20" >> "$HYPR_MONITORS"
+        echo "" >> "$EXPECTED_BINDINGS"
+        echo "# Monitor 2: workspaces 11-20" >> "$EXPECTED_BINDINGS"
         for i in {11..20}; do
-            echo "workspace = $i, monitor:${MONITORS[1]}" >> "$HYPR_MONITORS"
+            echo "workspace = $i, monitor:${MONITORS[1]}" >> "$EXPECTED_BINDINGS"
         done
-        echo "" >> "$HYPR_MONITORS"
-        echo "# Monitor 3: workspaces 21-30" >> "$HYPR_MONITORS"
+        echo "" >> "$EXPECTED_BINDINGS"
+        echo "# Monitor 3: workspaces 21-30" >> "$EXPECTED_BINDINGS"
         for i in {21..30}; do
-            echo "workspace = $i, monitor:${MONITORS[2]}" >> "$HYPR_MONITORS"
+            echo "workspace = $i, monitor:${MONITORS[2]}" >> "$EXPECTED_BINDINGS"
         done
         ;;
 esac
 
-echo "✓ Hyprland workspace bindings updated"
+# Extract current workspace bindings
+CURRENT_BINDINGS=$(grep -E '^(workspace = |# (Monitor|Workspace-to-monitor))' "$HYPR_MONITORS" 2>/dev/null || echo "")
+
+# Compare current and expected bindings
+if [ "$(echo "$CURRENT_BINDINGS" | tr -d ' \n\t')" = "$(cat "$EXPECTED_BINDINGS" | tr -d ' \n\t')" ]; then
+    echo "  ⊘ Workspace bindings already correct, no changes needed"
+else
+    # Backup before making changes
+    cp "$HYPR_MONITORS" "${HYPR_MONITORS}.bak.$(date +%s)"
+    echo "  ✓ Backed up existing monitors.conf"
+
+    # Remove old workspace bindings
+    sed -i '/^workspace = /d' "$HYPR_MONITORS"
+    sed -i '/# Monitor [0-9]: workspaces/d' "$HYPR_MONITORS"
+    sed -i '/# Workspace-to-monitor bindings/d' "$HYPR_MONITORS"
+
+    # Add new bindings
+    cat "$EXPECTED_BINDINGS" >> "$HYPR_MONITORS"
+
+    echo "  ✓ Hyprland workspace bindings updated"
+fi
+
+rm -f "$EXPECTED_BINDINGS"
 echo ""
 
 # ============================================================================
@@ -163,21 +197,38 @@ echo ""
 
 echo "Updating workspace persistence..."
 
-# Backup and create new file
-if [ -f "$HYPR_LAYOUTS" ]; then
-    cp "$HYPR_LAYOUTS" "${HYPR_LAYOUTS}.bak.$(date +%s)"
-fi
-
-cat > "$HYPR_LAYOUTS" << EOF
+# Generate expected content
+EXPECTED_LAYOUTS=$(mktemp)
+cat > "$EXPECTED_LAYOUTS" << EOF
 # Workspace persistence configuration (auto-generated)
 
 EOF
 
 for i in $(seq 1 $MAX_WORKSPACE); do
-    echo "workspace = $i, persistent:true" >> "$HYPR_LAYOUTS"
+    echo "workspace = $i, persistent:true" >> "$EXPECTED_LAYOUTS"
 done
 
-echo "✓ Workspace persistence configured (workspaces 1-$MAX_WORKSPACE)"
+# Check if current config matches expected
+if [ -f "$HYPR_LAYOUTS" ]; then
+    if diff -q "$HYPR_LAYOUTS" "$EXPECTED_LAYOUTS" > /dev/null 2>&1; then
+        echo "  ⊘ Workspace persistence already correct, no changes needed"
+    else
+        # Backup before making changes
+        cp "$HYPR_LAYOUTS" "${HYPR_LAYOUTS}.bak.$(date +%s)"
+        echo "  ✓ Backed up existing workspace-layouts.conf"
+
+        # Replace with new content
+        cat "$EXPECTED_LAYOUTS" > "$HYPR_LAYOUTS"
+
+        echo "  ✓ Workspace persistence configured (workspaces 1-$MAX_WORKSPACE)"
+    fi
+else
+    # Create new file
+    cat "$EXPECTED_LAYOUTS" > "$HYPR_LAYOUTS"
+    echo "  ✓ Created workspace-layouts.conf (workspaces 1-$MAX_WORKSPACE)"
+fi
+
+rm -f "$EXPECTED_LAYOUTS"
 echo ""
 
 # ============================================================================
@@ -186,37 +237,16 @@ echo ""
 
 echo "Adding CSS color coding..."
 
-# Remove old custom CSS if it exists
-if [ -f "$WAYBAR_STYLE" ]; then
-    # Backup
-    cp "$WAYBAR_STYLE" "${WAYBAR_STYLE}.bak.$(date +%s)"
-
-    # Remove old custom section
-    sed -i '/\/\* ============================================================================/,/^EOF$/d' "$WAYBAR_STYLE"
-    sed -i '/Color coding for different monitor ranges/,/^}/d' "$WAYBAR_STYLE"
-fi
-
-# Add new CSS based on monitor count
-cat >> "$WAYBAR_STYLE" << 'CSSEOF'
-
-/* ============================================================================
-   CUSTOM: Workspace Color Coding (Auto-generated)
-   ============================================================================ */
-
-CSSEOF
-
+# Generate expected CSS based on monitor count
 case $MONITOR_COUNT in
     1)
-        cat >> "$WAYBAR_STYLE" << 'CSSEOF'
-/* Single monitor: green for all workspaces */
+        EXPECTED_CSS='/* Single monitor: green for all workspaces */
 #workspaces button.persistent:nth-child(n+1):nth-child(-n+10) {
   color: #99d9ab;
-}
-CSSEOF
+}'
         ;;
     2)
-        cat >> "$WAYBAR_STYLE" << 'CSSEOF'
-/* Dual monitor setup */
+        EXPECTED_CSS='/* Dual monitor setup */
 #workspaces button.persistent:nth-child(n+1):nth-child(-n+10) {
   /* Monitor 1: workspaces 1-10 */
   color: #99d9ab; /* Green */
@@ -225,12 +255,10 @@ CSSEOF
 #workspaces button.persistent:nth-child(n+11):nth-child(-n+20) {
   /* Monitor 2: workspaces 11-20 */
   color: #00ffcc; /* Cyan */
-}
-CSSEOF
+}'
         ;;
     *)
-        cat >> "$WAYBAR_STYLE" << 'CSSEOF'
-/* Triple monitor setup */
+        EXPECTED_CSS='/* Triple monitor setup */
 #workspaces button.persistent:nth-child(n+1):nth-child(-n+10) {
   /* Monitor 1: workspaces 1-10 */
   color: #99d9ab; /* Green */
@@ -244,10 +272,45 @@ CSSEOF
 #workspaces button.persistent:nth-child(n+21):nth-child(-n+30) {
   /* Monitor 3: workspaces 21-30 */
   color: #ff00ff; /* Magenta */
-}
-CSSEOF
+}'
         ;;
 esac
+
+# Check if CSS already contains the expected workspace color coding
+if [ -f "$WAYBAR_STYLE" ]; then
+    # Extract current workspace color coding (between the custom marker and visual separator)
+    CURRENT_CSS=$(sed -n '/CUSTOM: Workspace Color Coding/,/Visual separator between workspace ranges/p' "$WAYBAR_STYLE" 2>/dev/null | head -n -2 | tail -n +4)
+
+    # Normalize whitespace for comparison
+    CURRENT_NORMALIZED=$(echo "$CURRENT_CSS" | tr -d ' \n\t')
+    EXPECTED_NORMALIZED=$(echo "$EXPECTED_CSS" | tr -d ' \n\t')
+
+    if [ "$CURRENT_NORMALIZED" = "$EXPECTED_NORMALIZED" ]; then
+        echo "  ⊘ CSS color coding already correct, no changes needed"
+    else
+        # Backup before making changes
+        cp "$WAYBAR_STYLE" "${WAYBAR_STYLE}.bak.$(date +%s)"
+        echo "  ✓ Backed up existing style.css"
+
+        # Remove old custom section
+        sed -i '/\/\* ============================================================================/,/^EOF$/d' "$WAYBAR_STYLE"
+        sed -i '/Color coding for different monitor ranges/,/^}/d' "$WAYBAR_STYLE"
+
+        # Add new CSS
+        cat >> "$WAYBAR_STYLE" << 'CSSEOF'
+
+/* ============================================================================
+   CUSTOM: Workspace Color Coding (Auto-generated)
+   ============================================================================ */
+
+CSSEOF
+        echo "$EXPECTED_CSS" >> "$WAYBAR_STYLE"
+
+        echo "  ✓ CSS color coding updated"
+    fi
+else
+    echo "  ⚠ style.css not found, skipping"
+fi
 
 # Add visual separator
 cat >> "$WAYBAR_STYLE" << 'CSSEOF'
