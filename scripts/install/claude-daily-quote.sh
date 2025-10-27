@@ -37,7 +37,7 @@ After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash -c '/home/jw/.local/bin/claude -p "Tell me an inspiring quote for $(date +%%A,%%B%%d,%%Y)."'
+ExecStart=/bin/bash -c '$HOME/.local/bin/claude -p "Tell me an inspiring quote for $(date +%%A,%%B%%d,%%Y)."'
 EOF
 
 echo -e "${GREEN}✓${NC} Service file created"
