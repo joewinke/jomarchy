@@ -283,3 +283,60 @@ A fully functional Omarchy system with:
 - Personal workspace setup
 
 **Perfect for:** Any Omarchy installation (laptop, desktop, VM)
+
+---
+
+## 🔧 Management Tools
+
+After installation, Jomarchy provides ongoing management capabilities:
+
+### Jomarchy Command
+
+Run `jomarchy` from anywhere to access:
+
+**Interactive Menu:**
+- Install Additional Profiles
+- Manage Web App Profiles
+- Update Jomarchy
+- View Installation Summary
+- View Documentation
+
+**Quick Commands:**
+```bash
+jomarchy --profiles    # Web app profile manager
+jomarchy --install     # Install more profiles
+jomarchy --update      # Update from GitHub
+jomarchy --status      # View installed profiles
+jomarchy --help        # Show all options
+```
+
+### Web App Profile Manager
+
+Organize your web apps by Chrome profile:
+
+**Features:**
+- View current profile assignments
+- Move apps between profiles (single or bulk)
+- Rename Chrome profiles
+- View detailed profile information
+
+**Example Use Cases:**
+- Separate work and personal apps
+- Isolate banking apps in dedicated profile
+- Keep social media in separate profile
+- Organize by project or client
+
+**Access:**
+```bash
+jomarchy --profiles
+```
+
+Or select "Manage Web App Profiles" from the jomarchy menu.
+
+---
+
+## 📚 Additional Documentation
+
+- **README.md** - Project overview and quick start
+- **JOMARCHY-DEV.md** - Development add-on guide
+- **Online:** https://github.com/joewinke/jomarchy

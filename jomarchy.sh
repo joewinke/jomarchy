@@ -1,41 +1,268 @@
 #!/bin/bash
 
-# Jomarchy Bootstrap Installer
-# One-command installation for fresh Omarchy systems
+# Jomarchy - Unified Installer and Management Tool
 #
-# Usage:
+# Bootstrap Mode (fresh install):
 #   bash <(curl -sL https://raw.githubusercontent.com/joewinke/jomarchy/master/jomarchy.sh)
+#
+# Management Mode (after install):
+#   jomarchy                  # Interactive menu
+#   jomarchy --profiles       # Web app profile manager
+#   jomarchy --install        # Install additional profiles
+#   jomarchy --update         # Update jomarchy
+#   jomarchy --status         # Show installed profiles
+#   jomarchy --help           # Show help
 
 set -e  # Exit on error
 
-# Color codes
-GREEN='\033[0;32m'
-BLUE='\033[0;34m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-CYAN='\033[0;36m'
-BOLD='\033[1m'
-NC='\033[0m'
+# Determine script directory (handles both direct execution and symlink)
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Display Jomarchy ASCII art
-cat << 'EOF'
-.·:''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''':·.
-: :                                                                                                                 : :
-: :      oooo   .oooooo.   ooo        ooooo       .o.       ooooooooo.     .oooooo.   ooooo   ooooo oooooo   oooo   : :
-: :      `888  d8P'  `Y8b  `88.       .888'      .888.      `888   `Y88.  d8P'  `Y8b  `888'   `888'  `888.   .8'    : :
-: :       888 888      888  888b     d'888      .8"888.      888   .d88' 888           888     888    `888. .8'     : :
-: :       888 888      888  8 Y88. .P  888     .8' `888.     888ooo88P'  888           888ooooo888     `888.8'      : :
-: :       888 888      888  8  `888'   888    .88ooo8888.    888`88b.    888           888     888      `888'       : :
-: :       888 `88b    d88'  8    Y     888   .8'     `888.   888  `88b.  `88b    ooo   888     888       888        : :
-: :   .o. 88P  `Y8bood8P'  o8o        o888o o88o     o8888o o888o  o888o  `Y8bood8P'  o888o   o888o     o888o       : :
-: :   `Y888P                                                                                                        : :
-: :                                                                                                                 : :
-'·:.................................................................................................................:·'
+# Source common library if available
+if [[ -f "$SCRIPT_DIR/scripts/lib/common.sh" ]]; then
+    source "$SCRIPT_DIR/scripts/lib/common.sh"
+else
+    # Fallback color codes if common.sh not found
+    GREEN='\033[0;32m'
+    BLUE='\033[0;34m'
+    YELLOW='\033[1;33m'
+    RED='\033[0;31m'
+    CYAN='\033[0;36m'
+    BOLD='\033[1m'
+    NC='\033[0m'
+
+    show_jomarchy_banner() {
+        cat << 'EOF'
+.·:''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''':·.
+: :                                                                                               : :
+: :         _____   ______   __       __   ______   _______    ______   __    __  __      __      : :
+: :        |     \ /      \ |  \     /  \ /      \ |       \  /      \ |  \  |  \|  \    /  \     : :
+: :         \$$$$$|  $$$$$$\| $$\   /  $$|  $$$$$$\| $$$$$$$\|  $$$$$$\| $$  | $$ \$$\  /  $$     : :
+: :           | $$| $$  | $$| $$$\ /  $$$| $$__| $$| $$__| $$| $$   \$$| $$__| $$  \$$\/  $$      : :
+: :      __   | $$| $$  | $$| $$$$\  $$$$| $$    $$| $$    $$| $$      | $$    $$   \$$  $$       : :
+: :     |  \  | $$| $$  | $$| $$\$$ $$ $$| $$$$$$$$| $$$$$$$\| $$   __ | $$$$$$$$    \$$$$        : :
+: :     | $$__| $$| $$__/ $$| $$ \$$$| $$| $$  | $$| $$  | $$| $$__/  \| $$  | $$    | $$         : :
+: :      \$$    $$ \$$    $$| $$  \$ | $$| $$  | $$| $$  | $$ \$$    $$| $$  | $$    | $$         : :
+: :       \$$$$$$   \$$$$$$  \$$      \$$ \$$   \$$ \$$   \$$  \$$$$$$  \$$   \$$     \$$         : :
+: :                                                                                               : :
+'·:...............................................................................................:·'
 EOF
+        echo ""
+        echo -e "${CYAN}${BOLD}Joe's complete Omarchy configuration system${NC}"
+        echo ""
+    }
+fi
 
-echo ""
-echo -e "${CYAN}${BOLD}Joe's complete Omarchy configuration system${NC}"
-echo ""
+# Mode detection functions
+is_bootstrap_mode() {
+    # Bootstrap only if installation marker doesn't exist
+    [[ ! -f "$HOME/.config/jomarchy/installed" ]]
+}
+
+# Management menu functions
+show_management_menu() {
+    show_jomarchy_banner
+
+    while true; do
+        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${BOLD}Jomarchy Management${NC}"
+        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo ""
+
+        local choice
+        choice=$(gum choose \
+            "Install Additional Profiles" \
+            "Manage Web App Profiles" \
+            "Update Jomarchy" \
+            "View Installation Summary" \
+            "View Documentation" \
+            "Exit")
+
+        case "$choice" in
+            "Install Additional Profiles")
+                run_profile_installer
+                ;;
+            "Manage Web App Profiles")
+                run_webapp_profile_manager
+                ;;
+            "Update Jomarchy")
+                update_jomarchy
+                ;;
+            "View Installation Summary")
+                show_installation_summary
+                ;;
+            "View Documentation")
+                show_documentation
+                ;;
+            "Exit")
+                echo ""
+                echo -e "${GREEN}Thanks for using Jomarchy!${NC}"
+                echo ""
+                exit 0
+                ;;
+            *)
+                echo -e "${RED}Invalid choice${NC}"
+                ;;
+        esac
+
+        echo ""
+        read -p "Press Enter to continue..."
+    done
+}
+
+# Run profile installer
+run_profile_installer() {
+    echo ""
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${BOLD}Install Additional Profiles${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+
+    local profiles
+    profiles=$(gum choose --no-limit \
+        "BASE - Core system" \
+        "DEV - Software development" \
+        "MEDIA - Creative tools" \
+        "FINANCE - Banking/accounting web apps" \
+        "COMMUNICATIONS - Messaging apps")
+
+    if [[ -z "$profiles" ]]; then
+        echo -e "${YELLOW}No profiles selected${NC}"
+        return
+    fi
+
+    while IFS= read -r line; do
+        if [[ -n "$line" ]]; then
+            profile=$(echo "$line" | cut -d'-' -f1 | xargs)
+            case "$profile" in
+                "BASE")
+                    bash "$SCRIPT_DIR/scripts/install/install-jomarchy.sh"
+                    ;;
+                "DEV")
+                    bash "$SCRIPT_DIR/scripts/install/install-jomarchy-dev.sh"
+                    ;;
+                "MEDIA")
+                    bash "$SCRIPT_DIR/scripts/install/install-jomarchy-media.sh"
+                    ;;
+                "FINANCE")
+                    bash "$SCRIPT_DIR/scripts/install/install-jomarchy-finance.sh"
+                    ;;
+                "COMMUNICATIONS")
+                    bash "$SCRIPT_DIR/scripts/install/install-jomarchy-communications.sh"
+                    ;;
+            esac
+        fi
+    done <<< "$profiles"
+}
+
+# Run webapp profile manager
+run_webapp_profile_manager() {
+    if [[ -f "$SCRIPT_DIR/scripts/lib/webapp-profile-manager-lib.sh" ]]; then
+        source "$SCRIPT_DIR/scripts/lib/webapp-profile-manager-lib.sh"
+        webapp_profile_manager_run
+    else
+        echo -e "${RED}Error: Web app profile manager not found${NC}"
+        echo "Please ensure jomarchy is properly installed"
+    fi
+}
+
+# Update jomarchy
+update_jomarchy() {
+    echo ""
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${BOLD}Updating Jomarchy${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+
+    cd "$SCRIPT_DIR"
+    echo -e "${BLUE}→${NC} Pulling latest changes..."
+    git pull origin master
+    echo -e "${GREEN}✓${NC} Jomarchy updated"
+}
+
+# Show installation summary
+show_installation_summary() {
+    echo ""
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${BOLD}Installation Summary${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+
+    if [[ -f "$HOME/.config/jomarchy/installed_profiles" ]]; then
+        echo -e "${GREEN}Installed Profiles:${NC}"
+        while read -r profile; do
+            echo "  ✓ $profile"
+        done < "$HOME/.config/jomarchy/installed_profiles"
+    else
+        echo -e "${YELLOW}No installation information found${NC}"
+    fi
+
+    echo ""
+    echo -e "${BLUE}Repository:${NC} $SCRIPT_DIR"
+    echo -e "${BLUE}Installed:${NC} $(date -r "$HOME/.config/jomarchy/installed" 2>/dev/null || echo "Unknown")"
+}
+
+# Show documentation
+show_documentation() {
+    echo ""
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${BOLD}Documentation${NC}"
+    echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+
+    echo -e "${YELLOW}Available Documentation:${NC}"
+    echo ""
+    echo "  • JOMARCHY.md      - Complete installation guide"
+    echo "  • JOMARCHY-DEV.md  - Development add-on guide"
+    echo "  • README.md        - Project overview"
+    echo ""
+    echo -e "${BLUE}View with:${NC}"
+    echo "  cat $SCRIPT_DIR/JOMARCHY.md | less"
+    echo ""
+    echo -e "${BLUE}Online:${NC}"
+    echo "  https://github.com/joewinke/jomarchy"
+}
+
+# CLI flag handling
+handle_cli_flags() {
+    case "$1" in
+        --profiles)
+            run_webapp_profile_manager
+            ;;
+        --install)
+            run_profile_installer
+            ;;
+        --update)
+            update_jomarchy
+            ;;
+        --status)
+            show_installation_summary
+            ;;
+        --help|-h)
+            show_jomarchy_banner
+            echo "Jomarchy - Unified Installer and Management Tool"
+            echo ""
+            echo "Usage:"
+            echo "  jomarchy               # Interactive management menu"
+            echo "  jomarchy --profiles    # Web app profile manager"
+            echo "  jomarchy --install     # Install additional profiles"
+            echo "  jomarchy --update      # Update jomarchy"
+            echo "  jomarchy --status      # Show installation summary"
+            echo "  jomarchy --help        # Show this help"
+            echo ""
+            exit 0
+            ;;
+        *)
+            echo -e "${RED}Unknown option: $1${NC}"
+            echo "Use --help for usage information"
+            exit 1
+            ;;
+    esac
+}
+
+# Bootstrap installation function
+run_bootstrap_install() {
+show_jomarchy_banner
 
 # Check if running as root
 if [ "$EUID" -eq 0 ]; then
@@ -212,3 +439,44 @@ fi
 
 echo "Installation complete. Enjoy Jomarchy!"
 echo ""
+
+# Mark as installed and create symlink
+mkdir -p "$HOME/.config/jomarchy"
+touch "$HOME/.config/jomarchy/installed"
+echo "$(date +%s)" > "$HOME/.config/jomarchy/installed"
+
+# Create symlink if it doesn't exist
+if [[ ! -f "$HOME/.local/bin/jomarchy" ]]; then
+    echo -e "${BLUE}→${NC} Creating jomarchy command symlink..."
+    mkdir -p "$HOME/.local/bin"
+    ln -sf "$REPO_DIR/jomarchy.sh" "$HOME/.local/bin/jomarchy"
+    echo -e "${GREEN}✓${NC} You can now run 'jomarchy' from anywhere"
+    echo ""
+fi
+
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${BOLD}Manage your installation:${NC}"
+echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+echo "  • Run ${CYAN}jomarchy${NC} for management menu"
+echo "  • Run ${CYAN}jomarchy --profiles${NC} to organize web apps by Chrome profile"
+echo "  • Run ${CYAN}jomarchy --help${NC} for all options"
+echo ""
+
+}  # End of run_bootstrap_install()
+
+# ============================================================================
+# MAIN EXECUTION
+# ============================================================================
+
+# Detect mode and run appropriate function
+if [[ $# -gt 0 ]]; then
+    # CLI flags provided
+    handle_cli_flags "$1"
+elif is_bootstrap_mode; then
+    # Bootstrap mode - fresh installation
+    run_bootstrap_install
+else
+    # Management mode - show interactive menu
+    show_management_menu
+fi
