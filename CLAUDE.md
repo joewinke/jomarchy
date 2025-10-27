@@ -281,6 +281,55 @@ bash <(curl -sL https://raw.githubusercontent.com/joewinke/jomarchy-machines/mas
    - Profiles installed sequentially
    - Can install machine-only, personal-only, or both
 
+## Post-Installation Management
+
+### Jomarchy Management Command
+
+After BASE profile installation, a `jomarchy` command is installed system-wide:
+
+**Installation:**
+- Symlink created: `~/.local/bin/jomarchy` → `~/code/jomarchy/jomarchy.sh`
+- Installed by `bash-customizations-universal.sh`
+- Available from anywhere in terminal
+
+**Usage:**
+```bash
+jomarchy                  # Interactive management menu
+jomarchy --install        # Install additional profiles
+jomarchy --status         # Show installed profiles
+jomarchy --update         # Update from GitHub
+jomarchy --help           # Show help
+```
+
+**Management Menu Features:**
+- Install Additional Profiles
+- Manage Web App Profiles (organize by Chrome profile)
+- Update Jomarchy from GitHub
+- View Installation Summary
+- View Documentation
+
+### Profile Tracking System
+
+All profile installers track their installation status:
+
+**Implementation:**
+- Each installer calls `add_installed_profile()` from `scripts/lib/common.sh`
+- Profiles recorded in `~/.config/jomarchy/installed_profiles`
+- Installation timestamps stored in `~/.config/jomarchy/install_history`
+
+**Tracked Profiles:**
+- BASE
+- DEV
+- MEDIA
+- FINANCE
+- COMMUNICATIONS
+
+**Benefits:**
+- `jomarchy --status` shows what's actually installed
+- Prevents duplicate installations
+- Enables intelligent upgrade paths
+- Supports conditional features based on installed profiles
+
 ## Key Design Patterns
 
 ### 1. Gum Pre-Selection Fix
