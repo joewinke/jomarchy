@@ -14,9 +14,9 @@
 '·:...............................................................................................:·'
 ```
 
-# Jomarchy - Joe's Omarchy Configuration
+# Jomarchy - Power Tools & Web App Manager
 
-A modular post-install system for Omarchy Linux that transforms a fresh installation into a fully-configured development workstation.
+**Jomarchy** is a profile-based installation system for Omarchy Linux. Select the profiles you want and transform a fresh installation into a fully-configured workstation.
 
 ---
 
@@ -35,6 +35,9 @@ This will:
 2. Clone the repository to ~/code/jomarchy
 3. Present an interactive profile selector
 4. Let you choose which profiles to install (BASE, DEV, MEDIA, FINANCE, COMMUNICATIONS)
+5. Install the jomarchy command for post-installation management
+
+> **✨ Web App Profile Manager:** After installation, use `jomarchy --profiles` to organize your web apps by Chrome profile (work vs personal, etc.)
 
 ---
 
