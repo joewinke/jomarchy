@@ -80,7 +80,7 @@ Desktop Launchers:
 **Software development tools**
 
 Packages:
-- VS Code
+- VSCodium (de-Microsoft-ified VS Code)
 - Node.js, npm
 - GitHub CLI
 - Stripe CLI

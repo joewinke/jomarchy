@@ -277,7 +277,7 @@ This will execute all BASE profile installation scripts in the correct order.
 ## ✅ What This Gives You
 
 A fully functional Omarchy system with:
-- Development environment (VS Code, Node.js, Claude Code)
+- Development environment (VSCodium, Node.js, Claude Code)
 - Voice transcription (ChezWizper with Waybar)
 - Essential web apps for productivity
 - Custom keybindings and scripts

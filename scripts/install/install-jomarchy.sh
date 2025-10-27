@@ -157,7 +157,7 @@ fi
 
 echo "What was installed:"
 echo ""
-echo "✓ Core packages (VS Code, Node.js, Firefox, claude-code, Sublime, Tailscale, etc.)"
+echo "✓ Core packages (Firefox, claude-code, Sublime, Tailscale, ChezWizper, etc.)"
 echo "✓ ChezWizper voice transcription (Super+R)"
 echo "✓ 10 universal web apps"
 echo "✓ 3 Chrome extensions"

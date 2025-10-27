@@ -30,7 +30,7 @@ SELECTED_COMPONENTS=$(gum choose --no-limit \
     --height=25 \
     --selected "*" \
     "━━━ CORE PACKAGES ━━━" \
-    "  VS Code" \
+    "  VSCodium" \
     "  Node.js & npm" \
     "━━━ CLI TOOLS ━━━" \
     "  GitHub CLI" \
@@ -53,7 +53,7 @@ echo -e "${BLUE}Installing selected DEV components...${NC}"
 echo ""
 
 # Install based on selections
-if echo "$SELECTED_COMPONENTS" | grep -qE "(  VS Code|  Node.js & npm)"; then
+if echo "$SELECTED_COMPONENTS" | grep -qE "(  VSCodium|  Node.js & npm)"; then
     if [ -f "$SCRIPT_DIR/dev-packages.sh" ]; then
         echo -e "${GREEN}→${NC} Running dev-packages.sh..."
         # TODO: Make dev-packages.sh accept parameters for selective installation
@@ -114,7 +114,7 @@ fi
 echo "What was installed:"
 echo ""
 echo "DEV PROFILE:"
-echo "  ✓ Dev packages (VS Code, Node.js, npm)"
+echo "  ✓ Dev packages (VSCodium, Node.js, npm)"
 echo "  ✓ Dev tools (GitHub CLI, Stripe CLI, Supabase CLI)"
 echo "  ✓ GitHub repository selection (your choice)"
 echo "  ✓ Project shortcuts (automatically generated from your repos)"

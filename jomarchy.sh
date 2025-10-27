@@ -324,7 +324,7 @@ echo ""
 # Use gum choose for multi-select
 SELECTED=$(gum choose --no-limit \
     "BASE - Core system (browsers, text editor, web apps, ChezWizper)" \
-    "DEV - Software development (VS Code, Node, CLIs, dev web apps)" \
+    "DEV - Software development (VSCodium, Node, CLIs, dev web apps)" \
     "MEDIA - Creative tools (GIMP, Inkscape, OBS, Blender, Audacity, Kdenlive)" \
     "FINANCE - Banking/accounting web apps (Bank of America, Chase, Capital One, QuickBooks)" \
     "COMMUNICATIONS - Messaging apps (Discord, WhatsApp, Slack, Gmail, Zoom)")

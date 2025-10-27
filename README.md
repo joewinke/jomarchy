@@ -228,7 +228,7 @@ All components below can be selectively installed via interactive gum menus. Eve
 ### DEV Profile
 
 #### 🛠️ Development Tools
-- **VS Code** - Full IDE
+- **VSCodium** - Privacy-focused VS Code (de-Microsoft-ified, telemetry-free)
 - **Node.js & npm** - JavaScript runtime
 - **GitHub CLI** - Git operations from terminal
 - **Stripe CLI** - Payment testing
