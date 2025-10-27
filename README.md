@@ -119,7 +119,7 @@ cd ~/code/jomarchy
 
 All components below can be selectively installed via interactive gum menus. Everything is pre-selected by default, but you can deselect items you don't want.
 
-### BASE Profile (Universal - For Everyone)
+### BASE Profile
 
 #### 🗂️ Core Packages
 - **Firefox** - Web browser (pre-installed by Omarchy)
@@ -191,7 +191,7 @@ All components below can be selectively installed via interactive gum menus. Eve
 - **YouTube** - Video platform
 - **X (Twitter)** - Social media
 
-### MEDIA Profile (Optional - Creative Work)
+### MEDIA Profile
 
 #### 🎨 Graphics
 - **GIMP** - Image editing (Photoshop alternative)
@@ -208,7 +208,7 @@ All components below can be selectively installed via interactive gum menus. Eve
 #### 🎵 Audio
 - **Audacity** - Audio editing and recording
 
-### FINANCE Profile (Optional - Banking & Accounting)
+### FINANCE Profile
 
 #### 🏦 Web Apps
 - **Bank of America** - Online banking
@@ -216,7 +216,7 @@ All components below can be selectively installed via interactive gum menus. Eve
 - **Capital One** - Online banking
 - **QuickBooks Online** - Accounting and invoicing
 
-### COMMUNICATIONS Profile (Optional - Messaging & Collaboration)
+### COMMUNICATIONS Profile
 
 #### 💬 Web Apps
 - **Discord** - Gaming and community chat
@@ -225,7 +225,7 @@ All components below can be selectively installed via interactive gum menus. Eve
 - **Gmail** - Google email
 - **Zoom** - Video conferencing
 
-### DEV Profile (Optional - Software Development)
+### DEV Profile
 
 #### 🛠️ Development Tools
 - **VS Code** - Full IDE
