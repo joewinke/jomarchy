@@ -48,33 +48,18 @@ install_webapp() {
 echo "Installing development web apps..."
 echo ""
 
-# Development Platforms
+# Development Platforms (universal - for any developer)
 echo -e "${BLUE}=== Development Platforms ===${NC}"
 install_webapp "GitHub" "https://github.com" "github"
 install_webapp "Cloudflare" "https://dash.cloudflare.com" "cloudflare"
 install_webapp "Supabase" "https://supabase.com/dashboard" "supabase"
 echo ""
 
-# Development Projects
-echo -e "${BLUE}=== Development Projects ===${NC}"
-install_webapp "Chimaro Local" "http://localhost:3000" "localhost"
-echo ""
-
-# Backend Services
-echo -e "${BLUE}=== Backend Services ===${NC}"
-echo -e "${YELLOW}→${NC} Note: Update project IDs in URLs after installation"
-install_webapp "Supabase Chimaro" "https://supabase.com/dashboard/project/PROJECT_ID" "supabase"
-install_webapp "Supabase Flush" "https://supabase.com/dashboard/project/PROJECT_ID" "supabase"
-install_webapp "Supabase Steelbridge" "https://supabase.com/dashboard/project/PROJECT_ID" "supabase"
-echo ""
-
-# Development Tools
-echo -e "${BLUE}=== Development Tools ===${NC}"
-install_webapp "Marduk" "https://mm.marduk.app" "marduk"
-install_webapp "Dev Tracker" "https://coda.io" "coda"
-install_webapp "Apify" "https://console.apify.com" "apify"
+# Development Documentation & Resources
+echo -e "${BLUE}=== Development Resources ===${NC}"
+install_webapp "Tailwind CSS" "https://tailwindcss.com/docs" "tailwindcss"
 install_webapp "DaisyUI" "https://daisyui.com" "daisyui"
-install_webapp "Docker" "https://localhost:9443" "docker"
+install_webapp "Svelte" "https://svelte.dev/docs" "svelte"
 echo ""
 
 echo -e "${GREEN}========================================${NC}"
@@ -83,15 +68,16 @@ echo -e "${GREEN}========================================${NC}"
 echo ""
 
 echo "Installed development web apps:"
-echo ""
-echo "  ✓ GitHub, Cloudflare, Supabase"
-echo "  ✓ Chimaro Local"
-echo "  ✓ 3x Supabase projects (update IDs manually)"
-echo "  ✓ Dev tools (Marduk, Dev Tracker, Apify, DaisyUI, Docker)"
-echo ""
-echo "Next steps:"
-echo "  1. Update Supabase project IDs in .desktop files"
+echo "  ✓ GitHub"
+echo "  ✓ Cloudflare"
+echo "  ✓ Supabase"
+echo "  ✓ Tailwind CSS"
+echo "  ✓ DaisyUI"
+echo "  ✓ Svelte"
 echo ""
 echo "Icons downloaded from: https://dashboardicons.com"
 echo "Access via: Super + Space (app launcher)"
+echo ""
+echo "Note: Personal project apps (Chimaro, Marduk, etc.) are available"
+echo "in the jomarchy-machines repo under JOE-PERSONAL profile."
 echo ""
