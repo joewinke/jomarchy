@@ -79,14 +79,15 @@ echo ""
 echo "Updating Waybar config..."
 
 # Create the expected workspace config
+# NOTE: We do NOT use persistent-workspaces because it causes a bug where
+# all workspaces show on every monitor. Instead, we rely on Hyprland's
+# workspace-to-monitor bindings and let waybar only show active workspaces.
 cat > /tmp/waybar_workspace_update.json << EOF
   "hyprland/workspaces": {
     "on-click": "activate",
     "format": "{id}",
     "all-outputs": false,
-    "persistent-workspaces": {
-      $WORKSPACE_CONFIG
-    }
+    "sort-by-number": true
   },
 EOF
 
@@ -238,43 +239,18 @@ echo ""
 echo "Adding CSS color coding..."
 
 # Generate expected CSS based on monitor count
-case $MONITOR_COUNT in
-    1)
-        EXPECTED_CSS='/* Single monitor: green for all workspaces */
-#workspaces button.persistent:nth-child(n+1):nth-child(-n+10) {
-  color: #99d9ab;
-}'
-        ;;
-    2)
-        EXPECTED_CSS='/* Dual monitor setup */
-#workspaces button.persistent:nth-child(n+1):nth-child(-n+10) {
-  /* Monitor 1: workspaces 1-10 */
-  color: #99d9ab; /* Green */
+# NOTE: Without persistent-workspaces, each monitor shows only its 10 workspaces
+# So we can't use nth-child selectors to color by workspace ID since position != ID
+# For now, we use uniform theme colors for all workspaces
+EXPECTED_CSS='/* Workspace styling - using theme colors */
+#workspaces button {
+  color: @foreground;
 }
 
-#workspaces button.persistent:nth-child(n+11):nth-child(-n+20) {
-  /* Monitor 2: workspaces 11-20 */
-  color: #00ffcc; /* Cyan */
+/* Visual separator - first workspace on each monitor */
+#workspaces button:first-child {
+  margin-left: 8px;
 }'
-        ;;
-    *)
-        EXPECTED_CSS='/* Triple monitor setup */
-#workspaces button.persistent:nth-child(n+1):nth-child(-n+10) {
-  /* Monitor 1: workspaces 1-10 */
-  color: #99d9ab; /* Green */
-}
-
-#workspaces button.persistent:nth-child(n+11):nth-child(-n+20) {
-  /* Monitor 2: workspaces 11-20 */
-  color: #00ffcc; /* Cyan */
-}
-
-#workspaces button.persistent:nth-child(n+21):nth-child(-n+30) {
-  /* Monitor 3: workspaces 21-30 */
-  color: #ff00ff; /* Magenta */
-}'
-        ;;
-esac
 
 # Check if CSS already contains the expected workspace color coding
 if [ -f "$WAYBAR_STYLE" ]; then
@@ -312,16 +288,7 @@ else
     echo "  ⚠ style.css not found, skipping"
 fi
 
-# Add visual separator
-cat >> "$WAYBAR_STYLE" << 'CSSEOF'
-
-/* Visual separator between workspace ranges */
-#workspaces button.persistent:nth-child(10n+1) {
-  margin-left: 8px;
-}
-CSSEOF
-
-echo "✓ CSS color coding added"
+echo "✓ CSS workspace styling added"
 echo ""
 
 # ============================================================================
@@ -344,16 +311,16 @@ echo "  • Workspaces configured: 1-$MAX_WORKSPACE"
 
 case $MONITOR_COUNT in
     1)
-        echo "  • ${MONITORS[0]}: workspaces 1-10 (green)"
+        echo "  • ${MONITORS[0]}: workspaces 1-10"
         ;;
     2)
-        echo "  • ${MONITORS[0]}: workspaces 1-10 (green)"
-        echo "  • ${MONITORS[1]}: workspaces 11-20 (cyan)"
+        echo "  • ${MONITORS[0]}: workspaces 1-10"
+        echo "  • ${MONITORS[1]}: workspaces 11-20"
         ;;
     *)
-        echo "  • ${MONITORS[0]}: workspaces 1-10 (green)"
-        echo "  • ${MONITORS[1]}: workspaces 11-20 (cyan)"
-        echo "  • ${MONITORS[2]}: workspaces 21-30 (magenta)"
+        echo "  • ${MONITORS[0]}: workspaces 1-10"
+        echo "  • ${MONITORS[1]}: workspaces 11-20"
+        echo "  • ${MONITORS[2]}: workspaces 21-30"
         ;;
 esac
 
