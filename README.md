@@ -142,10 +142,9 @@ All components below can be selectively installed via interactive gum menus. Eve
 - `tget` - Alias: Tailscale file download to ~/Downloads/
 
 **Waybar Customizations:**
-- **Theme-aware accent colors** - Automatically extracts `@selected-text` from all Omarchy themes and applies to Waybar modules
-  - Kanagawa: Orange accents
-  - Gruvbox: Yellow accents
-  - Tokyo Night: Cyan accents
+- **Theme-aware accent colors** - Automatically extracts `@selected-text` from your active Omarchy theme and applies to Waybar modules. Works with **all themes**!
+  - Examples: Kanagawa (orange), Gruvbox (yellow), Tokyo Night (cyan), Matte Black (red)
+  - Change theme in Omarchy, and Waybar colors update automatically
 - **Intelligent workspace detection** - Auto-configures for 1-3 monitors:
   - 1 monitor: workspaces 1-10
   - 2 monitors: 1-10 (left), 11-20 (right)
