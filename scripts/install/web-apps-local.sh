@@ -55,8 +55,8 @@ install_webapp "Cloudflare" "https://dash.cloudflare.com" "cloudflare"
 install_webapp "Supabase" "https://supabase.com/dashboard" "supabase"
 echo ""
 
-# Development Documentation & Resources
-echo -e "${BLUE}=== Development Resources ===${NC}"
+# Framework Documentation
+echo -e "${BLUE}=== Framework Documentation ===${NC}"
 install_webapp "Tailwind CSS" "https://tailwindcss.com/docs" "tailwindcss"
 install_webapp "DaisyUI" "https://daisyui.com" "daisyui"
 install_webapp "Svelte" "https://svelte.dev/docs" "svelte"
