@@ -338,5 +338,5 @@ Or select "Manage Web App Profiles" from the jomarchy menu.
 ## 📚 Additional Documentation
 
 - **README.md** - Project overview and quick start
-- **JOMARCHY-DEV.md** - Development add-on guide
+- **CLAUDE.md** - Developer documentation and architecture
 - **Online:** https://github.com/joewinke/jomarchy
