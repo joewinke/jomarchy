@@ -24,6 +24,7 @@ echo ""
 
 # Component selection with gum
 SELECTED_COMPONENTS=$(gum choose --no-limit \
+    --height=10 \
     --selected "*" \
     "GIMP (image editing)" \
     "Inkscape (vector graphics)" \

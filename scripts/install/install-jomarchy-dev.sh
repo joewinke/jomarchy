@@ -24,6 +24,7 @@ fi
 
 # Component selection with gum
 SELECTED_COMPONENTS=$(gum choose --no-limit \
+    --height=10 \
     --selected "*" \
     "VS Code, Node.js, npm" \
     "GitHub CLI" \

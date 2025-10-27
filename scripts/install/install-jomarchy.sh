@@ -24,6 +24,7 @@ fi
 
 # Component selection with gum
 SELECTED_COMPONENTS=$(gum choose --no-limit \
+    --height=20 \
     --selected "*" \
     "Firefox" \
     "Sublime Text 4" \
