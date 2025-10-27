@@ -33,8 +33,8 @@ bash <(curl -sL https://raw.githubusercontent.com/joewinke/jomarchy/master/jomar
 This will:
 1. Install git if needed
 2. Clone the repository to ~/code/jomarchy
-3. Run the default JOMARCHY installation
-4. Optionally install DEV or BEELINK add-ons
+3. Present an interactive profile selector
+4. Let you choose which profiles to install (BASE, DEV, MEDIA, FINANCE, COMMUNICATIONS)
 
 ---
 
@@ -54,34 +54,6 @@ This will:
 Each profile uses interactive `gum` menus to let you select exactly which components to install. Everything is pre-selected by default, but you can deselect items you don't want.
 
 ---
-
-## 📚 Documentation Files
-
-### [JOMARCHY.md](JOMARCHY.md) - Default Installation ⭐
-**What:** Complete Omarchy configuration for any system
-**Includes:**
-- Core packages (VS Code, Node.js, Firefox, claude-code, Sublime, Tailscale, etc.)
-- ChezWizper voice transcription
-- 10 universal web apps
-- 3 Chrome extensions
-- Waybar customizations
-- cl/cp aliases + Claude launchers
-- Custom scripts (zoom, screensaver, file search)
-
-**Install:** `./scripts/install/install-jomarchy.sh`
-
----
-
-### [JOMARCHY-DEV.md](JOMARCHY-DEV.md) - Development Add-on
-**What:** Work-specific tools and projects (adds to JOMARCHY)
-**Includes:**
-- Dev tools (GitHub CLI, Stripe CLI, Supabase CLI)
-- Interactive GitHub repository selection
-- Auto-generated Claude aliases for your repos
-- Work-specific web apps
-- Daily Claude quote timer
-
-**Install:** `./scripts/install/install-jomarchy-dev.sh`
 
 ---
 
@@ -108,16 +80,34 @@ Each profile is modular and independent. Install any combination you need:
 
 ### Already Have Repository Cloned
 
-#### Default Installation (Recommended)
 ```bash
 cd ~/code/jomarchy
-./scripts/install/install-jomarchy.sh
+./jomarchy.sh
 ```
 
-#### With Development Add-on
+This launches the interactive profile selector where you can choose which profiles to install.
+
+### Installing Specific Profiles Directly
+
+If you prefer to skip the profile selector and install specific profiles directly:
+
 ```bash
 cd ~/code/jomarchy
+
+# Install BASE profile only
+./scripts/install/install-jomarchy.sh
+
+# Install DEV profile
 ./scripts/install/install-jomarchy-dev.sh
+
+# Install MEDIA profile
+./scripts/install/install-jomarchy-media.sh
+
+# Install FINANCE profile
+./scripts/install/install-jomarchy-finance.sh
+
+# Install COMMUNICATIONS profile
+./scripts/install/install-jomarchy-communications.sh
 ```
 
 ---
@@ -258,55 +248,59 @@ All components below can be selectively installed via interactive gum menus. Eve
 
 ```
 ~/code/jomarchy/
-├── JOMARCHY.md                 # Default installation documentation
-├── JOMARCHY-DEV.md             # Development add-on documentation
-├── README-INSTALL.md           # This file
-├── jomarchy.sh                 # One-command installer
-└── scripts/install/
-    ├── install-jomarchy.sh             # Default installation
-    ├── install-jomarchy-dev.sh         # Dev add-on
-    ├── essential-packages.sh
-    ├── bash-customizations-universal.sh
-    ├── bash-customizations-local.sh
-    ├── chrome-extensions.sh
-    ├── claude-launchers-universal.sh
-    ├── claude-launchers-local.sh
-    ├── custom-scripts-universal.sh
-    ├── dev-tools-local.sh
-    ├── waybar-customizations-universal.sh
-    ├── web-apps-universal.sh
-    └── web-apps-local.sh
+├── README.md                           # This file
+├── JOMARCHY.md                         # Full project documentation
+├── CLAUDE.md                           # Developer documentation
+├── jomarchy.sh                         # Interactive profile selector
+└── scripts/
+    ├── install/
+    │   ├── install-jomarchy.sh                    # BASE profile installer
+    │   ├── install-jomarchy-dev.sh                # DEV profile installer
+    │   ├── install-jomarchy-media.sh              # MEDIA profile installer
+    │   ├── install-jomarchy-finance.sh            # FINANCE profile installer
+    │   ├── install-jomarchy-communications.sh     # COMMUNICATIONS profile installer
+    │   ├── essential-packages.sh                  # Core packages
+    │   ├── bash-customizations-universal.sh       # Bash aliases & dirs
+    │   ├── bash-customizations-local.sh           # GitHub repo cloning
+    │   ├── chrome-extensions.sh                   # Browser extensions
+    │   ├── chezwizper.sh                          # Voice transcription
+    │   ├── claude-launchers-universal.sh          # Base Claude launchers
+    │   ├── claude-launchers-local.sh              # Project launchers
+    │   ├── claude-code-mcp.sh                     # Claude Code MCP
+    │   ├── claude-daily-quote.sh                  # Daily quote timer
+    │   ├── custom-scripts-universal.sh            # Zoom, file search, etc.
+    │   ├── waybar-customizations-universal.sh     # Theme-aware styling
+    │   ├── waybar-workspace-detection.sh          # Multi-monitor config
+    │   ├── dev-packages.sh                        # Dev tools
+    │   ├── dev-tools-local.sh                     # CLI tools
+    │   ├── media-packages.sh                      # Creative software
+    │   ├── web-apps-universal.sh                  # BASE web apps
+    │   ├── web-apps-local.sh                      # DEV web apps
+    │   ├── web-apps-finance.sh                    # FINANCE web apps
+    │   └── web-apps-communications.sh             # COMMUNICATIONS web apps
+    └── lib/
+        └── (shared library functions)
 ```
 
 ---
 
 ## ✅ Benefits of This Structure
 
-1. **Simple Default** - One installation that works for everyone
-2. **Optional Extensions** - Add work/hardware configs only if needed
-3. **Clear Separation** - Easy to understand what each piece provides
-4. **Portable** - Use JOMARCHY on any machine
-5. **Documented** - Each component has clear documentation
-
----
-
-## 🔍 Reviewing What's Included
-
-```bash
-# View default installation
-cat JOMARCHY.md
-
-# View development add-on
-cat JOMARCHY-DEV.md
-```
+1. **Profile-Based** - Choose exactly what you need (BASE, DEV, MEDIA, FINANCE, COMMUNICATIONS)
+2. **Component Selection** - Each profile offers fine-grained control via gum menus
+3. **Idempotent** - Scripts can be run multiple times safely without creating duplicate backups
+4. **Modular** - Each component is independent and optional
+5. **Documented** - Detailed descriptions of every package, customization, and feature
+6. **Multi-Monitor Ready** - Intelligent workspace detection for 1-3 monitors
 
 ---
 
 ## 📝 Notes
 
-- Scripts can be run multiple times safely
-- Add-ons automatically install base requirements
-- All configurations are modular and optional beyond the base
+- All scripts are idempotent and can be run multiple times safely
+- Gum menus allow selective installation within each profile
+- All configurations are modular - install only what you need
+- BASE profile recommended for everyone as foundation
 
 ---
 
@@ -361,10 +355,9 @@ The integrated profile manager lets you:
 
 ## 🖥️ Hardware-Specific Configurations
 
-Looking for hardware-specific setups (monitor configs, printer drivers, etc.)?
+The profiles in this repository are designed to be universal and work on any Omarchy system.
 
-These are maintained in separate repositories to keep Jomarchy universal:
-- **Beelink SER9 Pro**: [jomarchy-beelink](https://github.com/joewinke/jomarchy-beelink)
+For hardware-specific configurations (monitor setups, printer drivers, etc.), you can create your own machine-specific profiles following the same pattern as the existing profiles in `scripts/install/`.
 
 ---
 
