@@ -130,7 +130,7 @@ All components below can be selectively installed via interactive gum menus. Eve
 - **Tailscale** - VPN/mesh network
 - **nwg-displays** - Multi-monitor display manager
 - **JetBrains Mono** - Programming font
-- **ydotool** - Auto-installed with ChezWizper
+- **ChezWizper** - Voice transcription with Super+R
 
 #### 🎨 Customizations
 
@@ -178,7 +178,6 @@ All components below can be selectively installed via interactive gum menus. Eve
 
 **ChezWizper:**
 - Voice transcription with **Super+R**
-- Includes ydotool for text insertion
 - Waybar indicator shows when active
 
 **Desktop Application Shortcuts:**

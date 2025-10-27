@@ -57,12 +57,11 @@ Packages:
 - Tailscale (VPN)
 - nwg-displays (display manager)
 - JetBrains Mono font
-- ydotool (auto-installed with ChezWizper)
+- ChezWizper (voice transcription)
 
 Customizations:
 - Bash customizations (cl/cp aliases, ~/code shortcuts)
 - Chrome extensions (Copy on Select, Dark Reader, 1Password)
-- ChezWizper voice transcription (Super+R)
 - Waybar customizations (clock, ChezWizper indicator, color-coded workspaces)
 - Custom scripts (toggle-zoom Super+Z, file-search F4, screensaver)
 
