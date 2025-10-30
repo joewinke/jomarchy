@@ -88,6 +88,7 @@ Packages:
 
 Customizations:
 - GitHub repository cloning (interactive selection)
+- Auto-generated bash aliases (cc + first letter of repo name, e.g., ccj for jomarchy)
 - Claude project launchers (auto-generated based on cloned repos)
 - Daily Claude quote timer (9am EST)
 

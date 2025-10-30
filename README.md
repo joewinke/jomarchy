@@ -235,6 +235,7 @@ All components below can be selectively installed via interactive gum menus. Eve
 
 #### 📦 Development Features
 - **Interactive GitHub repository cloning** - Select which repos to clone from your GitHub account
+- **Auto-generated bash aliases** - Quick Claude Code access with `cc` + first letter (e.g., `ccj` for jomarchy, `ccm` for marduk)
 - **Auto-generated project shortcuts** - Desktop shortcuts to launch Claude.ai for each cloned repo
 - **Daily Claude quote timer** - Motivational quotes at 9am EST
 

@@ -159,19 +159,19 @@ else
             declare -A alias_map
 
             for repo in "${cloned_repos[@]}"; do
-                # Generate alias: first letter of repo name
+                # Generate alias: cc + first letter of repo name
                 first_char="${repo:0:1}"
-                alias_name="c${first_char}"
+                alias_name="cc${first_char}"
 
                 # Handle conflicts by appending more characters
                 counter=1
                 while [ -n "${alias_map[$alias_name]}" ]; do
                     counter=$((counter + 1))
                     if [ $counter -le ${#repo} ]; then
-                        alias_name="c${repo:0:$counter}"
+                        alias_name="cc${repo:0:$counter}"
                     else
                         # Fallback: append numbers
-                        alias_name="c${first_char}${counter}"
+                        alias_name="cc${first_char}${counter}"
                     fi
                 done
 
@@ -191,7 +191,7 @@ else
 
             echo -e "${GREEN}✓${NC} Aliases added to .bashrc"
             echo ""
-            echo "Generated aliases:"
+            echo "Generated Claude Code aliases:"
             for alias_name in "${!alias_map[@]}"; do
                 repo="${alias_map[$alias_name]}"
                 echo "  $alias_name → Claude in ~/code/$repo"
