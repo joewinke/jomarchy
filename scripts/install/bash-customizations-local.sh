@@ -19,8 +19,8 @@ CYAN='\033[0;36m'
 NC='\033[0m'
 
 # Create ~/code directory if it doesn't exist
-if [ ! -d ~/code ]; then
-    mkdir -p ~/code
+if [ ! -d "$HOME/code" ]; then
+    mkdir -p "$HOME/code"
     echo -e "${GREEN}✓${NC} Created ~/code directory"
 fi
 
@@ -57,60 +57,62 @@ if [ -z "$repos_json" ] || [ "$repos_json" = "[]" ]; then
     exit 0
 fi
 
-# Parse and display repos
-echo ""
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${CYAN}Available GitHub Repositories:${NC}"
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo ""
-
 # Convert JSON to arrays
 mapfile -t repo_names < <(echo "$repos_json" | jq -r '.[].name')
 mapfile -t repo_private < <(echo "$repos_json" | jq -r '.[].isPrivate')
 mapfile -t repo_ssh < <(echo "$repos_json" | jq -r '.[].sshUrl')
 
-# Display numbered list
+# Build gum options
+gum_options=()
 for i in "${!repo_names[@]}"; do
-    num=$((i + 1))
     name="${repo_names[$i]}"
     if [ "${repo_private[$i]}" = "true" ]; then
-        privacy="${YELLOW}private${NC}"
+        privacy="private"
     else
-        privacy="${BLUE}public${NC}"
+        privacy="public"
     fi
-    printf "  [%2d] %-30s %b\n" "$num" "$name" "$privacy"
+    gum_options+=("$name ($privacy)")
 done
 
+# Phase 4: Interactive Selection with Gum
 echo ""
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${CYAN}Select repositories to clone (space to select, enter to confirm):${NC}"
 echo ""
 
-# Phase 4: Interactive Selection
-echo "Enter numbers to clone (space-separated, e.g., 1 3 5)"
-echo "Or press Enter to skip repository cloning"
-echo ""
-read -p "Selection: " selection
+selected_repos=$(printf '%s\n' "${gum_options[@]}" | gum choose --no-limit --height=20)
 
-if [ -z "$selection" ]; then
+if [ -z "$selected_repos" ]; then
     echo ""
     echo -e "${YELLOW}No repositories selected, skipping clone${NC}"
     selected_indices=()
 else
-    # Parse selection into array
-    read -ra selected_numbers <<< "$selection"
+    # Parse selected repos back to indices
     selected_indices=()
+    while IFS= read -r selected_item; do
+        # Extract repo name (everything before the last space and parenthesis)
+        selected_name="${selected_item% (*}"
 
-    # Convert to zero-based indices and validate
-    for num in "${selected_numbers[@]}"; do
-        if [[ "$num" =~ ^[0-9]+$ ]]; then
-            idx=$((num - 1))
-            if [ $idx -ge 0 ] && [ $idx -lt ${#repo_names[@]} ]; then
-                selected_indices+=($idx)
-            else
-                echo -e "${YELLOW}Warning: Invalid number $num (skipping)${NC}"
-            fi
+        # Validate extraction worked
+        if [ -z "$selected_name" ]; then
+            echo -e "${YELLOW}Warning: Failed to parse repo name from: $selected_item${NC}" >&2
+            continue
         fi
-    done
+
+        # Find the index of this repo
+        found=false
+        for i in "${!repo_names[@]}"; do
+            if [ "${repo_names[$i]}" = "$selected_name" ]; then
+                selected_indices+=("$i")
+                found=true
+                break
+            fi
+        done
+
+        # Warn if no match found
+        if [ "$found" = false ]; then
+            echo -e "${YELLOW}Warning: Could not find repository: $selected_name${NC}" >&2
+        fi
+    done <<< "$selected_repos"
 
     # Phase 5: Clone Selected Repos
     if [ ${#selected_indices[@]} -gt 0 ]; then
@@ -123,7 +125,7 @@ else
         for idx in "${selected_indices[@]}"; do
             name="${repo_names[$idx]}"
             ssh_url="${repo_ssh[$idx]}"
-            dest_dir=~/code/"$name"
+            dest_dir="$HOME/code/$name"
 
             if [ -d "$dest_dir" ]; then
                 echo -e "${YELLOW}→${NC} $name (already exists, skipping)"
@@ -146,7 +148,7 @@ else
             echo ""
             echo -e "${BLUE}→${NC} Generating Claude aliases..."
 
-            BASHRC=~/.bashrc
+            BASHRC="$HOME/.bashrc"
 
             # Remove old work aliases block if exists
             if grep -q "# Work Project Aliases" "$BASHRC" 2>/dev/null; then
