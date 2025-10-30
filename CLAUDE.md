@@ -519,6 +519,38 @@ If you're seeing multiple `.bak.<timestamp>` files:
 - New behavior (Oct 2025): Conditional backups only when needed
 - Safe to delete old duplicate backups with identical content
 
+## Recent Changes
+
+### October 30, 2025 - Installer Improvements
+
+**ChezWizper Voice Transcription:**
+- Added missing `chezwizper.sh` installer that was referenced but never existed
+- Now properly installs from github.com/joewinke/ChezWizper (add-waybar-integration branch)
+- Uses `/tmp` for source code (cleaned up after install - lowest lift approach)
+- Comprehensive error handling and post-install instructions
+
+**Script Cleanup:**
+- Removed orphaned scripts that were never called:
+  - `hardware-specific.sh` - Belongs in jomarchy-machines, not jomarchy
+  - `sublime-text.sh` - Redundant (Sublime installed by essential-packages.sh)
+
+**Enhanced Error Handling:**
+- Web app installers now capture and display actual error messages
+- Profile installers have defensive error handling for `add_installed_profile`
+- Waybar customizations check for dependencies (jq, perl) before running
+- Safer backup operations with error checking throughout
+
+**Improved User Experience:**
+- GitHub repo selection now uses gum multi-select (consistent with other installers)
+- Better visual feedback during installations
+- More actionable error messages when issues occur
+- Added curl timeouts to prevent hanging on slow connections
+
+**Reliability Improvements:**
+- Use `$HOME` instead of `/home/$USER` for better portability
+- Added validation for repo name parsing in bash-customizations-local.sh
+- Graceful degradation when optional operations fail
+
 ## Future Enhancements
 
 ### Planned Additions
