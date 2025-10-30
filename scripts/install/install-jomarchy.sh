@@ -158,8 +158,13 @@ echo ""
 # Mark profile as installed
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if [ -f "$SCRIPT_DIR/../lib/common.sh" ]; then
-    source "$SCRIPT_DIR/../lib/common.sh"
-    add_installed_profile "BASE"
+    if source "$SCRIPT_DIR/../lib/common.sh" 2>/dev/null; then
+        if declare -f add_installed_profile > /dev/null 2>&1; then
+            add_installed_profile "BASE" || echo "Warning: Failed to mark profile as installed" >&2
+        fi
+    else
+        echo "Warning: Failed to source common.sh" >&2
+    fi
 fi
 
 

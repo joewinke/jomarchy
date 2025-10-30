@@ -107,8 +107,13 @@ echo ""
 
 # Mark profile as installed
 if [ -f "$SCRIPT_DIR/../lib/common.sh" ]; then
-    source "$SCRIPT_DIR/../lib/common.sh"
-    add_installed_profile "DEV"
+    if source "$SCRIPT_DIR/../lib/common.sh" 2>/dev/null; then
+        if declare -f add_installed_profile > /dev/null 2>&1; then
+            add_installed_profile "DEV" || echo "Warning: Failed to mark profile as installed" >&2
+        fi
+    else
+        echo "Warning: Failed to source common.sh" >&2
+    fi
 fi
 
 echo "What was installed:"

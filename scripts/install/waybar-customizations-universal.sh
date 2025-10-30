@@ -66,7 +66,21 @@ echo ""
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-if [ -f "$SCRIPT_DIR/waybar-workspace-detection.sh" ]; then
+# Check for required dependencies
+missing_deps=()
+if ! command -v jq &> /dev/null; then
+    missing_deps+=("jq")
+fi
+if ! command -v perl &> /dev/null; then
+    missing_deps+=("perl")
+fi
+
+if [ ${#missing_deps[@]} -gt 0 ]; then
+    echo "⚠ Missing dependencies: ${missing_deps[*]}"
+    echo "  Install with: sudo pacman -S ${missing_deps[*]}"
+    echo "  Skipping workspace detection..."
+    echo ""
+elif [ -f "$SCRIPT_DIR/waybar-workspace-detection.sh" ]; then
     echo "Running intelligent workspace detection..."
     bash "$SCRIPT_DIR/waybar-workspace-detection.sh"
     echo ""
@@ -88,8 +102,12 @@ if grep -q "CUSTOM: Theme-Aware Accent Colors" "$WAYBAR_STYLE" 2>/dev/null; then
 else
     # Backup before making changes
     if [ -f "$WAYBAR_STYLE" ]; then
-        cp "$WAYBAR_STYLE" "$WAYBAR_STYLE.bak.$(date +%s)"
-        echo "  ✓ Backed up existing style.css"
+        if cp "$WAYBAR_STYLE" "$WAYBAR_STYLE.bak.$(date +%s)" 2>/dev/null; then
+            echo "  ✓ Backed up existing style.css"
+        else
+            echo "  ⚠ Warning: Failed to create backup of style.css" >&2
+            echo "  Continuing without backup..." >&2
+        fi
     fi
 
     # Append comprehensive custom CSS
@@ -212,12 +230,14 @@ if [ -f "$WAYBAR_CONFIG" ]; then
         # Try to update clock format using sed
         if grep -q '"clock":' "$WAYBAR_CONFIG" 2>/dev/null; then
             # Create backup
-            cp "$WAYBAR_CONFIG" "$WAYBAR_CONFIG.bak.$(date +%s)"
-
-            # Update clock format only within the clock section (no /g flag to only replace first match after "clock")
-            sed -i '/"clock":/,/}/ s/"format": *"{[^}]*}"/"format": "{:%m-%d %a %H:%M}"/' "$WAYBAR_CONFIG"
-
-            echo "  ✓ Clock format updated to show date (mm-dd weekday time)"
+            if cp "$WAYBAR_CONFIG" "$WAYBAR_CONFIG.bak.$(date +%s)" 2>/dev/null; then
+                # Update clock format only within the clock section (no /g flag to only replace first match after "clock")
+                sed -i '/"clock":/,/}/ s/"format": *"{[^}]*}"/"format": "{:%m-%d %a %H:%M}"/' "$WAYBAR_CONFIG"
+                echo "  ✓ Clock format updated to show date (mm-dd weekday time)"
+            else
+                echo "  ⚠ Warning: Failed to create backup of config.jsonc" >&2
+                echo "  Skipping clock format update for safety" >&2
+            fi
         else
             echo "  ⊘ Clock module not found in config, skipping"
         fi

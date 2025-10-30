@@ -38,10 +38,16 @@ install_webapp() {
     local icon_url="${ICON_CDN}/${icon_slug}.png"
 
     # Use Omarchy's webapp installer
-    if omarchy-webapp-install "$name" "$url" "$icon_url" "" "" 2>/dev/null; then
+    output=$(omarchy-webapp-install "$name" "$url" "$icon_url" "" "" 2>&1)
+    exit_code=$?
+
+    if [ $exit_code -eq 0 ]; then
         echo -e "${GREEN}✓${NC} $name installed"
     else
-        echo -e "${YELLOW}⚠${NC} $name - installation failed, skipping"
+        echo -e "${RED}✗${NC} $name - installation failed"
+        if [ -n "$output" ]; then
+            echo -e "${YELLOW}  Error: $output${NC}"
+        fi
     fi
 }
 
