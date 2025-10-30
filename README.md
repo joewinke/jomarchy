@@ -167,6 +167,11 @@ All components below can be selectively installed via interactive gum menus. Eve
   - 7:00 PM: Sunset warmth (5000K)
   - 9:00 PM: Bedtime mode (3400K)
 - **Jomarchy screensaver** - Custom ASCII art branding (activated with **Super+L**)
+- **Email/Calendar/Drive Keybinds** - Configure keybinds for your preferred email provider:
+  - **Super+Shift+E** → Email
+  - **Super+Shift+C** → Calendar
+  - **Super+Shift+D** → Drive (when available)
+  - Supported providers: Proton Mail, Gmail/Google, Hey, Outlook/Microsoft, Yahoo
 
 #### 🌐 Applications
 
@@ -271,6 +276,7 @@ All components below can be selectively installed via interactive gum menus. Eve
     │   ├── claude-code-mcp.sh                     # Claude Code MCP
     │   ├── claude-daily-quote.sh                  # Daily quote timer
     │   ├── custom-scripts-universal.sh            # Keybindings: zoom toggle, file search
+    │   ├── email-calendar-keybinds.sh             # Email/calendar/drive keybinds config
     │   ├── waybar-customizations-universal.sh     # Theme-aware styling
     │   ├── waybar-workspace-detection.sh          # Multi-monitor config
     │   ├── dev-packages.sh                        # Dev tools

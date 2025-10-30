@@ -64,6 +64,7 @@ Customizations:
 - Chrome extensions (Copy on Select, Dark Reader, 1Password)
 - Waybar customizations (clock, ChezWizper indicator, color-coded workspaces)
 - Custom scripts (toggle-zoom Super+Z, file-search F4, screensaver)
+- Email/Calendar/Drive keybinds (Super+Shift+E/C/D) - configurable for Proton, Gmail, Hey, Outlook, Yahoo
 
 Web Apps:
 - Proton Mail
@@ -199,6 +200,7 @@ Components (all selectable with gum):
     ├── web-apps-universal.sh                # BASE web apps
     ├── claude-launchers-universal.sh        # Claude desktop launchers
     ├── claude-code-mcp.sh                   # Claude Code MCP
+    ├── email-calendar-keybinds.sh           # Email/calendar/drive keybinds
     ├── waybar-customizations-universal.sh   # Waybar customizations
     ├── custom-scripts-universal.sh          # Custom scripts
     ├── dev-packages.sh                      # DEV packages
@@ -538,6 +540,6 @@ If you're seeing multiple `.bak.<timestamp>` files:
 
 ---
 
-**Last Updated:** October 27, 2025
+**Last Updated:** October 30, 2025
 **Maintained By:** Joe Winke
 **Generated With:** Claude Code

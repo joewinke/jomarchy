@@ -50,7 +50,8 @@ SELECTED_COMPONENTS=$(gum choose --no-limit \
     "  Proton Mail" \
     "  Kagi (search)" \
     "  YouTube" \
-    "  X (Twitter)")
+    "  X (Twitter)" \
+    "  Email/Calendar/Drive keybinds (Super+Shift+E/C/D)")
 
 echo ""
 echo -e "${BLUE}Installing selected BASE components...${NC}"
@@ -121,6 +122,13 @@ if echo "$SELECTED_COMPONENTS" | grep -q "  Claude Code browser tools"; then
     fi
 fi
 
+if echo "$SELECTED_COMPONENTS" | grep -q "  Email/Calendar/Drive keybinds"; then
+    if [ -f "$SCRIPT_DIR/email-calendar-keybinds.sh" ]; then
+        echo -e "${GREEN}→${NC} Running email-calendar-keybinds.sh..."
+        bash "$SCRIPT_DIR/email-calendar-keybinds.sh"
+    fi
+fi
+
 echo ""
 
 # Phase 3: Customizations
@@ -161,6 +169,7 @@ echo "✓ Core packages (Firefox, claude-code, Sublime, Tailscale, ChezWizper, e
 echo "✓ ChezWizper voice transcription (Super+R)"
 echo "✓ 10 universal web apps"
 echo "✓ 3 Chrome extensions"
+echo "✓ Email/Calendar/Drive keybinds (Super+Shift+E/C/D - if configured)"
 echo "✓ Intelligent multi-monitor workspace configuration (1-3 monitors)"
 echo "✓ Waybar customizations (clock, ChezWizper, color-coded workspaces)"
 echo "✓ Custom scripts (toggle-zoom Super+Z, file-search F4)"

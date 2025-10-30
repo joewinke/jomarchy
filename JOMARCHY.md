@@ -186,6 +186,24 @@ Minimal custom keybindings (verify Omarchy 3.1 compatibility):
 - **Super+R**: ChezWizper voice transcription
 - **Super+L**: Enable screensaver/lock
 
+### Email/Calendar/Drive Keybinds
+
+**Optional Configuration:** `scripts/install/email-calendar-keybinds.sh`
+
+Configure keybinds for your preferred email provider:
+- **Super+Shift+E**: Email
+- **Super+Shift+C**: Calendar
+- **Super+Shift+D**: Drive (when available)
+
+**Supported Providers:**
+- Proton Mail (email, calendar, drive)
+- Gmail/Google (email, calendar, drive)
+- Hey (email, calendar)
+- Outlook/Microsoft (email, calendar, OneDrive)
+- Yahoo (email, calendar)
+
+Interactive `gum` menu lets you choose your provider during installation. The script is idempotent and can be re-run to change providers.
+
 ---
 
 ## 💻 Bash Customizations
