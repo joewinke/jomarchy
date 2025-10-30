@@ -167,5 +167,5 @@ echo "  9:00 PM - Bedtime mode (3400K)"
 echo ""
 
 echo "Note: Reload Hyprland config to activate keybindings:"
-echo "  Press Super+Shift+C or restart Hyprland"
+echo "  Press Super+Shift+R or restart Hyprland"
 echo ""

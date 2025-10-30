@@ -36,7 +36,7 @@ create_claude_launcher() {
 Version=1.0
 Name=Claude $name
 Comment=Claude in /code/$directory
-Exec=alacritty -T "Claude $name" --working-directory /home/$USER/code/$directory -e bash -ic "claude --dangerously-skip-permissions; exec bash"
+Exec=alacritty -T "Claude $name" --working-directory $HOME/code/$directory -e bash -ic "claude --dangerously-skip-permissions; exec bash"
 Terminal=false
 Type=Application
 Icon=$ICONS_DIR/Claude.png
@@ -53,11 +53,13 @@ if [ ! -f "$ICONS_DIR/Claude.png" ]; then
     echo -e "${YELLOW}→${NC} Claude icon not found, downloading..."
 
     # Try to download Claude icon
-    if curl -sL "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/claude-ai.png" \
-        -o "$ICONS_DIR/Claude.png" 2>/dev/null; then
+    if curl -sL --max-time 10 --fail \
+        "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/claude-ai.png" \
+        -o "$ICONS_DIR/Claude.png" 2>&1; then
         echo -e "${GREEN}✓${NC} Claude icon downloaded"
     else
         # Fallback: copy chromium icon
+        echo -e "${YELLOW}→${NC} Icon download failed or timed out"
         if [ -f "/usr/share/pixmaps/chromium.png" ]; then
             cp "/usr/share/pixmaps/chromium.png" "$ICONS_DIR/Claude.png"
             echo -e "${YELLOW}→${NC} Using chromium icon as fallback"
