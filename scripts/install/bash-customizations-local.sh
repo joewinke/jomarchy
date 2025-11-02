@@ -135,6 +135,90 @@ else
                 if git clone "$ssh_url" "$dest_dir" 2>/dev/null; then
                     echo -e "${GREEN}✓${NC} $name cloned successfully"
                     cloned_repos+=("$name")
+
+                    # Create MCP configuration for this project
+                    if [ ! -f "$dest_dir/mcp.json" ]; then
+                        cat > "$dest_dir/mcp.json" << 'MCPEOF'
+{
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--browserUrl=http://127.0.0.1:9222"
+      ]
+    }
+  }
+}
+MCPEOF
+                        echo -e "${GREEN}✓${NC} MCP config created for $name"
+
+                        # Create MCP README with Supabase instructions
+                        cat > "$dest_dir/.mcp-config-help.md" << 'MCPHELPEOF'
+# MCP Server Configuration
+
+This project has MCP (Model Context Protocol) servers configured for Claude Code.
+
+## Currently Enabled
+
+- **chrome-devtools** - Browser automation and debugging
+
+## Available MCP Servers
+
+### Supabase MCP
+Interact with your Supabase database directly from Claude Code.
+
+**Quick Setup (Recommended):**
+```bash
+cd ~/code/YOUR_PROJECT
+supabase-mcp-config
+```
+
+The interactive helper will prompt for your credentials and configure everything automatically.
+
+**Manual Setup:**
+Edit `mcp.json` and add:
+
+```json
+{
+  "mcpServers": {
+    "chrome-devtools": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--browserUrl=http://127.0.0.1:9222"
+      ]
+    },
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server-supabase@latest",
+        "--url",
+        "https://YOUR_PROJECT_REF.supabase.co",
+        "--service-role-key",
+        "YOUR_SERVICE_ROLE_KEY"
+      ]
+    }
+  }
+}
+```
+
+**Get your credentials:**
+1. Go to https://supabase.com/dashboard/project/YOUR_PROJECT/settings/api
+2. Copy the Project URL
+3. Copy the service_role key (keep this secret!)
+
+### Other MCP Servers
+- **Tavily** - Web search capabilities
+- **Filesystem** - Direct file system access
+- **GitHub** - GitHub API integration
+
+See: https://github.com/modelcontextprotocol/servers
+MCPHELPEOF
+                    fi
                 else
                     echo -e "${YELLOW}→${NC} Could not clone $name (check SSH key or network)"
                     mkdir -p "$dest_dir"

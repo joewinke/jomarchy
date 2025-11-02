@@ -43,6 +43,8 @@ SELECTED_COMPONENTS=$(gum choose --no-limit \
     "  Tailwind CSS" \
     "  DaisyUI" \
     "  Svelte" \
+    "━━━ DEV TOOLS ━━━" \
+    "  DevChrome MCP (Browser for Claude debugging)" \
     "━━━ CUSTOMIZATIONS ━━━" \
     "  GitHub repository cloning" \
     "  Claude desktop shortcuts (per project)" \
@@ -92,6 +94,19 @@ if echo "$SELECTED_COMPONENTS" | grep -qE "(  GitHub|  Cloudflare|  Supabase|  T
     fi
 fi
 
+if echo "$SELECTED_COMPONENTS" | grep -q "  DevChrome MCP"; then
+    if [ -f "$SCRIPT_DIR/devchrome-mcp.sh" ]; then
+        echo -e "${GREEN}→${NC} Running devchrome-mcp.sh..."
+        bash "$SCRIPT_DIR/devchrome-mcp.sh"
+    fi
+
+    # Configure MCP for all projects in ~/code
+    if [ -f "$SCRIPT_DIR/claude-code-mcp.sh" ]; then
+        echo -e "${GREEN}→${NC} Running claude-code-mcp.sh..."
+        bash "$SCRIPT_DIR/claude-code-mcp.sh"
+    fi
+fi
+
 if echo "$SELECTED_COMPONENTS" | grep -q "  Daily Claude quote timer"; then
     if [ -f "$SCRIPT_DIR/claude-daily-quote.sh" ]; then
         echo -e "${GREEN}→${NC} Running claude-daily-quote.sh..."
@@ -121,6 +136,7 @@ echo ""
 echo "DEV PROFILE:"
 echo "  ✓ Dev packages (VSCodium, Node.js, npm)"
 echo "  ✓ Dev tools (GitHub CLI, Stripe CLI, Supabase CLI)"
+echo "  ✓ DevChrome MCP (Chromium for Claude Code debugging)"
 echo "  ✓ GitHub repository selection (your choice)"
 echo "  ✓ Project shortcuts (automatically generated from your repos)"
 echo "  ✓ Development web apps (GitHub, Cloudflare, Supabase)"

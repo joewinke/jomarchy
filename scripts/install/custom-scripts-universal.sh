@@ -147,6 +147,33 @@ EOF
 cp ~/.config/omarchy/branding/jomarchy.txt ~/.config/omarchy/branding/screensaver.txt
 echo -e "${GREEN}✓${NC} Jomarchy screensaver branding configured"
 
+# 6. Install Supabase MCP Configuration Helper
+echo -e "${BLUE}→${NC} Installing supabase-mcp-config helper..."
+
+# Get the script directory
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+if [ -f "$SCRIPT_DIR/configure-supabase-mcp.sh" ]; then
+    # Create a symlink or wrapper in ~/.local/bin
+    cat > ~/.local/bin/supabase-mcp-config << 'EOF'
+#!/bin/bash
+# Wrapper for Supabase MCP configuration script
+JOMARCHY_SCRIPTS="$HOME/code/jomarchy/scripts/install"
+
+if [ -f "$JOMARCHY_SCRIPTS/configure-supabase-mcp.sh" ]; then
+    bash "$JOMARCHY_SCRIPTS/configure-supabase-mcp.sh" "$@"
+else
+    echo "ERROR: Jomarchy scripts not found"
+    echo "Expected location: $JOMARCHY_SCRIPTS"
+    exit 1
+fi
+EOF
+    chmod +x ~/.local/bin/supabase-mcp-config
+    echo -e "${GREEN}✓${NC} supabase-mcp-config installed"
+else
+    echo -e "${YELLOW}→${NC} configure-supabase-mcp.sh not found, skipping"
+fi
+
 echo ""
 echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}Custom Scripts Installation Complete!${NC}"
@@ -158,6 +185,7 @@ echo "  ✓ toggle-zoom - Super+Z for 2x screen magnification"
 echo "  ✓ file-search - F4 for fuzzy file finder"
 echo "  ✓ Hyprsunset - Blue light filter (auto-adjusts by time)"
 echo "  ✓ Jomarchy screensaver - Super+L to activate"
+echo "  ✓ supabase-mcp-config - Interactive Supabase MCP setup"
 echo ""
 
 echo "Hyprsunset schedule:"
