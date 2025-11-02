@@ -432,10 +432,40 @@ Icons are fetched from: `https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/p
 
 ### Committing Changes
 
-Use git-commit-assistant for organized commits:
-- Group related changes (e.g., all gum fixes together)
+**Using the git-commit-documenter Agent:**
+
+The git-commit-documenter agent should be used to commit all code changes. When invoking it, be explicit and directive to ensure autonomous operation:
+
+**Good invocation (autonomous):**
+```
+Commit and push all changes in /home/jw/code/jomarchy to GitHub.
+
+Context: [Brief description of what was changed and why]
+
+Requirements:
+1. Review all changes
+2. Create appropriate commit message(s)
+3. Execute git add, commit, and push
+4. DO NOT ask for confirmation - execute automatically
+```
+
+**Bad invocation (will ask for confirmation):**
+```
+Can you help me commit these changes?
+```
+
+**Why this matters:**
+- The agent will ask for confirmation if the invocation is unclear or tentative
+- Use directive language: "Commit and push" not "Can you commit"
+- Explicitly state "DO NOT ask for confirmation" if needed
+- Include context so the agent can write good commit messages
+
+**Commit message style:**
+- Use conventional commits format: `feat:`, `fix:`, `docs:`, `refactor:`
+- Group related changes together
 - Separate features from refactors
 - Include context in commit messages
+- Follow existing commit patterns in the repo
 
 ### Syncing Repos
 
