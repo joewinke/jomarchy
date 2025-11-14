@@ -63,7 +63,9 @@ selected=$(find . -type f \
   -not -path "*/\.cache/*" \
   -not -path "*/node_modules/*" \
   -not -path "*/\.local/share/Trash/*" \
-  2>/dev/null | fzf --prompt="Search files: " --preview 'head -50 {}')
+  2>/dev/null | fzf --prompt="Search files (Enter=open, Ctrl+O=folder): " \
+  --bind 'ctrl-o:execute-silent(uwsm app -- nautilus "$(dirname {})")' \
+  --preview 'head -50 {}')
 
 if [ -n "$selected" ]; then
   # Open the file with appropriate program
@@ -155,7 +157,7 @@ echo ""
 
 echo "Installed scripts:"
 echo "  ✓ toggle-zoom - Super+Z for 2x screen magnification"
-echo "  ✓ file-search - F4 for fuzzy file finder"
+echo "  ✓ file-search - F4 for fuzzy file finder (Enter=open file, Ctrl+O=open folder)"
 echo "  ✓ Hyprsunset - Blue light filter (auto-adjusts by time)"
 echo "  ✓ Jomarchy screensaver - Super+L to activate"
 echo ""
