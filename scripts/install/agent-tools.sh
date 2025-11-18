@@ -82,6 +82,116 @@ EOF
 
 echo "✓ Configuration added to .bashrc"
 
+# Update global Claude documentation if it exists
+CLAUDE_MD="$HOME/.claude/CLAUDE.md"
+if [ -f "$CLAUDE_MD" ]; then
+    echo ""
+    echo "→ Updating ~/.claude/CLAUDE.md with agent tools documentation..."
+
+    # Check if agent tools section already exists
+    if grep -q "## Agent Tools: Lightweight bash tools" "$CLAUDE_MD"; then
+        echo "  ℹ Agent Tools section already exists in CLAUDE.md (skipping)"
+    else
+        # Append agent tools documentation
+        cat >> "$CLAUDE_MD" << 'AGENT_TOOLS_DOC'
+
+## Agent Tools: Lightweight bash tools for common operations
+
+**56 generic bash tools** available system-wide with massive token savings (32,425 tokens vs MCP servers).
+
+Philosophy: Following [What if you don't need MCP?](https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/) by Mario Zechner - simple bash tools achieve 80x token reduction.
+
+**Location:** `~/code/jomarchy/.app/agent-tools/`
+
+### Tool Categories
+
+- **Agent Mail (11):** am-register, am-inbox, am-send, am-reply, am-ack, am-reserve, am-release, am-reservations, am-search, am-agents, am-whoami
+- **Database (4):** db-query, db-user-lookup, db-sessions, db-schema
+- **Media (4):** asset-info, video-status, storage-cleanup, media-validate
+- **Development (5):** type-check-fast, lint-staged, migration-status, component-deps, route-list
+- **Monitoring (5):** edge-logs, quota-check, job-monitor, error-log, perf-check
+- **Team (3):** user-activity, brand-stats, invite-status
+- **Deployment (4):** env-check, build-size, db-connection-test, cache-clear
+- **AI/Testing (6):** generation-history, test-route, prompt-test, model-compare, db-seed-mini, snapshot-compare
+- **Browser (7):** browser-start.js, browser-nav.js, browser-eval.js, browser-screenshot.js, browser-pick.js, browser-cookies.js, browser-hn-scraper.js
+
+### Quick Usage
+
+**All tools have `--help` flags:**
+```bash
+db-query --help
+am-inbox --help
+edge-logs --help
+```
+
+**Common examples:**
+```bash
+# Database queries (auto-LIMIT protection)
+db-query "SELECT * FROM users WHERE created_at > NOW() - INTERVAL '1 hour'"
+db-user-lookup user@example.com
+
+# Agent Mail (lightweight HTTP wrappers)
+am-inbox AgentName --unread
+am-send "Subject" "Body" --from Agent1 --to Agent2 --thread bd-123
+am-reserve src/**/*.svelte --agent AgentName --ttl 3600 --reason "bd-123"
+
+# Monitoring
+edge-logs function-name --follow --errors
+quota-check --model openai-gpt4
+
+# Media
+asset-info asset_id
+video-status batch_id --all-pending
+
+# Browser automation
+browser-screenshot.js  # Returns temp file path
+browser-eval.js 'document.title'
+```
+
+### Integration with Agent Mail & Beads
+
+Use together for maximum efficiency:
+```bash
+# 1. Pick work
+bd ready --json
+
+# 2. Reserve files (bash tool instead of MCP)
+am-reserve src/**/*.ts --agent $AGENT_NAME --ttl 3600 --reason "bd-123"
+
+# 3. Query database
+db-query "SELECT COUNT(*) FROM invocations WHERE status='pending'"
+
+# 4. Monitor edge function
+edge-logs video-generator --errors
+
+# 5. Complete and release
+bd close bd-123 --reason "Completed"
+am-release src/**/*.ts --agent $AGENT_NAME
+```
+
+### When to use bash tools vs MCP
+
+**Use bash tools when:**
+- Simple operations (check inbox, query database, monitor logs)
+- Token budget is tight (saves ~30k tokens)
+- Want bash composability (pipes, jq filtering, redirects)
+
+**Use MCP when:**
+- Complex macros (`macro_start_session`, `macro_prepare_thread`)
+- Structured validation needed
+- Stateful operations
+
+### Full Documentation
+
+For complete tool reference: `@~/code/jomarchy/.app/agent-tools/README.md`
+
+This injects full docs into your context when needed (Mario's approach - saves tokens vs auto-discovery).
+AGENT_TOOLS_DOC
+
+        echo "  ✓ Added agent tools documentation to ~/.claude/CLAUDE.md"
+    fi
+fi
+
 # Create project-specific functions
 echo ""
 echo "→ Creating project-specific Claude functions..."
