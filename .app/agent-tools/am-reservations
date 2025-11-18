@@ -1,0 +1,53 @@
+#!/usr/bin/env node
+// List active file reservations
+// Usage: am-reservations [--agent <AgentName>] [--all]
+
+import { parseArgs, showHelp, amFetch, PROJECT_KEY, formatTable } from './am-lib.js';
+
+const args = parseArgs(process.argv.slice(2));
+
+if (args.flags.help || args.flags.h) {
+  showHelp('am-reservations [options]', {
+    '--agent': 'Filter by agent name',
+    '--all': 'Show all reservations in project',
+    '--project': 'Project key (default: current directory)',
+    '--json': 'Output as JSON'
+  });
+  process.exit(0);
+}
+
+try {
+  const params = new URLSearchParams({
+    project_key: PROJECT_KEY
+  });
+
+  if (args.flags.agent) {
+    params.append('agent_name', args.flags.agent);
+  }
+
+  const result = await amFetch(`/api/list_file_reservations?${params}`);
+
+  if (args.flags.json) {
+    console.log(JSON.stringify(result, null, 2));
+  } else {
+    if (!result || result.length === 0) {
+      console.log('No active reservations');
+      process.exit(0);
+    }
+
+    // Format as table
+    const rows = result.map(r => ({
+      agent: r.agent_name,
+      path: r.path_pattern,
+      exclusive: r.exclusive ? 'Yes' : 'No',
+      expires: new Date(r.expires_ts).toLocaleString(),
+      reason: (r.reason || '').slice(0, 30)
+    }));
+
+    console.log(formatTable(rows, ['agent', 'path', 'exclusive', 'expires', 'reason']));
+    console.log(`\nTotal: ${result.length} reservations`);
+  }
+} catch (error) {
+  console.error('✗ Query failed:', error.message);
+  process.exit(1);
+}

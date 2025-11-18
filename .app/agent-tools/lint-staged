@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Lint only changed files (much faster than full lint)
+# Usage: lint-staged
+#        lint-staged --fix
+
+if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
+  echo "Usage: lint-staged [--fix]"
+  echo ""
+  echo "Lint only files changed in git working directory"
+  echo ""
+  echo "Options:"
+  echo "  --fix    Auto-fix linting issues"
+  exit 0
+fi
+
+FILES=$(git diff --name-only --diff-filter=ACMR | grep -E '\.(js|ts|svelte)$' || true)
+
+if [ -z "$FILES" ]; then
+  echo "✓ No changed files to lint"
+  exit 0
+fi
+
+echo "Linting changed files:"
+echo "$FILES" | sed 's/^/  /'
+echo ""
+
+if [ "$1" == "--fix" ]; then
+  echo "$FILES" | xargs npx eslint --fix
+else
+  echo "$FILES" | xargs npx eslint
+fi

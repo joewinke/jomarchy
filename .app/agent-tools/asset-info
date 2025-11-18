@@ -1,0 +1,86 @@
+#!/usr/bin/env node
+// Quick asset metadata lookup
+// Usage: asset-info <asset_id>
+//        asset-info --url "storage/path/file.mp4"
+//        asset-info --recent 5
+
+import { spawn } from 'child_process';
+
+const args = process.argv.slice(2);
+
+if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
+  console.log('Usage: asset-info <asset_id>');
+  console.log('       asset-info --url "<storage_path>"');
+  console.log('       asset-info --recent <n>');
+  console.log('       asset-info --brand <brand_id>');
+  console.log('\nExamples:');
+  console.log('  asset-info 123e4567-e89b-12d3-a456-426614174000');
+  console.log('  asset-info --url "brand123/videos/output.mp4"');
+  console.log('  asset-info --recent 10');
+  process.exit(0);
+}
+
+const connectionString = process.env.DATABASE_URL || process.env.SUPABASE_DB_URL;
+if (!connectionString) {
+  console.error('✗ DATABASE_URL or SUPABASE_DB_URL environment variable required');
+  process.exit(1);
+}
+
+let query;
+
+if (args[0] === '--url') {
+  const url = args[1].replace(/'/g, "''");
+  query = `
+    SELECT
+      id, name, asset_type, file_size, storage_path,
+      brand_id, created_by, created_at,
+      metadata
+    FROM assets
+    WHERE storage_path LIKE '%${url}%'
+    LIMIT 10
+  `;
+} else if (args[0] === '--recent') {
+  const limit = args[1] || 5;
+  query = `
+    SELECT
+      id, name, asset_type, file_size, storage_path,
+      brand_id, created_by, created_at
+    FROM assets
+    ORDER BY created_at DESC
+    LIMIT ${limit}
+  `;
+} else if (args[0] === '--brand') {
+  const brandId = args[1];
+  query = `
+    SELECT
+      id, name, asset_type, file_size, storage_path,
+      created_by, created_at
+    FROM assets
+    WHERE brand_id = '${brandId}'
+    ORDER BY created_at DESC
+    LIMIT 20
+  `;
+} else {
+  const assetId = args[0];
+  query = `
+    SELECT
+      a.*,
+      b.name as brand_name,
+      p.email as creator_email
+    FROM assets a
+    LEFT JOIN brands b ON a.brand_id = b.id
+    LEFT JOIN profiles p ON a.created_by = p.id
+    WHERE a.id = '${assetId}'
+  `;
+}
+
+const psql = spawn('psql', [connectionString, '-c', query, '-x'], { stdio: 'inherit' });
+
+psql.on('error', (error) => {
+  console.error('✗ Failed to execute psql:', error.message);
+  process.exit(1);
+});
+
+psql.on('close', (code) => {
+  process.exit(code);
+});

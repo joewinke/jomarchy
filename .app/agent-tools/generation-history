@@ -1,0 +1,59 @@
+#!/usr/bin/env node
+// View recent AI generations
+// Usage: generation-history --user <user_id>
+//        generation-history --model gpt-4 --last 24h
+
+import { spawn } from 'child_process';
+
+const args = process.argv.slice(2);
+
+if (args.includes('--help') || args.includes('-h')) {
+  console.log('Usage: generation-history [options]');
+  console.log('\nOptions:');
+  console.log('  --user <id>      Filter by user');
+  console.log('  --model <name>   Filter by model');
+  console.log('  --last <time>    Time range (1h, 24h, 7d)');
+  console.log('  --type <type>    Filter by type (video, image, text)');
+  console.log('\nExamples:');
+  console.log('  generation-history --user 123e4567');
+  console.log('  generation-history --model gpt-4 --last 24h');
+  console.log('  generation-history --type video');
+  process.exit(0);
+}
+
+const connectionString = process.env.DATABASE_URL || process.env.SUPABASE_DB_URL;
+if (!connectionString) {
+  console.error('✗ DATABASE_URL required');
+  process.exit(1);
+}
+
+let where = [`created_at > NOW() - INTERVAL '24 hours'`];
+
+for (let i = 0; i < args.length; i++) {
+  if (args[i] === '--user') {
+    where.push(`user_id = '${args[++i]}'`);
+  } else if (args[i] === '--model') {
+    where.push(`model = '${args[++i]}'`);
+  } else if (args[i] === '--last') {
+    const time = args[++i];
+    where[0] = `created_at > NOW() - INTERVAL '${time}'`;
+  } else if (args[i] === '--type') {
+    where.push(`generation_type = '${args[++i]}'`);
+  }
+}
+
+const query = `
+  SELECT
+    id, generation_type, model,
+    LEFT(prompt, 50) as prompt_preview,
+    status, created_at,
+    tokens_used, cost_cents
+  FROM ai_generations
+  WHERE ${where.join(' AND ')}
+  ORDER BY created_at DESC
+  LIMIT 50
+`;
+
+const psql = spawn('psql', [connectionString, '-c', query], { stdio: 'inherit' });
+psql.on('error', (e) => { console.error('✗', e.message); process.exit(1); });
+psql.on('close', (code) => process.exit(code));

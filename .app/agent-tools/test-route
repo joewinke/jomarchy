@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# Quick API route testing
+# Usage: test-route /api/video/generate --method POST --data '{"prompt":"..."}'
+
+if [ "$1" == "--help" ] || [ "$1" == "-h" ] || [ -z "$1" ]; then
+  echo "Usage: test-route <path> [options]"
+  echo ""
+  echo "Options:"
+  echo "  --method <METHOD>    HTTP method (default: GET)"
+  echo "  --data <json>        Request body (for POST/PUT)"
+  echo "  --auth <token>       Authorization token"
+  echo ""
+  echo "Examples:"
+  echo "  test-route /api/health"
+  echo "  test-route /api/video/generate --method POST --data '{\"prompt\":\"test\"}'"
+  exit 0
+fi
+
+ROUTE="$1"
+METHOD="GET"
+DATA=""
+AUTH=""
+BASE_URL="${BASE_URL:-http://localhost:5173}"
+
+shift
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --method)
+      METHOD="$2"
+      shift 2
+      ;;
+    --data)
+      DATA="$2"
+      shift 2
+      ;;
+    --auth)
+      AUTH="$2"
+      shift 2
+      ;;
+    *)
+      shift
+      ;;
+  esac
+done
+
+echo "Testing: $METHOD $BASE_URL$ROUTE"
+echo ""
+
+CURL_ARGS="-X $METHOD -H \"Content-Type: application/json\" -w \"\\n\\nStatus: %{http_code}\\nTime: %{time_total}s\\n\""
+
+if [ -n "$DATA" ]; then
+  CURL_ARGS="$CURL_ARGS -d '$DATA'"
+fi
+
+if [ -n "$AUTH" ]; then
+  CURL_ARGS="$CURL_ARGS -H \"Authorization: Bearer $AUTH\""
+fi
+
+eval "curl $CURL_ARGS \"$BASE_URL$ROUTE\""

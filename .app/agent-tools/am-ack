@@ -1,0 +1,50 @@
+#!/usr/bin/env node
+// Acknowledge a message
+// Usage: am-ack <message_id> --agent <AgentName>
+
+import { parseArgs, showHelp, amFetch, PROJECT_KEY } from './am-lib.js';
+
+const args = parseArgs(process.argv.slice(2));
+
+if (args.flags.help || args.flags.h) {
+  showHelp('am-ack <message_id> [options]', {
+    '--agent': 'Agent name (required)',
+    '--project': 'Project key (default: current directory)',
+    '--json': 'Output as JSON'
+  });
+  process.exit(0);
+}
+
+const messageId = parseInt(args._[0]);
+
+if (!messageId) {
+  console.error('✗ Message ID required');
+  console.error('Usage: am-ack <message_id> --agent <AgentName>');
+  process.exit(1);
+}
+
+if (!args.flags.agent) {
+  console.error('✗ --agent required');
+  process.exit(1);
+}
+
+try {
+  const result = await amFetch('/api/acknowledge_message', {
+    method: 'POST',
+    body: JSON.stringify({
+      project_key: PROJECT_KEY,
+      agent_name: args.flags.agent,
+      message_id: messageId
+    })
+  });
+
+  if (args.flags.json) {
+    console.log(JSON.stringify(result, null, 2));
+  } else {
+    console.log(`✓ Message ${messageId} acknowledged`);
+    console.log(`  Acknowledged at: ${result.acknowledged_at}`);
+  }
+} catch (error) {
+  console.error('✗ Acknowledgement failed:', error.message);
+  process.exit(1);
+}

@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Quick TypeScript check of specific files (much faster than full check)
+# Usage: type-check-fast src/lib/components/video/*.svelte
+#        type-check-fast --changed
+
+if [ "$1" == "--help" ] || [ "$1" == "-h" ] || [ -z "$1" ]; then
+  echo "Usage: type-check-fast <file_pattern>"
+  echo "       type-check-fast --changed"
+  echo ""
+  echo "Examples:"
+  echo "  type-check-fast src/lib/components/video/*.svelte"
+  echo "  type-check-fast src/routes/app/+page.svelte"
+  echo "  type-check-fast --changed    # Only git modified files"
+  echo ""
+  echo "Much faster than 'npm run check' for specific files"
+  exit 0
+fi
+
+if [ "$1" == "--changed" ]; then
+  echo "Checking changed files..."
+  FILES=$(git diff --name-only --diff-filter=ACMR | grep -E '\.(svelte|ts)$' || true)
+  if [ -z "$FILES" ]; then
+    echo "✓ No changed TypeScript/Svelte files"
+    exit 0
+  fi
+  echo "$FILES" | xargs npx svelte-check --threshold error --workspace .
+else
+  echo "Checking: $@"
+  npx svelte-check --threshold error --workspace . $@
+fi

@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# Test database connectivity
+# Usage: db-connection-test
+#        db-connection-test --latency
+
+if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
+  echo "Usage: db-connection-test [--latency]"
+  echo ""
+  echo "Test Supabase database connection"
+  echo ""
+  echo "Options:"
+  echo "  --latency    Measure query latency"
+  echo ""
+  echo "Examples:"
+  echo "  db-connection-test"
+  echo "  db-connection-test --latency"
+  exit 0
+fi
+
+CONNECTION_STRING="${DATABASE_URL:-$SUPABASE_DB_URL}"
+
+if [ -z "$CONNECTION_STRING" ]; then
+  echo "✗ DATABASE_URL or SUPABASE_DB_URL environment variable required"
+  exit 1
+fi
+
+echo "Testing database connection..."
+echo ""
+
+if [ "$1" == "--latency" ]; then
+  echo "Measuring latency (10 queries):"
+  for i in {1..10}; do
+    START=$(date +%s%N)
+    psql "$CONNECTION_STRING" -c "SELECT 1" > /dev/null 2>&1
+    END=$(date +%s%N)
+    LATENCY=$(( (END - START) / 1000000 ))
+    echo "  Query $i: ${LATENCY}ms"
+  done
+else
+  psql "$CONNECTION_STRING" -c "SELECT version();" -c "SELECT NOW();"
+  if [ $? -eq 0 ]; then
+    echo ""
+    echo "✓ Connection successful"
+  else
+    echo ""
+    echo "✗ Connection failed"
+    exit 1
+  fi
+fi

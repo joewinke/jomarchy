@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Track build artifact sizes
+# Usage: build-size
+#        build-size --breakdown
+
+if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
+  echo "Usage: build-size [options]"
+  echo ""
+  echo "Options:"
+  echo "  --breakdown    Show size by route/chunk"
+  echo ""
+  echo "Examples:"
+  echo "  build-size"
+  echo "  build-size --breakdown"
+  exit 0
+fi
+
+if [ ! -d ".svelte-kit/output" ]; then
+  echo "✗ No build found. Run 'npm run build' first."
+  exit 1
+fi
+
+echo "=== Build Size Analysis ==="
+echo ""
+
+TOTAL_SIZE=$(du -sh .svelte-kit/output | awk '{print $1}')
+echo "Total build size: $TOTAL_SIZE"
+echo ""
+
+if [ "$1" == "--breakdown" ]; then
+  echo "Size by directory:"
+  du -sh .svelte-kit/output/*/ 2>/dev/null | sort -hr | head -10
+  echo ""
+  echo "Largest files:"
+  find .svelte-kit/output -type f -exec du -h {} + | sort -hr | head -20
+fi

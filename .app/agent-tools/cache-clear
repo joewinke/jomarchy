@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# Clear various caches
+# Usage: cache-clear --local
+#        cache-clear --all
+
+if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
+  echo "Usage: cache-clear [options]"
+  echo ""
+  echo "Options:"
+  echo "  --local       Clear local .svelte-kit cache"
+  echo "  --node        Clear node_modules and reinstall"
+  echo "  --all         Clear all caches"
+  echo ""
+  echo "Examples:"
+  echo "  cache-clear --local"
+  echo "  cache-clear --all"
+  exit 0
+fi
+
+if [ "$1" == "--local" ] || [ "$1" == "--all" ]; then
+  echo "Clearing .svelte-kit cache..."
+  rm -rf .svelte-kit
+  echo "✓ Local cache cleared"
+fi
+
+if [ "$1" == "--node" ] || [ "$1" == "--all" ]; then
+  echo "Clearing node_modules..."
+  rm -rf node_modules package-lock.json
+  echo "Reinstalling dependencies..."
+  npm install
+  echo "✓ Node modules cache cleared and reinstalled"
+fi
+
+if [ -z "$1" ]; then
+  echo "Usage: cache-clear [--local|--node|--all]"
+  echo "Run with --help for more options"
+fi

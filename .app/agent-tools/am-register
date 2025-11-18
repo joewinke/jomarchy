@@ -1,0 +1,50 @@
+#!/usr/bin/env node
+// Register or resume agent identity with Agent Mail
+// Usage: am-register [--name AgentName] [--program claude-code] [--model sonnet-4.5] [--task "Description"]
+
+import { parseArgs, showHelp, amFetch, PROJECT_KEY } from './am-lib.js';
+
+const args = parseArgs(process.argv.slice(2));
+
+if (args.flags.help || args.flags.h) {
+  showHelp('am-register [options]', {
+    '--name': 'Agent name (adjective+noun, omit to auto-generate)',
+    '--program': 'Program name (default: claude-code)',
+    '--model': 'Model name (default: sonnet-4.5)',
+    '--task': 'Task description (default: "")',
+    '--project': 'Project key (default: current directory)',
+    '--json': 'Output as JSON'
+  });
+  process.exit(0);
+}
+
+const body = {
+  project_key: args.flags.project || PROJECT_KEY,
+  program: args.flags.program || 'claude-code',
+  model: args.flags.model || 'sonnet-4.5',
+  task_description: args.flags.task || ''
+};
+
+if (args.flags.name) {
+  body.name = args.flags.name;
+}
+
+try {
+  const result = await amFetch('/api/register_agent', {
+    method: 'POST',
+    body: JSON.stringify(body)
+  });
+
+  if (args.flags.json) {
+    console.log(JSON.stringify(result, null, 2));
+  } else {
+    console.log(`✓ Registered: ${result.name}`);
+    console.log(`  Program: ${result.program}`);
+    console.log(`  Model: ${result.model}`);
+    console.log(`  Task: ${result.task_description || '(none)'}`);
+    console.log(`  Last active: ${result.last_active_ts}`);
+  }
+} catch (error) {
+  console.error('✗ Registration failed:', error.message);
+  process.exit(1);
+}

@@ -1,0 +1,81 @@
+#!/usr/bin/env node
+// Find user and brand information
+// Usage: db-user-lookup user@example.com
+//        db-user-lookup --user-id uuid
+//        db-user-lookup --brand "Brand Name"
+
+import { spawn } from 'child_process';
+
+const args = process.argv.slice(2);
+
+if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
+  console.log('Usage: db-user-lookup <email>');
+  console.log('       db-user-lookup --user-id <uuid>');
+  console.log('       db-user-lookup --brand "<name>"');
+  console.log('\nExamples:');
+  console.log('  db-user-lookup user@example.com');
+  console.log('  db-user-lookup --user-id 123e4567-e89b-12d3-a456-426614174000');
+  console.log('  db-user-lookup --brand "Acme Corp"');
+  process.exit(0);
+}
+
+const connectionString = process.env.DATABASE_URL || process.env.SUPABASE_DB_URL;
+if (!connectionString) {
+  console.error('✗ DATABASE_URL or SUPABASE_DB_URL environment variable required');
+  process.exit(1);
+}
+
+let query;
+
+if (args[0] === '--user-id') {
+  const userId = args[1];
+  query = `
+    SELECT
+      p.id, p.email, p.full_name, p.brand_id,
+      b.name as brand_name,
+      bm.role as brand_role,
+      p.created_at, p.updated_at
+    FROM profiles p
+    LEFT JOIN brands b ON p.brand_id = b.id
+    LEFT JOIN brand_members bm ON p.id = bm.user_id AND p.brand_id = bm.brand_id
+    WHERE p.id = '${userId}'
+  `;
+} else if (args[0] === '--brand') {
+  const brandName = args.slice(1).join(' ').replace(/'/g, "''");
+  query = `
+    SELECT
+      b.id, b.name, b.created_at,
+      COUNT(DISTINCT bm.user_id) as member_count,
+      COUNT(DISTINCT a.id) as asset_count
+    FROM brands b
+    LEFT JOIN brand_members bm ON b.id = bm.brand_id
+    LEFT JOIN assets a ON b.id = a.brand_id
+    WHERE b.name ILIKE '%${brandName}%'
+    GROUP BY b.id, b.name, b.created_at
+    LIMIT 10
+  `;
+} else {
+  const email = args[0];
+  query = `
+    SELECT
+      p.id, p.email, p.full_name, p.brand_id,
+      b.name as brand_name,
+      bm.role as brand_role,
+      p.created_at, p.updated_at
+    FROM profiles p
+    LEFT JOIN brands b ON p.brand_id = b.id
+    LEFT JOIN brand_members bm ON p.id = bm.user_id AND p.brand_id = bm.brand_id
+    WHERE p.email = '${email}'
+  `;
+}
+
+const psql = spawn('psql', [connectionString, '-c', query], { stdio: 'inherit' });
+
+psql.on('error', (error) => {
+  console.error('✗ Failed to execute psql:', error.message);
+  process.exit(1);
+});
+
+psql.on('close', (code) => {
+  process.exit(code);
+});

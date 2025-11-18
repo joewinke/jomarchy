@@ -1,0 +1,60 @@
+#!/usr/bin/env node
+// Quick database queries with automatic LIMIT protection
+// Usage: db-query "SELECT * FROM assets WHERE brand_id = '...' LIMIT 5"
+
+import { spawn } from 'child_process';
+
+const query = process.argv.slice(2).join(' ');
+
+if (!query || query.includes('--help') || query.includes('-h')) {
+  console.log('Usage: db-query "<SQL query>"');
+  console.log('\nOptions:');
+  console.log('  --json    Output as JSON (default: table format)');
+  console.log('  --csv     Output as CSV');
+  console.log('\nExamples:');
+  console.log('  db-query "SELECT * FROM assets LIMIT 5"');
+  console.log('  db-query "SELECT count(*) FROM users" --json');
+  console.log('\nSafety: Adds LIMIT 100 if no LIMIT specified');
+  process.exit(0);
+}
+
+const connectionString = process.env.DATABASE_URL || process.env.SUPABASE_DB_URL;
+if (!connectionString) {
+  console.error('✗ DATABASE_URL or SUPABASE_DB_URL environment variable required');
+  process.exit(1);
+}
+
+// Check for format flags
+const isJson = process.argv.includes('--json');
+const isCsv = process.argv.includes('--csv');
+const cleanQuery = query.replace(/--json|--csv/g, '').trim();
+
+// Add LIMIT protection if not present and not a mutation
+const needsLimit = !cleanQuery.match(/LIMIT\s+\d+/i) &&
+                   !cleanQuery.match(/^(INSERT|UPDATE|DELETE|CREATE|ALTER|DROP)/i);
+
+const finalQuery = needsLimit ? `${cleanQuery} LIMIT 100` : cleanQuery;
+
+// Build psql command
+const psqlArgs = [connectionString, '-c', finalQuery];
+
+if (isJson) {
+  psqlArgs.push('--json');
+} else if (isCsv) {
+  psqlArgs.push('--csv');
+} else {
+  psqlArgs.push('-x'); // Expanded display for readability
+}
+
+// Execute psql
+const psql = spawn('psql', psqlArgs, { stdio: 'inherit' });
+
+psql.on('error', (error) => {
+  console.error('✗ Failed to execute psql:', error.message);
+  console.error('Make sure PostgreSQL client tools are installed');
+  process.exit(1);
+});
+
+psql.on('close', (code) => {
+  process.exit(code);
+});

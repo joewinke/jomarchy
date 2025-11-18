@@ -232,6 +232,154 @@ Configures Claude Code with MCP servers for enhanced capabilities.
 
 ---
 
+## 🤖 Agentic Coding Environment (DEV Profile)
+
+**A synergistic multi-agent development setup** combining multiple AI coding tools, coordination systems, and lightweight utilities for maximum productivity.
+
+### Philosophy: Token-Efficient Agent Tools
+
+Following [What if you don't need MCP?](https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/) by Mario Zechner - simple bash tools achieve 80x token reduction versus MCP servers.
+
+**Token Savings:** 32,425 tokens (vs using MCP servers for equivalent functionality)
+
+### Components
+
+#### 1. **Claude Code** (Already Installed)
+Anthropic's official CLI for AI pair programming.
+- Command: `cl` (alias with agent tools loaded)
+- Uses: Primary agentic coding interface
+- Documentation: https://code.claude.com/docs
+
+#### 2. **OpenCode** (Optional)
+Alternative agentic CLI with TypeScript/JavaScript focus.
+- Command: `opencode`
+- Uses: Alternative to Claude Code, good for front-end work
+- Documentation: https://opencode.ai/docs
+- **Installation:** `scripts/install/opencode.sh`
+
+#### 3. **Agent Mail** (Multi-Agent Coordination)
+Message-passing system for agents to coordinate asynchronously.
+- Service: `systemctl --user status agent-mail`
+- URL: http://localhost:8765
+- Uses:
+  - Agents communicate across sessions
+  - File reservation system (prevents conflicts)
+  - Thread-based conversations with audit trail
+  - Searchable message archive
+- **Installation:** `scripts/install/agent-mail.sh`
+
+#### 4. **Beads** (Dependency-Aware Task Planning)
+Lightweight issue database with dependency tracking.
+- Command: `bd`
+- Uses:
+  - `bd ready` - Show tasks ready to work on
+  - `bd create` - Create new tasks
+  - `bd status <id>` - Check task status
+  - Agents can query and update task states
+- Integration: Use `bd-###` as Agent Mail `thread_id` for traceability
+- **Installation:** `scripts/install/beads.sh`
+
+#### 5. **Agent Tools** (49 Bash Tools)
+Lightweight command-line tools for common operations.
+
+**Categories:**
+- **Agent Mail (11):** am-register, am-inbox, am-send, am-reply, am-ack, am-reserve, am-release, etc.
+- **Database (4):** db-query, db-user-lookup, db-sessions, db-schema
+- **Media (4):** asset-info, video-status, storage-cleanup, media-validate
+- **Development (5):** type-check-fast, lint-staged, migration-status, component-deps, route-list
+- **Monitoring (5):** edge-logs, quota-check, job-monitor, error-log, perf-check
+- **Team (3):** user-activity, brand-stats, invite-status
+- **Deployment (4):** env-check, build-size, db-connection-test, cache-clear
+- **AI/Testing (6):** generation-history, test-route, prompt-test, model-compare, etc.
+- **Browser (7):** browser-start.js, browser-nav.js, browser-eval.js, browser-screenshot.js, etc.
+
+**Location:** `~/code/jomarchy/.app/agent-tools/`
+
+**Usage:**
+```bash
+# Tools available when using 'cl' alias
+db-query "SELECT * FROM users LIMIT 5"
+am-inbox AgentName --unread
+edge-logs function-name --follow
+video-status --all-pending
+
+# Quick help
+agent-tools-help
+```
+
+**Installation:** `scripts/install/agent-tools.sh`
+
+### The Synergy
+
+These tools work together to create a powerful development workflow:
+
+1. **Pick Work** (Beads)
+   ```bash
+   bd ready --json  # Get highest priority task
+   ```
+
+2. **Reserve Files** (Agent Mail)
+   ```bash
+   am-reserve src/**/*.svelte --agent AgentName --ttl 3600 --reason "bd-123"
+   ```
+
+3. **Code with AI** (Claude Code / OpenCode)
+   ```bash
+   cl  # Claude with agent tools loaded
+   # or
+   opencode
+   ```
+
+4. **Coordinate** (Agent Mail)
+   ```bash
+   am-send "Status update" "Completed auth flow" --from Agent1 --to Agent2 --thread bd-123
+   ```
+
+5. **Monitor** (Agent Tools)
+   ```bash
+   edge-logs auth-function --errors
+   db-query "SELECT COUNT(*) FROM users WHERE created_at > NOW() - INTERVAL '1 hour'"
+   ```
+
+6. **Complete** (Beads)
+   ```bash
+   bd close bd-123 --reason "Completed"
+   am-release src/**/*.svelte --agent AgentName
+   ```
+
+### Cross-CLI Compatibility
+
+Agent tools work with ANY agentic CLI:
+- ✅ Claude Code (via `cl` alias)
+- ✅ OpenCode (symlinked to `~/.config/opencode/tool/`)
+- ✅ Cursor (add to settings)
+- ✅ Aider (tools in PATH)
+
+### Configuration
+
+All tools configured via `~/.bashrc`:
+```bash
+# Agent tools path
+export AGENT_TOOLS_PATH="~/code/jomarchy/.app/agent-tools"
+
+# Agent Mail
+export AGENT_MAIL_URL="http://localhost:8765"
+
+# Database (configure for your project)
+export DATABASE_URL="postgresql://..."
+
+# Alias: Claude Code with tools
+alias cl="PATH=$PATH:$AGENT_TOOLS_PATH DATABASE_URL=\"$DATABASE_URL\" claude"
+```
+
+### Documentation
+
+Full agent tools reference: `~/code/jomarchy/.app/agent-tools/README.md`
+
+Inject into agent context: `@~/code/jomarchy/.app/agent-tools/README.md`
+
+---
+
 ## 🚀 Claude Desktop Shortcuts (2 shortcuts)
 
 Desktop shortcuts matching terminal aliases:

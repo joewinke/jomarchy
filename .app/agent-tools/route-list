@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# List all SvelteKit routes
+# Usage: route-list
+#        route-list --api
+#        route-list --pages
+
+if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
+  echo "Usage: route-list [options]"
+  echo ""
+  echo "Options:"
+  echo "  --api      Only API routes (+server.ts)"
+  echo "  --pages    Only page routes (+page.svelte)"
+  echo "  --layouts  Only layout files"
+  echo ""
+  echo "Examples:"
+  echo "  route-list           # All routes"
+  echo "  route-list --api     # Just API routes"
+  echo "  route-list --pages   # Just page routes"
+  exit 0
+fi
+
+if [ "$1" == "--api" ]; then
+  echo "API Routes:"
+  find src/routes -name "+server.ts" -o -name "+server.js" | sort | sed 's|src/routes||;s|/+server\.[jt]s||;s|^|  /|'
+elif [ "$1" == "--pages" ]; then
+  echo "Page Routes:"
+  find src/routes -name "+page.svelte" | sort | sed 's|src/routes||;s|/+page\.svelte||;s|^|  /|'
+elif [ "$1" == "--layouts" ]; then
+  echo "Layout Files:"
+  find src/routes -name "+layout.svelte" -o -name "+layout.ts" -o -name "+layout.js" | sort | sed 's|src/routes||;s|^|  |'
+else
+  echo "=== SvelteKit Routes ==="
+  echo ""
+  echo "Pages:"
+  find src/routes -name "+page.svelte" | sort | sed 's|src/routes||;s|/+page\.svelte||;s|^|  /|'
+  echo ""
+  echo "API Routes:"
+  find src/routes -name "+server.ts" -o -name "+server.js" | sort | sed 's|src/routes||;s|/+server\.[jt]s||;s|^|  /|'
+  echo ""
+  echo "Layouts:"
+  find src/routes -name "+layout.svelte" | sort | sed 's|src/routes||;s|^|  |'
+fi

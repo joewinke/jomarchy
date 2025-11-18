@@ -1,0 +1,94 @@
+#!/usr/bin/env node
+// View user activity patterns
+// Usage: user-activity user@example.com
+//        user-activity --inactive 30d
+//        user-activity --brand <brand_id> --summary
+
+import { spawn } from 'child_process';
+
+const args = process.argv.slice(2);
+
+if (args.includes('--help') || args.includes('-h')) {
+  console.log('Usage: user-activity <email>');
+  console.log('       user-activity --inactive <days>d');
+  console.log('       user-activity --brand <id> --summary');
+  console.log('\nExamples:');
+  console.log('  user-activity user@example.com');
+  console.log('  user-activity --inactive 30d');
+  console.log('  user-activity --brand 123e4567 --summary');
+  process.exit(0);
+}
+
+const connectionString = process.env.DATABASE_URL || process.env.SUPABASE_DB_URL;
+if (!connectionString) {
+  console.error('✗ DATABASE_URL required');
+  process.exit(1);
+}
+
+let query;
+
+if (args[0] === '--inactive') {
+  const days = parseInt(args[1]);
+  query = `
+    SELECT
+      p.email, p.full_name,
+      MAX(cs.updated_at) as last_session,
+      NOW() - MAX(cs.updated_at) as inactive_for
+    FROM profiles p
+    LEFT JOIN chat_sessions cs ON p.id = cs.user_id
+    GROUP BY p.id, p.email, p.full_name
+    HAVING MAX(cs.updated_at) < NOW() - INTERVAL '${days} days'
+    OR MAX(cs.updated_at) IS NULL
+    ORDER BY last_session DESC NULLS LAST
+    LIMIT 50
+  `;
+} else if (args[0] === '--brand') {
+  const brandId = args[1];
+  const isSummary = args.includes('--summary');
+
+  if (isSummary) {
+    query = `
+      SELECT
+        COUNT(DISTINCT p.id) as total_users,
+        COUNT(DISTINCT cs.id) as total_sessions,
+        COUNT(DISTINCT a.id) as total_assets,
+        MAX(cs.updated_at) as last_activity
+      FROM profiles p
+      LEFT JOIN chat_sessions cs ON p.id = cs.user_id
+      LEFT JOIN assets a ON p.id = a.created_by
+      WHERE p.brand_id = '${brandId}'
+    `;
+  } else {
+    query = `
+      SELECT
+        p.email, p.full_name,
+        COUNT(DISTINCT cs.id) as sessions,
+        COUNT(DISTINCT a.id) as assets,
+        MAX(cs.updated_at) as last_active
+      FROM profiles p
+      LEFT JOIN chat_sessions cs ON p.id = cs.user_id
+      LEFT JOIN assets a ON p.id = a.created_by
+      WHERE p.brand_id = '${brandId}'
+      GROUP BY p.id, p.email, p.full_name
+      ORDER BY last_active DESC
+    `;
+  }
+} else {
+  const email = args[0];
+  query = `
+    SELECT
+      p.*,
+      COUNT(DISTINCT cs.id) as session_count,
+      COUNT(DISTINCT a.id) as asset_count,
+      MAX(cs.updated_at) as last_session
+    FROM profiles p
+    LEFT JOIN chat_sessions cs ON p.id = cs.user_id
+    LEFT JOIN assets a ON p.id = a.created_by
+    WHERE p.email = '${email}'
+    GROUP BY p.id
+  `;
+}
+
+const psql = spawn('psql', [connectionString, '-c', query, '-x'], { stdio: 'inherit' });
+psql.on('error', (e) => { console.error('✗', e.message); process.exit(1); });
+psql.on('close', (code) => process.exit(code));

@@ -1,0 +1,9 @@
+{
+  "name": "chimaro-agent-tools",
+  "version": "1.0.0",
+  "description": "Lightweight bash-style tools for AI agents - minimal context overhead",
+  "type": "module",
+  "dependencies": {
+    "puppeteer-core": "^23.0.0"
+  }
+}

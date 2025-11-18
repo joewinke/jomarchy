@@ -1,0 +1,68 @@
+#!/usr/bin/env node
+// Reserve file paths for editing
+// Usage: am-reserve <paths...> --agent <AgentName> [--ttl 3600]
+
+import { parseArgs, showHelp, amFetch, PROJECT_KEY } from './am-lib.js';
+
+const args = parseArgs(process.argv.slice(2));
+
+if (args.flags.help || args.flags.h) {
+  showHelp('am-reserve <paths...> [options]', {
+    '--agent': 'Agent name (required)',
+    '--ttl': 'Time to live in seconds (default: 3600)',
+    '--shared': 'Non-exclusive reservation',
+    '--reason': 'Reason for reservation',
+    '--project': 'Project key (default: current directory)',
+    '--json': 'Output as JSON'
+  });
+  process.exit(0);
+}
+
+const paths = args._;
+
+if (paths.length === 0) {
+  console.error('✗ At least one path required');
+  console.error('Usage: am-reserve <paths...> --agent <AgentName>');
+  process.exit(1);
+}
+
+if (!args.flags.agent) {
+  console.error('✗ --agent required');
+  process.exit(1);
+}
+
+try {
+  const result = await amFetch('/api/file_reservation_paths', {
+    method: 'POST',
+    body: JSON.stringify({
+      project_key: PROJECT_KEY,
+      agent_name: args.flags.agent,
+      paths,
+      ttl_seconds: parseInt(args.flags.ttl) || 3600,
+      exclusive: !args.flags.shared,
+      reason: args.flags.reason || ''
+    })
+  });
+
+  if (args.flags.json) {
+    console.log(JSON.stringify(result, null, 2));
+  } else {
+    if (result.granted && result.granted.length > 0) {
+      console.log(`✓ Reserved ${result.granted.length} paths:`);
+      result.granted.forEach(r => {
+        console.log(`  ${r.path_pattern} (expires: ${new Date(r.expires_ts).toLocaleString()})`);
+      });
+    }
+
+    if (result.conflicts && result.conflicts.length > 0) {
+      console.log(`\n✗ ${result.conflicts.length} conflicts:`);
+      result.conflicts.forEach(c => {
+        console.log(`  ${c.path}`);
+        c.holders.forEach(h => console.log(`    Held by: ${h.agent_name}`));
+      });
+    }
+  }
+} catch (error) {
+  console.error('✗ Reservation failed:', error.message);
+  process.exit(1);
+}

@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Compare database snapshots
+# Usage: snapshot-compare --before before.json --after after.json
+
+if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
+  echo "Usage: snapshot-compare --before <file> --after <file>"
+  echo "       snapshot-compare --live --tables <table1,table2>"
+  echo ""
+  echo "Examples:"
+  echo "  snapshot-compare --before before.json --after after.json"
+  echo "  snapshot-compare --live --tables assets,video_batches"
+  exit 0
+fi
+
+echo "⚠️  Snapshot comparison not yet implemented"
+echo ""
+echo "Planned functionality:"
+echo "1. Take schema/data snapshots"
+echo "2. Show differences (added, removed, changed)"
+echo "3. Useful for migration testing"
+echo "4. Can compare against live database"
+exit 1
