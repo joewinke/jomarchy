@@ -359,3 +359,25 @@ The integrated profile manager lets you:
 The profiles in this repository are designed to be universal and work on any Omarchy system.
 
 For hardware-specific configurations (monitor setups, printer drivers, etc.), you can create your own machine-specific profiles following the same pattern as the existing profiles in `scripts/install/`.
+
+---
+
+## 🤖 Developer Tools (AI-Assisted Development)
+
+Jomarchy includes **43 lightweight bash tools** in `tools/` for AI-assisted development workflows:
+
+**Agent Mail Tools:** Coordinate multi-agent workflows with messaging and file reservations
+**Browser Tools:** Chrome DevTools Protocol automation (navigation, evaluation, screenshots)
+**Additional Tools:** Database utilities, monitoring, media management
+
+**Task Management with Beads:**
+- This repository uses [Beads](https://github.com/steveyegge/beads) for dependency-aware task planning
+- Tracked tasks for browser tool development (8 priority tasks in `.beads/`)
+- Multi-project support: Use Chimaro's dashboard to view tasks across all projects
+
+**For AI Assistants:**
+- Full documentation in `CLAUDE.md`
+- All tools have `--help` flags
+- Integration patterns with Agent Mail + Beads
+
+**Philosophy:** Following [What if you don't need MCP?](https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/) - simple bash tools save ~32,000 tokens vs MCP servers.

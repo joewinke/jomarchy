@@ -36,12 +36,6 @@ SELECTED_COMPONENTS=$(gum choose --no-limit \
     "  GitHub CLI" \
     "  Stripe CLI" \
     "  Supabase CLI" \
-    "━━━ AGENTIC CODING ━━━" \
-    "  Claude Code (already installed)" \
-    "  OpenCode (alternative CLI)" \
-    "  Agent Mail (multi-agent coordination)" \
-    "  Beads (dependency-aware task planning)" \
-    "  Agent Tools (49 bash tools for AI agents)" \
     "━━━ WEB APPS ━━━" \
     "  GitHub" \
     "  Cloudflare" \
@@ -105,35 +99,6 @@ if echo "$SELECTED_COMPONENTS" | grep -q "  Daily Claude quote timer"; then
     fi
 fi
 
-# Agentic Coding Setup
-if echo "$SELECTED_COMPONENTS" | grep -q "  OpenCode"; then
-    if [ -f "$SCRIPT_DIR/opencode.sh" ]; then
-        echo -e "${GREEN}→${NC} Running opencode.sh..."
-        bash "$SCRIPT_DIR/opencode.sh"
-    fi
-fi
-
-if echo "$SELECTED_COMPONENTS" | grep -q "  Agent Mail"; then
-    if [ -f "$SCRIPT_DIR/agent-mail.sh" ]; then
-        echo -e "${GREEN}→${NC} Running agent-mail.sh..."
-        bash "$SCRIPT_DIR/agent-mail.sh"
-    fi
-fi
-
-if echo "$SELECTED_COMPONENTS" | grep -q "  Beads"; then
-    if [ -f "$SCRIPT_DIR/beads.sh" ]; then
-        echo -e "${GREEN}→${NC} Running beads.sh..."
-        bash "$SCRIPT_DIR/beads.sh"
-    fi
-fi
-
-if echo "$SELECTED_COMPONENTS" | grep -q "  Agent Tools"; then
-    if [ -f "$SCRIPT_DIR/agent-tools.sh" ]; then
-        echo -e "${GREEN}→${NC} Running agent-tools.sh..."
-        bash "$SCRIPT_DIR/agent-tools.sh"
-    fi
-fi
-
 echo ""
 echo -e "${GREEN}=========================================${NC}"
 echo -e "${GREEN}JOMARCHY-DEV Installation Complete!${NC}"
@@ -151,22 +116,6 @@ echo ""
 echo "DEV PROFILE:"
 echo "  ✓ Dev packages (VSCodium, Node.js, npm)"
 echo "  ✓ Dev tools (GitHub CLI, Stripe CLI, Supabase CLI)"
-echo ""
-echo "AGENTIC CODING ENVIRONMENT (if selected):"
-echo "  ✓ Claude Code (AI pair programming)"
-echo "  ✓ OpenCode (alternative agentic CLI)"
-echo "  ✓ Agent Mail (multi-agent coordination server)"
-echo "  ✓ Beads (dependency-aware task planning)"
-echo "  ✓ Agent Tools (49 bash tools: db, media, monitoring, etc.)"
-echo ""
-echo "  Synergy: These tools work together to create a powerful"
-echo "  multi-agent development environment with:"
-echo "    • Cross-CLI tool sharing (Claude, OpenCode, Cursor, Aider)"
-echo "    • Agent coordination via Agent Mail"
-echo "    • Task tracking with Beads"
-echo "    • Efficient bash tools (32k+ token savings vs MCP)"
-echo ""
-echo "OTHER:"
 echo "  ✓ GitHub repository selection (your choice)"
 echo "  ✓ Project shortcuts (automatically generated from your repos)"
 echo "  ✓ Development web apps (GitHub, Cloudflare, Supabase)"
@@ -177,7 +126,14 @@ echo ""
 echo "Next steps:"
 echo ""
 echo "1. Restart your shell: source ~/.bashrc"
-echo "2. Test agentic tools: cl (Claude), bd list (Beads), agent-tools-help"
-echo "3. Check Agent Mail: systemctl --user status agent-mail"
-echo "4. Run 'jomarchy' to access the management menu"
+echo "2. Test Claude CLI: cl (opens Claude in terminal)"
+echo "3. Run 'jomarchy' to access the management menu"
+echo ""
+echo "Want AI-assisted development tools?"
+echo "  Install the AGENT-TOOLS profile:"
+echo "    • Agent Mail (multi-agent coordination)"
+echo "    • Beads (dependency-aware task planning)"
+echo "    • 43 bash agent tools"
+echo "    • Global + per-repo configuration"
+echo "  Run: jomarchy  (then select 'Install Additional Profiles')"
 echo ""
