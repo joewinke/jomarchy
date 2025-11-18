@@ -169,17 +169,25 @@ bd close bd-123 --reason "Completed"
 am-release src/**/*.ts --agent $AGENT_NAME
 ```
 
-### When to use bash tools vs MCP
+### Why Bash Tools (Not MCP)
 
-**Use bash tools when:**
-- Simple operations (check inbox, query database, monitor logs)
-- Token budget is tight (saves ~30k tokens)
-- Want bash composability (pipes, jq filtering, redirects)
+These tools **replace MCP servers** entirely, providing:
+- **Massive token savings**: 32,425 tokens saved (80x reduction)
+- **Bash composability**: Use pipes, jq, redirects, xargs
+- **Cross-CLI compatibility**: Works with Claude Code, OpenCode, Cursor, Aider
+- **Zero overhead**: Just executables, no server startup
 
-**Use MCP when:**
-- Complex macros (`macro_start_session`, `macro_prepare_thread`)
-- Structured validation needed
-- Stateful operations
+Example of bash composability:
+\`\`\`bash
+# Chain tools together
+am-inbox AgentName --unread --json | jq '.[] | select(.importance=="urgent")'
+
+# Pipe to other tools
+db-query "SELECT id FROM users WHERE role='admin'" | xargs -I {} db-user-lookup {}
+
+# Save to file and process
+edge-logs video-gen --errors > errors.log && grep "timeout" errors.log
+\`\`\`
 
 ### Full Documentation
 

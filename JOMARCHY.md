@@ -236,11 +236,17 @@ Configures Claude Code with MCP servers for enhanced capabilities.
 
 **A synergistic multi-agent development setup** combining multiple AI coding tools, coordination systems, and lightweight utilities for maximum productivity.
 
-### Philosophy: Token-Efficient Agent Tools
+### Philosophy: Bash Tools Over MCP
 
-Following [What if you don't need MCP?](https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/) by Mario Zechner - simple bash tools achieve 80x token reduction versus MCP servers.
+Following [What if you don't need MCP?](https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/) by Mario Zechner - simple bash tools **replace MCP servers entirely** with 80x token reduction.
 
-**Token Savings:** 32,425 tokens (vs using MCP servers for equivalent functionality)
+**Token Savings:** 32,425 tokens saved by eliminating MCP server overhead
+
+**Why bash over MCP:**
+- Composability: `tool1 | jq | tool2 > output.json`
+- Cross-CLI: Same tools work in Claude Code, OpenCode, Cursor, Aider
+- Zero startup: No server initialization, just execute
+- Portable: Tools are simple bash/node scripts
 
 ### Components
 
