@@ -370,6 +370,19 @@ export DATABASE_URL="postgresql://..."
 
 # Alias: Claude Code with tools
 alias cl="PATH=$PATH:$AGENT_TOOLS_PATH DATABASE_URL=\"$DATABASE_URL\" claude"
+
+# Project-specific functions (auto-generated from ~/code/)
+ccchim() {
+    (cd ~/code/chimaro && PATH=$PATH:$AGENT_TOOLS_PATH DATABASE_URL="$DATABASE_URL" AGENT_MAIL_URL="$AGENT_MAIL_URL" claude --dangerously-skip-permissions "$@")
+}
+# ... functions for each project in ~/code/
+```
+
+**Project Functions Support Arguments:**
+```bash
+ccchim          # Open chimaro with agent tools
+ccchim -r       # Resume last chimaro session
+ccchim --help   # Show Claude help in chimaro context
 ```
 
 ### Documentation

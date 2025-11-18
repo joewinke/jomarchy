@@ -82,6 +82,40 @@ EOF
 
 echo "✓ Configuration added to .bashrc"
 
+# Create project-specific functions
+echo ""
+echo "→ Creating project-specific Claude functions..."
+
+# Scan for projects in ~/code/
+if [ -d "$HOME/code" ]; then
+    PROJECTS=$(find "$HOME/code" -maxdepth 1 -type d -not -name "code" -not -name ".*" -exec basename {} \; | sort)
+
+    if [ -n "$PROJECTS" ]; then
+        cat >> "$BASHRC" <<'FUNCTIONS_START'
+
+# Project-specific Claude Code functions with agent tools (support arguments)
+# Usage: ccc -r (resume), ccc --help, etc.
+
+FUNCTIONS_START
+
+        for project in $PROJECTS; do
+            # Create short alias name (first letter of each word, or first 3-4 chars)
+            shortname=$(echo "$project" | tr '[:upper:]' '[:lower:]' | head -c 4)
+
+            cat >> "$BASHRC" <<FUNC_END
+cc${shortname}() {
+    (cd ~/code/${project} && PATH=\$PATH:\$AGENT_TOOLS_PATH DATABASE_URL="\$DATABASE_URL" AGENT_MAIL_URL="\$AGENT_MAIL_URL" claude --dangerously-skip-permissions "\$@")
+}
+
+FUNC_END
+            echo "  ✓ cc${shortname} → ~/code/${project}"
+        done
+
+        echo ""
+        echo "✓ Created functions for $(echo "$PROJECTS" | wc -w) projects"
+    fi
+fi
+
 # Verify a few key tools
 echo ""
 echo "→ Verifying agent tools..."
@@ -110,5 +144,13 @@ echo ""
 echo "Usage:"
 echo "  cl                     - Launch Claude Code with tools available"
 echo "  agent-tools-help       - View full documentation"
+echo ""
+echo "Project-specific functions (auto-generated from ~/code/):"
+if [ -d "$HOME/code" ]; then
+    for project in $(find "$HOME/code" -maxdepth 1 -type d -not -name "code" -not -name ".*" -exec basename {} \; | sort); do
+        shortname=$(echo "$project" | tr '[:upper:]' '[:lower:]' | head -c 4)
+        echo "  cc${shortname}         - Claude in ~/code/${project} (supports args like -r)"
+    done
+fi
 echo ""
 echo "Reload your shell: source ~/.bashrc"
