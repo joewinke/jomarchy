@@ -4,7 +4,7 @@
 
 set -e
 
-AGENT_TOOLS_DIR="$HOME/code/jomarchy/.app/agent-tools"
+AGENT_TOOLS_DIR="$HOME/code/jomarchy/tools"
 BASHRC="$HOME/.bashrc"
 
 echo "=== Configuring Agent Tools ==="
@@ -101,7 +101,7 @@ if [ -f "$CLAUDE_MD" ]; then
 
 Philosophy: Following [What if you don't need MCP?](https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/) by Mario Zechner - simple bash tools achieve 80x token reduction.
 
-**Location:** `~/code/jomarchy/.app/agent-tools/`
+**Location:** `~/code/jomarchy/tools/`
 
 ### Tool Categories
 
@@ -191,7 +191,7 @@ edge-logs video-gen --errors > errors.log && grep "timeout" errors.log
 
 ### Full Documentation
 
-For complete tool reference: `@~/code/jomarchy/.app/agent-tools/README.md`
+For complete tool reference: `@~/code/jomarchy/tools/README.md`
 
 This injects full docs into your context when needed (Mario's approach - saves tokens vs auto-discovery).
 AGENT_TOOLS_DOC

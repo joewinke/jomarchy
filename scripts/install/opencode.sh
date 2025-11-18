@@ -41,7 +41,7 @@ mkdir -p "$CONFIG_DIR"
 mkdir -p "$CONFIG_DIR/tool"
 
 # Create symlinks to shared agent tools
-AGENT_TOOLS_DIR="$HOME/code/jomarchy/.app/agent-tools"
+AGENT_TOOLS_DIR="$HOME/code/jomarchy/tools"
 echo "→ Creating symlinks to shared agent tools..."
 
 # Core agent tools that work across CLIs

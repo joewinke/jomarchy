@@ -285,32 +285,38 @@ Lightweight issue database with dependency tracking.
 - Integration: Use `bd-###` as Agent Mail `thread_id` for traceability
 - **Installation:** `scripts/install/beads.sh`
 
-#### 5. **Agent Tools** (49 Bash Tools)
+#### 5. **Agent Tools** (35 Generic + Project-Specific)
 Lightweight command-line tools for common operations.
 
-**Categories:**
+**Generic Tools** (available in all projects):
 - **Agent Mail (11):** am-register, am-inbox, am-send, am-reply, am-ack, am-reserve, am-release, etc.
-- **Database (4):** db-query, db-user-lookup, db-sessions, db-schema
-- **Media (4):** asset-info, video-status, storage-cleanup, media-validate
-- **Development (5):** type-check-fast, lint-staged, migration-status, component-deps, route-list
+- **Database (3):** db-query, db-schema, db-sessions
+- **Development (7):** type-check-fast, lint-staged, migration-status, component-deps, route-list, build-size, env-check
 - **Monitoring (5):** edge-logs, quota-check, job-monitor, error-log, perf-check
-- **Team (3):** user-activity, brand-stats, invite-status
-- **Deployment (4):** env-check, build-size, db-connection-test, cache-clear
-- **AI/Testing (6):** generation-history, test-route, prompt-test, model-compare, etc.
+- **Deployment (2):** db-connection-test, cache-clear
 - **Browser (7):** browser-start.js, browser-nav.js, browser-eval.js, browser-screenshot.js, etc.
 
-**Location:** `~/code/jomarchy/.app/agent-tools/`
+**Location:** `~/code/jomarchy/tools/`
+
+**Project-Specific Tools Pattern:**
+Projects can add custom tools in `.claude/tools/` which are automatically available when working in that project:
+```
+~/code/myproject/.claude/tools/
+  ├── project-specific-tool-1
+  └── project-specific-tool-2
+```
+
+Your `.bashrc` launcher adds both generic and project-specific tools to PATH automatically.
 
 **Usage:**
 ```bash
-# Tools available when using 'cl' alias
+# Generic tools work everywhere
 db-query "SELECT * FROM users LIMIT 5"
 am-inbox AgentName --unread
 edge-logs function-name --follow
-video-status --all-pending
 
-# Quick help
-agent-tools-help
+# Project-specific tools only work in their project
+# (if defined in that project's .claude/tools/)
 ```
 
 **Installation:** `scripts/install/agent-tools.sh`
@@ -366,7 +372,7 @@ Agent tools work with ANY agentic CLI:
 All tools configured via `~/.bashrc`:
 ```bash
 # Agent tools path
-export AGENT_TOOLS_PATH="~/code/jomarchy/.app/agent-tools"
+export AGENT_TOOLS_PATH="~/code/jomarchy/tools"
 
 # Agent Mail
 export AGENT_MAIL_URL="http://localhost:8765"
@@ -393,9 +399,9 @@ ccchim --help   # Show Claude help in chimaro context
 
 ### Documentation
 
-Full agent tools reference: `~/code/jomarchy/.app/agent-tools/README.md`
+Full agent tools reference: `~/code/jomarchy/tools/README.md`
 
-Inject into agent context: `@~/code/jomarchy/.app/agent-tools/README.md`
+Inject into agent context: `@~/code/jomarchy/tools/README.md`
 
 ---
 
