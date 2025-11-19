@@ -14,137 +14,221 @@
 '·:...............................................................................................:·'
 ```
 
-# Jomarchy - Power Tools & Web App Manager
+# Jomarchy - Omarchy Linux Power Tools
 
-**Jomarchy** is a profile-based installation system for Omarchy Linux. Select the profiles you want and transform a fresh installation into a fully-configured workstation.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Profiles](https://img.shields.io/badge/Profiles-5-blue)](#-what-is-jomarchy)
+[![Tools](https://img.shields.io/badge/Tools-43-purple)](#-developer-tools-ai-assisted-development)
+[![Beads](https://img.shields.io/badge/Beads-Enabled-orange)](https://github.com/steveyegge/beads)
+[![Sister Project](https://img.shields.io/badge/Sister-jomarchy--agent--tools-green)](https://github.com/joewinke/jomarchy-agent-tools)
 
----
+**Transform a fresh Omarchy Linux installation into a fully-configured workstation with one command.**
 
-## 🎯 Quick Start
-
-### Fresh Omarchy Install (One Command)
-
-As soon as wifi is connected, run:
+Profile-based installation system (BASE + DEV + MEDIA + FINANCE + COMMUNICATIONS) with intelligent workspace detection, theme-aware customizations, and integrated web app management. Plus 43 bash tools for AI-assisted development.
 
 ```bash
 bash <(curl -sL https://raw.githubusercontent.com/joewinke/jomarchy/master/jomarchy.sh)
 ```
 
-This will:
-1. Install git if needed
-2. Clone the repository to ~/code/jomarchy
-3. Present an interactive profile selector
-4. Let you choose which profiles to install (BASE, DEV, MEDIA, FINANCE, COMMUNICATIONS)
-5. Install the jomarchy command for post-installation management
-
-> **✨ Web App Profile Manager:** After installation, use `jomarchy --profiles` to organize your web apps by Chrome profile (work vs personal, etc.)
-
 ---
 
-## 📚 What Is Jomarchy?
+## ⚡ Quick Start
 
-**Jomarchy** is a profile-based installation system for Omarchy Linux. Select the profiles you want:
+```bash
+# 1. Install (one command, requires wifi)
+bash <(curl -sL https://raw.githubusercontent.com/joewinke/jomarchy/master/jomarchy.sh)
 
-**Core Profile:**
-- **BASE**: Universal configuration for any Omarchy system (packages, customizations, web apps)
+# 2. Select profiles interactively
+# ☑ BASE (recommended)
+# ☐ DEV (software development)
+# ☐ MEDIA (creative work)
+# ☐ FINANCE (banking/accounting)
+# ☐ COMMUNICATIONS (messaging)
 
-**Optional Profiles:**
-- **DEV**: Software development tools and GitHub integration
-- **MEDIA**: Creative tools (graphics, video, 3D, audio)
-- **FINANCE**: Banking and accounting web apps
-- **COMMUNICATIONS**: Messaging and collaboration apps
+# 3. Restart shell
+source ~/.bashrc
 
-Each profile uses interactive `gum` menus to let you select exactly which components to install. Everything is pre-selected by default, but you can deselect items you don't want.
-
----
-
----
-
-## 🔄 Installation Model
-
-```
-Select Profiles (Multi-select with gum):
-  ☑ BASE (recommended for everyone)
-  ☐ DEV (software development)
-  ☐ MEDIA (creative work)
-  ☐ FINANCE (banking/accounting)
-  ☐ COMMUNICATIONS (messaging/collaboration)
+# 4. Manage post-installation
+jomarchy --profiles  # Organize web apps by Chrome profile
 ```
 
-Each profile is modular and independent. Install any combination you need:
-- **BASE only** = Complete minimal system
-- **BASE + DEV** = Development workstation
-- **BASE + MEDIA** = Creative workstation
-- **All profiles** = Full-featured system
+**Configured workstation in 5 minutes!** The installer presents interactive menus, installs your selected profiles, and sets up the `jomarchy` command for ongoing management.
 
 ---
 
-## 💻 Manual Installation
+## What Is Jomarchy?
 
-### Already Have Repository Cloned
+Jomarchy is a **profile-based installation system** for Omarchy Linux that transforms a minimal system into a fully-configured workstation:
+
+- **Choose** from 5 modular profiles (BASE, DEV, MEDIA, FINANCE, COMMUNICATIONS)
+- **Select** components within each profile via interactive gum menus
+- **Configure** intelligent multi-monitor workspaces (1-3 monitors)
+- **Organize** web apps by Chrome profile (work vs personal)
+- **Manage** with unified `jomarchy` command for updates and configuration
+
+### 🏗️ Architecture
+
+```
+┌───────────────────────────────────────────────────┐
+│                  Fresh Omarchy                    │
+│            (Hyprland + Waybar + Kitty)            │
+└─────────────────┬─────────────────────────────────┘
+                  │
+                  ▼
+         ┌────────────────────┐
+         │  Profile Selector  │  Interactive gum menu
+         │   jomarchy.sh      │  Multi-select profiles
+         └────────┬───────────┘
+                  │
+    ┌─────────────┼─────────────┬─────────────┬─────────────┐
+    │             │             │             │             │
+    ▼             ▼             ▼             ▼             ▼
+┌───────┐    ┌───────┐    ┌───────┐    ┌──────────┐  ┌─────────────┐
+│ BASE  │    │  DEV  │    │ MEDIA │    │ FINANCE  │  │ COMMS       │
+└───┬───┘    └───┬───┘    └───┬───┘    └────┬─────┘  └──────┬──────┘
+    │            │            │             │               │
+    │            │            │             │               │
+    ▼            ▼            ▼             ▼               ▼
+Packages +  VSCodium +   GIMP    +   Banking   +    Discord
+Waybar   +  GitHub   +   OBS     +   QuickBooks +   Slack
+Chrome   +  Node.js  +   Blender +             +   WhatsApp
+Shortcuts+  43 Tools +           +             +   Gmail
+```
+
+**How it works:**
+1. **Interactive Selection** - Choose profiles via gum multi-select
+2. **Component Menus** - Each profile offers fine-grained control
+3. **Intelligent Setup** - Auto-detects monitors, applies theme colors
+4. **Web App Management** - Organize apps by Chrome profile
+5. **Ongoing Management** - `jomarchy` command for updates and config
+
+---
+
+## Why Use Jomarchy?
+
+### The Problem
+
+Fresh Linux installations face three challenges:
+
+1. **Manual tedium**: Installing packages, configuring shortcuts, setting up workspaces
+2. **Inconsistency**: Different setups across machines, forgotten customizations
+3. **No organization**: Web apps scattered across profiles, no structure
+
+### The Solution
+
+**Jomarchy automates and organizes everything:**
+
+| Challenge | Solution | Benefit |
+|-----------|----------|---------|
+| Manual tedium | Profile-based automation | 5-minute setup vs 2-hour manual |
+| Inconsistency | Version-controlled configs | Same setup everywhere |
+| No organization | Web app profile manager | Work/personal separation |
+
+**Real-world impact:**
+- **Modular profiles** - Install only what you need (BASE only = minimal system)
+- **Theme-aware** - Waybar colors auto-sync with Omarchy theme
+- **Multi-monitor ready** - Intelligent workspace detection (1-3 monitors)
+- **Post-install management** - `jomarchy` command for ongoing config
+
+---
+
+## 🎯 Profile Overview
+
+### Core Profile
+
+**BASE** - Universal foundation (recommended for everyone)
+- Essential packages (Sublime Text, yt-dlp, Tailscale, ChezWizper voice transcription)
+- Bash customizations (`cl`, `cp` aliases for Claude Code)
+- Waybar theme-aware styling with intelligent workspace detection
+- Custom scripts (Super+Z zoom, F4 file search, Hyprsunset blue light filter)
+- Web apps (Proton Mail, Kagi, YouTube, X)
+- Chrome extensions (Dark Reader, Copy on Select, 1Password)
+
+### Optional Profiles
+
+**DEV** - Software development
+- VSCodium (de-Microsoft-ified VS Code)
+- Node.js, GitHub CLI, Stripe CLI, Supabase CLI
+- 43 bash tools for AI-assisted workflows (Agent Mail + Beads + browser automation)
+- Interactive GitHub repo cloning + auto-generated project shortcuts
+- Web apps (GitHub, Cloudflare, Supabase)
+
+**MEDIA** - Creative tools
+- Graphics: GIMP, Inkscape
+- Video: OBS Studio, Shotcut, Kdenlive
+- 3D: Blender
+- Audio: Audacity
+
+**FINANCE** - Banking & accounting
+- Web apps: Bank of America, Chase, Capital One, QuickBooks Online
+
+**COMMUNICATIONS** - Messaging & collaboration
+- Web apps: Discord, WhatsApp, Slack, Gmail, Zoom
+
+---
+
+## Installation
+
+### One-Line Install (Fresh Omarchy System)
+
+```bash
+bash <(curl -sL https://raw.githubusercontent.com/joewinke/jomarchy/master/jomarchy.sh)
+```
+
+This:
+- ✅ Installs git if needed
+- ✅ Clones repository to ~/code/jomarchy
+- ✅ Presents interactive profile selector
+- ✅ Installs selected profiles with component menus
+- ✅ Sets up `jomarchy` command for management
+
+**Time:** ~5 minutes (depending on profile selection) | **Requires:** Omarchy Linux, wifi
+
+### Manual Installation
+
+Already have the repository cloned?
 
 ```bash
 cd ~/code/jomarchy
-./jomarchy.sh
-```
+./jomarchy.sh  # Interactive selector
 
-This launches the interactive profile selector where you can choose which profiles to install.
-
-### Installing Specific Profiles Directly
-
-If you prefer to skip the profile selector and install specific profiles directly:
-
-```bash
-cd ~/code/jomarchy
-
-# Install BASE profile only
-./scripts/install/install-jomarchy.sh
-
-# Install DEV profile
-./scripts/install/install-jomarchy-dev.sh
-
-# Install MEDIA profile
-./scripts/install/install-jomarchy-media.sh
-
-# Install FINANCE profile
-./scripts/install/install-jomarchy-finance.sh
-
-# Install COMMUNICATIONS profile
-./scripts/install/install-jomarchy-communications.sh
+# Or install specific profiles directly:
+./scripts/install/install-jomarchy.sh              # BASE
+./scripts/install/install-jomarchy-dev.sh          # DEV
+./scripts/install/install-jomarchy-media.sh        # MEDIA
+./scripts/install/install-jomarchy-finance.sh      # FINANCE
+./scripts/install/install-jomarchy-communications.sh # COMMUNICATIONS
 ```
 
 ---
 
-## 📊 What Gets Installed
+## What Gets Installed
 
-All components below can be selectively installed via interactive gum menus. Everything is pre-selected by default, but you can deselect items you don't want.
+### 1. BASE Profile Components
 
-### BASE Profile
-
-#### 🗂️ Core Packages
-- **Firefox** - Web browser (pre-installed by Omarchy)
-- **Chromium** - Alternative browser (pre-installed by Omarchy)
-- **Sublime Text 4** - Fast text editor
-- **Claude Code** - AI-powered CLI coding assistant
-- **yt-dlp** - Video downloader (YouTube, etc.)
-- **Tailscale** - VPN/mesh network
-- **nwg-displays** - Multi-monitor display manager
-- **JetBrains Mono** - Programming font
-- **ChezWizper** - Voice transcription with Super+R
-
-#### 🎨 Customizations
+**Core Packages (Selectable via gum menu):**
+- Firefox & Chromium (pre-installed by Omarchy)
+- Sublime Text 4 - Fast text editor
+- Claude Code - AI-powered CLI coding assistant
+- yt-dlp - Video downloader
+- Tailscale - VPN/mesh network
+- nwg-displays - Multi-monitor display manager
+- JetBrains Mono - Programming font
+- ChezWizper - Voice transcription with Super+R
 
 **Bash Customizations:**
-- `~/code/linux` - Directory for system projects
-- `~/code/personal` - Directory for personal projects
-- `cl` - Alias: cd to ~/code/linux + launch Claude Code with --dangerously-skip-permissions
-- `cp` - Alias: cd to ~/code/personal + launch Claude Code with --dangerously-skip-permissions
-- `tget` - Alias: Tailscale file download to ~/Downloads/
+```bash
+~/code/linux          # System projects directory
+~/code/personal       # Personal projects directory
+cl                    # Alias: cd to ~/code/linux + launch Claude Code
+cp                    # Alias: cd to ~/code/personal + launch Code
+tget                  # Alias: Tailscale file download to ~/Downloads/
+```
 
-**Waybar Customizations:**
-- **Theme-aware accent colors** - Automatically extracts `@selected-text` from your active Omarchy theme and applies to Waybar modules. Works with **all themes**!
-  - Examples: Kanagawa (orange), Gruvbox (yellow), Tokyo Night (cyan), Matte Black (red)
-  - Change theme in Omarchy, and Waybar colors update automatically
+**Waybar Customizations (Automatic):**
+- **Theme-aware accent colors** - Auto-extracts `@selected-text` from active theme
+  - Works with ALL themes (Kanagawa, Gruvbox, Tokyo Night, Matte Black, etc.)
+  - Change theme → Waybar colors update automatically
 - **Intelligent workspace detection** - Auto-configures for 1-3 monitors:
   - 1 monitor: workspaces 1-10
   - 2 monitors: 1-10 (left), 11-20 (right)
@@ -153,161 +237,132 @@ All components below can be selectively installed via interactive gum menus. Eve
   - Monitor 1: Green (#99d9ab)
   - Monitor 2: Cyan (#00ffcc)
   - Monitor 3: Magenta (#ff00ff)
-- **Active workspace highlighting** - Uses theme accent colors with transparency
-- **Clock format** - Shows date (mm-dd weekday HH:MM)
-- **Window title styling** - Current app name with theme accents
-- Updates `~/.config/waybar/config.jsonc` and `~/.config/waybar/style.css`
-- Updates `~/.config/hypr/monitors.conf` and `~/.config/hypr/workspace-layouts.conf`
+- **Active workspace highlighting** - Theme accent colors with transparency
+- Updates `~/.config/waybar/config.jsonc`, `~/.config/waybar/style.css`
+- Updates `~/.config/hypr/monitors.conf`, `~/.config/hypr/workspace-layouts.conf`
 
-**Custom Scripts:**
+**Custom Scripts (Automatic):**
 - `toggle-zoom` - **Super+Z** for 2x screen magnification
-- `file-search` - **F4** for fuzzy file finder (fzf-based, searches ~/home excluding .git, .cache, node_modules)
+- `file-search` - **F4** for fuzzy file finder (fzf, searches ~/home)
 - **Hyprsunset** - Blue light filter with auto-schedule:
-  - 6:30 AM: Normal daylight (6500K)
-  - 7:00 PM: Sunset warmth (5000K)
-  - 9:00 PM: Bedtime mode (3400K)
-- **Jomarchy screensaver** - Custom ASCII art branding (activated with **Super+L**)
+  - 6:30 AM: Daylight (6500K)
+  - 7:00 PM: Sunset (5000K)
+  - 9:00 PM: Bedtime (3400K)
+- **Jomarchy screensaver** - ASCII art branding (Super+L)
 
-#### 🌐 Applications
-
-**Chrome Extensions:**
-- Copy on Select - Auto-copy highlighted text
+**Chrome Extensions (Selectable via gum menu):**
 - Dark Reader - Dark mode for all websites
+- Copy on Select - Auto-copy highlighted text
 - 1Password - Password manager
 
-**ChezWizper:**
-- Voice transcription with **Super+R**
+**ChezWizper Voice Transcription:**
+- **Super+R** to activate
 - Waybar indicator shows when active
+- Works system-wide
 
 **Desktop Application Shortcuts:**
-- Claude.ai (Linux) - Desktop shortcut to launch Claude.ai for ~/code/linux projects
-- Claude.ai (Personal) - Desktop shortcut to launch Claude.ai for ~/code/personal projects
-- Claude Code MCP configuration - Chrome DevTools integration for web scraping
+- Claude.ai (Linux) - Desktop shortcut for ~/code/linux projects
+- Claude.ai (Personal) - Desktop shortcut for ~/code/personal projects
+- Claude Code MCP configuration - Chrome DevTools integration
 
-#### 🌐 Web Apps
-- **Proton Mail** - Encrypted email
-- **Kagi** - Privacy-focused search engine
-- **YouTube** - Video platform
-- **X (Twitter)** - Social media
+**Web Apps (Selectable via gum menu):**
+- Proton Mail - Encrypted email
+- Kagi - Privacy-focused search
+- YouTube - Video platform
+- X (Twitter) - Social media
 
-### MEDIA Profile
+### 2. DEV Profile Components
 
-#### 🎨 Graphics
-- **GIMP** - Image editing (Photoshop alternative)
-- **Inkscape** - Vector graphics (Illustrator alternative)
-
-#### 🎬 Video
-- **OBS Studio** - Screen recording and live streaming
-- **Shotcut** - Lightweight video editor
-- **Kdenlive** - Advanced video editor
-
-#### 🧊 3D
-- **Blender** - 3D modeling, animation, and rendering
-
-#### 🎵 Audio
-- **Audacity** - Audio editing and recording
-
-### FINANCE Profile
-
-#### 🏦 Web Apps
-- **Bank of America** - Online banking
-- **Chase Bank** - Online banking
-- **Capital One** - Online banking
-- **QuickBooks Online** - Accounting and invoicing
-
-### COMMUNICATIONS Profile
-
-#### 💬 Web Apps
-- **Discord** - Gaming and community chat
-- **WhatsApp** - Messaging
-- **Slack** - Team communication
-- **Gmail** - Google email
-- **Zoom** - Video conferencing
-
-### DEV Profile
-
-#### 🛠️ Development Tools
+**Development Tools (Selectable via gum menu):**
 - **VSCodium** - Privacy-focused VS Code (de-Microsoft-ified, telemetry-free)
 - **Node.js & npm** - JavaScript runtime
 - **GitHub CLI** - Git operations from terminal
 - **Stripe CLI** - Payment testing
 - **Supabase CLI** - Backend/database management
 
-#### 📦 Development Features
-- **Interactive GitHub repository cloning** - Select which repos to clone from your GitHub account
-- **Auto-generated project shortcuts** - Desktop shortcuts to launch Claude.ai for each cloned repo
+**Development Features:**
+- **Interactive GitHub repository cloning** - Select repos from your GitHub account
+- **Auto-generated project shortcuts** - Desktop shortcuts to launch Claude.ai for each repo
 - **Daily Claude quote timer** - Motivational quotes at 9am EST
 
-#### 🌐 Development Web Apps
-- **GitHub** - Code hosting
-- **Cloudflare** - DNS and CDN management
-- **Supabase** - Backend dashboard
+**Development Web Apps (Selectable via gum menu):**
+- GitHub - Code hosting
+- Cloudflare - DNS and CDN management
+- Supabase - Backend dashboard
+
+### 3. MEDIA Profile Components
+
+**Graphics (Selectable via gum menu):**
+- GIMP - Image editing (Photoshop alternative)
+- Inkscape - Vector graphics (Illustrator alternative)
+
+**Video (Selectable via gum menu):**
+- OBS Studio - Screen recording and live streaming
+- Shotcut - Lightweight video editor
+- Kdenlive - Advanced video editor
+
+**3D (Selectable via gum menu):**
+- Blender - 3D modeling, animation, rendering
+
+**Audio (Selectable via gum menu):**
+- Audacity - Audio editing and recording
+
+### 4. FINANCE Profile Components
+
+**Web Apps (Selectable via gum menu):**
+- Bank of America - Online banking
+- Chase Bank - Online banking
+- Capital One - Online banking
+- QuickBooks Online - Accounting and invoicing
+
+### 5. COMMUNICATIONS Profile Components
+
+**Web Apps (Selectable via gum menu):**
+- Discord - Gaming and community chat
+- WhatsApp - Messaging
+- Slack - Team communication
+- Gmail - Google email
+- Zoom - Video conferencing
 
 ---
 
-## 📁 Repository Structure
+## 🤖 Developer Tools (AI-Assisted Development)
 
-```
-~/code/jomarchy/
-├── README.md                           # This file
-├── JOMARCHY.md                         # Full project documentation
-├── CLAUDE.md                           # Developer documentation
-├── jomarchy.sh                         # Interactive profile selector
-└── scripts/
-    ├── install/
-    │   ├── install-jomarchy.sh                    # BASE profile installer
-    │   ├── install-jomarchy-dev.sh                # DEV profile installer
-    │   ├── install-jomarchy-media.sh              # MEDIA profile installer
-    │   ├── install-jomarchy-finance.sh            # FINANCE profile installer
-    │   ├── install-jomarchy-communications.sh     # COMMUNICATIONS profile installer
-    │   ├── essential-packages.sh                  # Core packages
-    │   ├── bash-customizations-universal.sh       # Bash aliases & dirs
-    │   ├── bash-customizations-local.sh           # GitHub repo cloning
-    │   ├── chrome-extensions.sh                   # Browser extensions
-    │   ├── chezwizper.sh                          # Voice transcription
-    │   ├── claude-launchers-universal.sh          # Claude.ai desktop shortcuts
-    │   ├── claude-launchers-local.sh              # Project-specific shortcuts
-    │   ├── claude-code-mcp.sh                     # Claude Code MCP
-    │   ├── claude-daily-quote.sh                  # Daily quote timer
-    │   ├── custom-scripts-universal.sh            # Keybindings: zoom toggle, file search
-    │   ├── waybar-customizations-universal.sh     # Theme-aware styling
-    │   ├── waybar-workspace-detection.sh          # Multi-monitor config
-    │   ├── dev-packages.sh                        # Dev tools
-    │   ├── dev-tools-local.sh                     # CLI tools
-    │   ├── media-packages.sh                      # Creative software
-    │   ├── web-apps-universal.sh                  # BASE web apps
-    │   ├── web-apps-local.sh                      # DEV web apps
-    │   ├── web-apps-finance.sh                    # FINANCE web apps
-    │   └── web-apps-communications.sh             # COMMUNICATIONS web apps
-    └── lib/
-        └── (shared library functions)
-```
+If you install the **DEV profile**, you get access to **43 lightweight bash tools** for AI-assisted development workflows:
 
----
+### Agent Mail Tools (11 tools)
+Multi-agent coordination with messaging and file reservations:
+- `am-register`, `am-inbox`, `am-send`, `am-reply`, `am-ack`
+- `am-reserve`, `am-release`, `am-reservations`
+- `am-search`, `am-agents`, `am-whoami`
 
-## ✅ Benefits of This Structure
+### Browser Automation Tools (11 tools)
+Chrome DevTools Protocol automation:
+- **Core**: `browser-start.js`, `browser-nav.js`, `browser-eval.js`, `browser-screenshot.js`, `browser-pick.js`, `browser-cookies.js`, `browser-hn-scraper.js`
+- **Advanced**: `browser-wait.js` (smart waiting), `browser-snapshot.js` (1000x token savings), `browser-console.js` (debug JS), `browser-network.js` (API testing)
 
-1. **Profile-Based** - Choose exactly what you need (BASE, DEV, MEDIA, FINANCE, COMMUNICATIONS)
-2. **Component Selection** - Each profile offers fine-grained control via gum menus
-3. **Idempotent** - Scripts can be run multiple times safely without creating duplicate backups
-4. **Modular** - Each component is independent and optional
-5. **Documented** - Detailed descriptions of every package, customization, and feature
-6. **Multi-Monitor Ready** - Intelligent workspace detection for 1-3 monitors
+### Database & Utility Tools (21 tools)
+Database queries, monitoring, media management, deployment helpers
 
----
+**Philosophy:** Following [What if you don't need MCP?](https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/) by Mario Zechner - simple bash tools save ~32,000 tokens vs MCP servers.
 
-## 📝 Notes
+**Task Management with Beads:**
+- This repository uses [Beads](https://github.com/steveyegge/beads) for dependency-aware task planning
+- Multi-project support: Use Chimaro's dashboard to view tasks across all projects
+- Git-backed storage: Tasks are committable to your repository
 
-- All scripts are idempotent and can be run multiple times safely
-- Gum menus allow selective installation within each profile
-- All configurations are modular - install only what you need
-- BASE profile recommended for everyone as foundation
+**For AI Assistants:**
+- Full documentation in `CLAUDE.md`
+- All tools have `--help` flags
+- Integration patterns with Agent Mail + Beads
+
+**Sister Project:** For standalone agent tools installer (works with any Linux system, not just Omarchy), see [jomarchy-agent-tools](https://github.com/joewinke/jomarchy-agent-tools)
 
 ---
 
 ## 🔧 Managing Your Installation
 
-After installation, you have a unified management tool at your fingertips:
+After installation, manage everything with the `jomarchy` command:
 
 ### Interactive Menu
 
@@ -315,7 +370,7 @@ After installation, you have a unified management tool at your fingertips:
 jomarchy
 ```
 
-Launches an interactive menu with options to:
+**Options:**
 - Install Additional Profiles
 - **Manage Web App Profiles** (organize apps by Chrome profile)
 - Update Jomarchy
@@ -336,7 +391,7 @@ jomarchy --help        # Show all options
 
 The integrated profile manager lets you:
 - View which web apps use which Chrome profiles
-- Move apps between profiles (single or bulk)
+- Move apps between profiles (single or bulk operations)
 - Rename Chrome profiles
 - View detailed profile information
 
@@ -344,40 +399,234 @@ The integrated profile manager lets you:
 
 ---
 
+## How It Works
+
+### Profile Selection Flow
+
+```
+1. Run jomarchy.sh
+   ↓
+2. Select profiles (gum multi-select):
+   ☑ BASE (recommended)
+   ☐ DEV
+   ☐ MEDIA
+   ☐ FINANCE
+   ☐ COMMUNICATIONS
+   ↓
+3. Each profile shows component menu:
+   - Packages
+   - Customizations
+   - Web Apps
+   - Extensions
+   ↓
+4. Installation runs selected components
+   ↓
+5. jomarchy command installed for management
+```
+
+### Intelligent Multi-Monitor Detection
+
+Jomarchy auto-detects your monitor setup and configures Hyprland workspaces:
+
+```bash
+# Automatic detection based on connected monitors:
+
+1 Monitor:
+  Workspaces 1-10 on primary
+
+2 Monitors:
+  Workspaces 1-10 on left (green)
+  Workspaces 11-20 on right (cyan)
+
+3 Monitors:
+  Workspaces 1-10 on left (green)
+  Workspaces 11-20 on center (cyan)
+  Workspaces 21-30 on right (magenta)
+```
+
+**Updates automatically** when you add/remove monitors.
+
+### Directory Structure
+
+```
+~/.config/
+├── waybar/
+│   ├── config.jsonc           # Updated with workspaces
+│   └── style.css              # Updated with theme colors
+├── hypr/
+│   ├── monitors.conf          # Auto-generated monitor config
+│   └── workspace-layouts.conf # Auto-generated workspace config
+└── ...
+
+~/code/
+├── jomarchy/                  # This repository
+│   ├── jomarchy.sh           # Main installer
+│   ├── scripts/install/      # Profile installers
+│   ├── tools/                # 43 bash tools (DEV profile)
+│   └── .beads/              # Task database
+├── linux/                     # System projects (created by BASE)
+└── personal/                  # Personal projects (created by BASE)
+
+~/.local/bin/
+└── jomarchy                   # Management command
+```
+
+---
+
+## ✅ Benefits
+
+1. **Profile-Based** - Choose exactly what you need (BASE, DEV, MEDIA, FINANCE, COMMUNICATIONS)
+2. **Component Selection** - Fine-grained control via gum menus within each profile
+3. **Idempotent** - Scripts can be run multiple times safely
+4. **Modular** - Each component is independent and optional
+5. **Theme-Aware** - Waybar colors auto-sync with Omarchy theme
+6. **Multi-Monitor Ready** - Intelligent workspace detection (1-3 monitors)
+7. **Organized** - Web app profile manager for work/personal separation
+8. **Documented** - Detailed descriptions of every component
+
+---
+
 ## 🚀 Next Steps After Installation
 
-1. Restart your shell: `source ~/.bashrc`
-2. Test ChezWizper: Press `Super+R`
-3. **Organize web apps**: Run `jomarchy --profiles`
-4. Test Claude aliases: `cl`, `cp`
-5. Launch file search: Press `F4`
+1. **Restart shell:** `source ~/.bashrc`
+2. **Test ChezWizper:** Press `Super+R`
+3. **Organize web apps:** Run `jomarchy --profiles`
+4. **Test Claude aliases:** `cl` (linux projects), `cp` (personal projects)
+5. **Launch file search:** Press `F4`
+6. **Test zoom toggle:** Press `Super+Z`
 
 ---
 
-## 🖥️ Hardware-Specific Configurations
+## Requirements
 
-The profiles in this repository are designed to be universal and work on any Omarchy system.
-
-For hardware-specific configurations (monitor setups, printer drivers, etc.), you can create your own machine-specific profiles following the same pattern as the existing profiles in `scripts/install/`.
+- **OS:** Omarchy Linux
+- **Shell:** Bash
+- **Network:** Wifi (for installation)
+- **Optional:** GitHub account (for DEV profile repo cloning)
 
 ---
 
-## 🤖 Developer Tools (AI-Assisted Development)
+## 📝 Notes
 
-Jomarchy includes **43 lightweight bash tools** in `tools/` for AI-assisted development workflows:
+- All scripts are idempotent and can be run multiple times safely
+- Gum menus allow selective installation within each profile
+- All configurations are modular - install only what you need
+- BASE profile recommended for everyone as foundation
+- For hardware-specific configs, create your own profiles in `scripts/install/`
 
-**Agent Mail Tools:** Coordinate multi-agent workflows with messaging and file reservations
-**Browser Tools:** Chrome DevTools Protocol automation (navigation, evaluation, screenshots)
-**Additional Tools:** Database utilities, monitoring, media management
+---
 
-**Task Management with Beads:**
-- This repository uses [Beads](https://github.com/steveyegge/beads) for dependency-aware task planning
-- Tracked tasks for browser tool development (8 priority tasks in `.beads/`)
-- Multi-project support: Use Chimaro's dashboard to view tasks across all projects
+## Troubleshooting
 
-**For AI Assistants:**
-- Full documentation in `CLAUDE.md`
-- All tools have `--help` flags
-- Integration patterns with Agent Mail + Beads
+### Waybar Colors Not Updating
 
-**Philosophy:** Following [What if you don't need MCP?](https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/) - simple bash tools save ~32,000 tokens vs MCP servers.
+```bash
+# Re-run theme detection
+cd ~/code/jomarchy
+./scripts/install/waybar-customizations-universal.sh
+```
+
+### Workspaces Not Detected
+
+```bash
+# Re-run workspace detection
+cd ~/code/jomarchy
+./scripts/install/waybar-workspace-detection.sh
+```
+
+### Web App Profile Manager Issues
+
+```bash
+# Check Chrome profile directory
+ls ~/.config/chromium/
+
+# Re-run profile manager
+jomarchy --profiles
+```
+
+### Tools Not Found (DEV profile)
+
+```bash
+# Check if tools are in PATH
+which am-inbox
+
+# Add to PATH if missing
+echo 'export PATH="$HOME/code/jomarchy/tools:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+---
+
+## Contributing
+
+Contributions welcome! Please open issues or PRs.
+
+**Areas for contribution:**
+- Additional profiles (gaming, education, etc.)
+- More customization scripts
+- Theme support improvements
+- Documentation enhancements
+
+---
+
+## ❓ FAQ
+
+### Can I run this on non-Omarchy systems?
+
+**Partially.** Most components work on any Arch-based system, but Waybar/Hyprland configs assume Omarchy's structure. For universal agent tools that work anywhere, see [jomarchy-agent-tools](https://github.com/joewinke/jomarchy-agent-tools).
+
+### Can I install profiles separately?
+
+**Yes!** Run specific installers:
+```bash
+./scripts/install/install-jomarchy-dev.sh
+./scripts/install/install-jomarchy-media.sh
+```
+
+### How do I add custom packages?
+
+Create your own profile in `scripts/install/` following the existing pattern. All profile scripts are modular and independent.
+
+### Does this work with multiple machines?
+
+**Yes!** Clone the repository on each machine and run `jomarchy.sh`. Your configs are version-controlled in the repository.
+
+### How do I update to the latest version?
+
+```bash
+jomarchy --update
+# Or manually:
+cd ~/code/jomarchy
+git pull origin master
+```
+
+---
+
+## License
+
+MIT License
+
+---
+
+## Credits
+
+- **Omarchy Linux:** Created by [@KrystalSkull](https://github.com/KrystalSkull)
+- **Agent Mail:** [Dicklesworthstone/mcp_agent_mail](https://github.com/Dicklesworthstone/mcp_agent_mail)
+- **Beads:** [steveyegge/beads](https://github.com/steveyegge/beads)
+- **Browser Tools:** [badlogic/browser-tools](https://github.com/badlogic/browser-tools)
+- **Tools > MCP:** Inspired by [Mario Zechner's "What if you don't need MCP?"](https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/)
+- **Jomarchy:** Assembled by [@joewinke](https://github.com/joewinke)
+
+---
+
+## Related Projects
+
+- **jomarchy-agent-tools:** [github.com/joewinke/jomarchy-agent-tools](https://github.com/joewinke/jomarchy-agent-tools) - Standalone AI agent tools installer (works on any Linux)
+- **Omarchy Linux:** [github.com/KrystalSkull/omarchy](https://github.com/KrystalSkull/omarchy) - The Linux distribution this is built for
+- **Chimaro:** AI-powered application platform with unified Beads dashboard
+
+---
+
+**Built for Omarchy Linux. Transforms your system in 5 minutes.**
+
+**[Install Now](#quick-start)** | **[Report Issue](https://github.com/joewinke/jomarchy/issues)** | **[Contribute](https://github.com/joewinke/jomarchy/pulls)**
