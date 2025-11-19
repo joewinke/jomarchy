@@ -1,4 +1,4 @@
-# Chimaro Agent Tools
+# Jomarchy Agent Tools
 
 **49 lightweight command-line tools** for AI agents with minimal context overhead.
 
@@ -326,7 +326,7 @@ Replacing MCP servers with simple tools:
 
 To add a new tool:
 
-1. Create executable script in `~/code/jomarchy/tools/`
+1. Create executable script in `~/code/jomarchy-agent-tools/tools/`
 2. Follow naming convention: `category-action` (e.g., `db-query`, `am-inbox`)
 3. Add `--help` flag with usage examples
 4. Keep it single-purpose and fast
@@ -350,4 +350,4 @@ MIT
 
 - Browser tools from [badlogic/browser-tools](https://github.com/badlogic/browser-tools)
 - Philosophy from [What if you don't need MCP?](https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/) by Mario Zechner
-- Built for Chimaro AI-powered application platform
+- Part of the [Jomarchy Agent Tools](https://github.com/joewinke/jomarchy-agent-tools) unified repository
