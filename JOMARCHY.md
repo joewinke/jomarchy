@@ -283,14 +283,14 @@ Alternative agentic CLI with TypeScript/JavaScript focus.
 
 #### 3. **Agent Mail** (Multi-Agent Coordination)
 Message-passing system for agents to coordinate asynchronously.
-- Service: `systemctl --user status agent-mail`
-- URL: http://localhost:8765
+- Database: `~/.agent-mail.db` (SQLite)
+- Tools: `am-register`, `am-send`, `am-inbox`, `am-reserve`, etc.
 - Uses:
   - Agents communicate across sessions
   - File reservation system (prevents conflicts)
   - Thread-based conversations with audit trail
   - Searchable message archive
-- **Installation:** `scripts/install/agent-mail.sh`
+- **Installation:** Installed via jomarchy-agent-tools
 
 #### 4. **Beads** (Dependency-Aware Task Planning)
 Lightweight issue database with dependency tracking.
@@ -392,8 +392,8 @@ All tools configured via `~/.bashrc`:
 # Agent tools path
 export AGENT_TOOLS_PATH="~/code/jomarchy/tools"
 
-# Agent Mail
-export AGENT_MAIL_URL="http://localhost:8765"
+# Agent Mail (bash + SQLite, no server needed)
+export AGENT_MAIL_DB="${AGENT_MAIL_DB:-$HOME/.agent-mail.db}"
 
 # Database (configure for your project)
 export DATABASE_URL="postgresql://..."
