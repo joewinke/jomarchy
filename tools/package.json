@@ -4,6 +4,7 @@
   "description": "Lightweight bash-style tools for AI agents - minimal context overhead",
   "type": "module",
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.22.0",
     "puppeteer-core": "^23.0.0"
   }
 }
