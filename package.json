@@ -1,0 +1,10 @@
+{
+  "name": "jomarchy",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Browser automation tools",
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "puppeteer-core": "^23.11.1"
+  }
+}
