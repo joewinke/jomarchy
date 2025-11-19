@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+# Read Supabase edge function logs
+# Usage: edge-logs <function_name>
+#        edge-logs --all
+#        edge-logs <function_name> --follow
+
+if [ "$1" == "--help" ] || [ "$1" == "-h" ]; then
+  echo "Usage: edge-logs <function_name> [options]"
+  echo "       edge-logs --all"
+  echo "       edge-logs --list"
+  echo ""
+  echo "Options:"
+  echo "  --follow, -f    Follow logs in real-time"
+  echo "  --limit <n>     Show last n entries (default: 50)"
+  echo "  --errors        Only show errors"
+  echo ""
+  echo "Examples:"
+  echo "  edge-logs generate-video                 # Show recent logs"
+  echo "  edge-logs generate-video --follow        # Tail logs"
+  echo "  edge-logs generate-video --errors        # Only errors"
+  echo "  edge-logs --list                         # List all functions"
+  exit 0
+fi
+
+if [ "$1" == "--list" ]; then
+  echo "Edge Functions:"
+  supabase functions list
+  exit 0
+fi
+
+if [ "$1" == "--all" ]; then
+  echo "All Edge Function Logs:"
+  supabase functions list | tail -n +2 | awk '{print $1}' | while read func; do
+    echo ""
+    echo "=== $func ==="
+    supabase functions logs "$func" --limit 10
+  done
+  exit 0
+fi
+
+FUNCTION_NAME="$1"
+LIMIT=50
+FOLLOW=false
+ERRORS_ONLY=false
+
+shift
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --follow|-f)
+      FOLLOW=true
+      ;;
+    --limit)
+      LIMIT="$2"
+      shift
+      ;;
+    --errors)
+      ERRORS_ONLY=true
+      ;;
+  esac
+  shift
+done
+
+if [ -z "$FUNCTION_NAME" ]; then
+  echo "✗ Function name required"
+  echo "Usage: edge-logs <function_name>"
+  echo "Run 'edge-logs --list' to see available functions"
+  exit 1
+fi
+
+echo "Logs for: $FUNCTION_NAME"
+echo "---"
+
+if [ "$FOLLOW" == "true" ]; then
+  supabase functions logs "$FUNCTION_NAME" --follow
+elif [ "$ERRORS_ONLY" == "true" ]; then
+  supabase functions logs "$FUNCTION_NAME" --limit "$LIMIT" | grep -i "error\|exception\|failed"
+else
+  supabase functions logs "$FUNCTION_NAME" --limit "$LIMIT"
+fi

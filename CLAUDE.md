@@ -594,14 +594,170 @@ If you're seeing multiple `.bak.<timestamp>` files:
 - Post-install hooks (custom scripts after profile installation)
 - Profile templates (easy creation of new profiles)
 
+## Agent Tools for LLM Development
+
+### Overview
+
+Jomarchy includes a collection of **24 lightweight bash tools** in `~/code/jomarchy/tools/` designed for AI-assisted development workflows. These tools follow the philosophy from [What if you don't need MCP?](https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/) by Mario Zechner - simple bash tools provide better token efficiency than MCP servers.
+
+**Token Savings:** These tools save ~32,000 tokens compared to equivalent MCP server implementations.
+
+### Tool Categories
+
+**Agent Mail (11 tools):**
+- `am-register`, `am-inbox`, `am-send`, `am-reply`, `am-ack`
+- `am-reserve`, `am-release`, `am-reservations`
+- `am-search`, `am-agents`, `am-whoami`
+- Coordinate multi-agent workflows with messaging and file reservations
+
+**Browser Automation (7 tools):**
+- `browser-start.js`, `browser-nav.js`, `browser-eval.js`
+- `browser-screenshot.js`, `browser-pick.js`, `browser-cookies.js`
+- `browser-hn-scraper.js`
+- Based on [badlogic/browser-tools](https://github.com/badlogic/browser-tools)
+
+**Database & Utilities (6 tools):**
+- `db-query`, `db-connection-test`, `db-schema`, `db-sessions`
+- `edge-logs` (Supabase edge functions), `lint-staged` (git)
+- Generic tools for Postgres/Supabase projects
+
+### Installation
+
+Add tools to your PATH during jomarchy DEV profile installation:
+
+```bash
+# Tools are installed to ~/code/jomarchy/tools/
+# Symlinked to ~/.local/bin/ for global access
+```
+
+All tools have `--help` flags for documentation:
+```bash
+am-inbox --help
+browser-eval.js --help
+```
+
+### Beads Task Management
+
+**Jomarchy uses Beads for dependency-aware task planning.**
+
+#### Multi-Project Architecture
+
+- Each project has its own `.beads/` directory (committable to git)
+- Task IDs are prefixed with project name (e.g., `jomarchy-36j`, `chimaro-abc`)
+- `bd` commands work in your current project directory automatically
+- **Unified dashboard:** Chimaro aggregates all projects from `~/code/*`
+
+#### Jomarchy Tasks
+
+This repository includes Beads-tracked tasks for browser tool development:
+
+**Priority 1 (Critical):**
+- `jomarchy-36j`: Build browser-wait.js - Smart waiting capability
+- `jomarchy-a4j`: Build browser-snapshot.js - Structured page tree (1000x token savings)
+- `jomarchy-586`: Build browser-console.js - Structured console access
+
+**Priority 2 (Important):**
+- `jomarchy-lud`: Build browser-network.js - Network request monitoring
+- `jomarchy-5b7`: Build browser-pages.js - Page/tab management
+
+**Priority 3 (Nice-to-have):**
+- `jomarchy-1mo`: Build browser-dialog.js - Dialog handling
+- `jomarchy-bd1`: Build browser-viewport.js - Proper viewport control
+- `jomarchy-erg`: Build browser-performance.js - Performance metrics
+
+#### Working with Beads
+
+```bash
+# See ready tasks (no blockers)
+bd ready
+
+# Create a new task with full metadata
+bd create "Build browser-wait.js - Smart waiting capability" \
+  --type task \
+  --labels browser,tools,cdp \
+  --priority 1 \
+  --description "Implement browser-wait.js tool to eliminate race conditions. Supports waiting for: text content, selectors, URL changes, and custom eval conditions. Uses CDP polling with configurable timeouts." \
+  --assignee "AgentName"
+
+# Update task status
+bd update jomarchy-36j --status in_progress --assignee "AgentName"
+
+# Close when complete
+bd close jomarchy-36j --reason "Completed: implemented with CDP polling and timeout support"
+
+# View all commands
+bd --help
+```
+
+#### Integration with Agent Mail
+
+Use Beads task IDs as Agent Mail thread IDs for traceability:
+
+```bash
+# Reserve files for a task
+am-reserve "tools/browser-*.js" \
+  --agent AgentName \
+  --ttl 3600 \
+  --exclusive \
+  --reason "jomarchy-36j: Building browser-wait.js"
+
+# Send progress update
+am-send "[jomarchy-36j] Progress Update" \
+  "Implemented CDP polling logic. Next: timeout handling." \
+  --from AgentName \
+  --thread jomarchy-36j
+
+# Release when done
+am-release "tools/browser-*.js" --agent AgentName
+```
+
+### Browser Tool Development
+
+The browser tools in this repo use Chrome DevTools Protocol (CDP) to interact with Chrome/Chromium. New tools should follow the same pattern:
+
+```javascript
+#!/usr/bin/env node
+const CDP = require('chrome-remote-interface')
+
+async function main() {
+  const client = await CDP()
+  const { Page, DOM, Accessibility } = client
+
+  await Page.enable()
+  // Tool logic here
+
+  await client.close()
+}
+
+main().catch(console.error)
+```
+
+**Requirements:**
+- Chrome/Chromium running with `--remote-debugging-port=9222`
+- `chrome-remote-interface` npm package
+- Node.js installed
+
+See existing `browser-*.js` tools for implementation examples.
+
+### Unified Dashboard
+
+**View all tasks across projects:**
+- When Chimaro is running: http://localhost:5173/account/development/beads
+- Aggregates tasks from all `~/code/*` projects
+- Filter by project, status, priority, assignee, type, labels
+- Color-coded ID badges show project at a glance
+
 ## Related Documentation
 
 - **Jomarchy README:** `~/code/jomarchy/README.md`
 - **Jomarchy-Machines README:** `~/code/jomarchy-machines/README.md`
 - **Omarchy Docs:** https://omarchy.org
+- **Beads Project:** https://github.com/steveyegge/beads
+- **Browser Tools:** https://github.com/badlogic/browser-tools
+- **MCP Alternative Philosophy:** https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/
 
 ---
 
-**Last Updated:** October 30, 2025
+**Last Updated:** November 18, 2025
 **Maintained By:** Joe Winke
 **Generated With:** Claude Code

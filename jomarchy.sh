@@ -122,6 +122,7 @@ run_profile_installer() {
     profiles=$(gum choose --no-limit \
         "BASE - Core system" \
         "DEV - Software development" \
+        "AGENT-TOOLS - AI-assisted development environment" \
         "MEDIA - Creative tools" \
         "FINANCE - Banking/accounting web apps" \
         "COMMUNICATIONS - Messaging apps")
@@ -140,6 +141,9 @@ run_profile_installer() {
                     ;;
                 "DEV")
                     bash "$SCRIPT_DIR/scripts/install/install-jomarchy-dev.sh"
+                    ;;
+                "AGENT")
+                    bash "$SCRIPT_DIR/scripts/install/install-jomarchy-agent-tools.sh"
                     ;;
                 "MEDIA")
                     bash "$SCRIPT_DIR/scripts/install/install-jomarchy-media.sh"
@@ -325,6 +329,7 @@ echo ""
 SELECTED=$(gum choose --no-limit \
     "BASE - Core system (browsers, text editor, web apps, ChezWizper)" \
     "DEV - Software development (VSCodium, Node, CLIs, dev web apps)" \
+    "AGENT-TOOLS - AI development (Agent Mail, Beads, 43 bash tools, global/per-repo config)" \
     "MEDIA - Creative tools (GIMP, Inkscape, OBS, Blender, Audacity, Kdenlive)" \
     "FINANCE - Banking/accounting web apps (Bank of America, Chase, Capital One, QuickBooks)" \
     "COMMUNICATIONS - Messaging apps (Discord, WhatsApp, Slack, Gmail, Zoom)")
@@ -378,6 +383,9 @@ for profile in "${SELECTED_PROFILES[@]}"; do
             ;;
         "DEV")
             bash scripts/install/install-jomarchy-dev.sh
+            ;;
+        "AGENT")
+            bash scripts/install/install-jomarchy-agent-tools.sh
             ;;
         "MEDIA")
             bash scripts/install/install-jomarchy-media.sh

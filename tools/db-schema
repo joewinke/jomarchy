@@ -1,0 +1,71 @@
+#!/usr/bin/env node
+// Quick schema inspection
+// Usage: db-schema <table_name>
+//        db-schema --tables
+//        db-schema --views
+
+import { spawn } from 'child_process';
+
+const args = process.argv.slice(2);
+
+if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
+  console.log('Usage: db-schema <table_name>');
+  console.log('       db-schema --tables');
+  console.log('       db-schema --views');
+  console.log('\nExamples:');
+  console.log('  db-schema assets                # Show assets table schema');
+  console.log('  db-schema --tables              # List all tables');
+  console.log('  db-schema --views               # List all views');
+  process.exit(0);
+}
+
+const connectionString = process.env.DATABASE_URL || process.env.SUPABASE_DB_URL;
+if (!connectionString) {
+  console.error('✗ DATABASE_URL or SUPABASE_DB_URL environment variable required');
+  process.exit(1);
+}
+
+let query;
+
+if (args[0] === '--tables') {
+  query = `
+    SELECT
+      schemaname, tablename,
+      pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) as size
+    FROM pg_tables
+    WHERE schemaname = 'public'
+    ORDER BY tablename
+  `;
+} else if (args[0] === '--views') {
+  query = `
+    SELECT schemaname, viewname
+    FROM pg_views
+    WHERE schemaname = 'public'
+    ORDER BY viewname
+  `;
+} else {
+  const tableName = args[0];
+  query = `
+    SELECT
+      column_name,
+      data_type,
+      character_maximum_length,
+      is_nullable,
+      column_default
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+    AND table_name = '${tableName}'
+    ORDER BY ordinal_position
+  `;
+}
+
+const psql = spawn('psql', [connectionString, '-c', query], { stdio: 'inherit' });
+
+psql.on('error', (error) => {
+  console.error('✗ Failed to execute psql:', error.message);
+  process.exit(1);
+});
+
+psql.on('close', (code) => {
+  process.exit(code);
+});

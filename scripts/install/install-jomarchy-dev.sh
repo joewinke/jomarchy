@@ -27,7 +27,7 @@ echo -e "${BLUE}Select DEV components to install:${NC}"
 echo ""
 
 SELECTED_COMPONENTS=$(gum choose --no-limit \
-    --height=25 \
+    --height=30 \
     --selected "*" \
     "━━━ CORE PACKAGES ━━━" \
     "  VSCodium" \
@@ -147,6 +147,14 @@ echo ""
 echo "Next steps:"
 echo ""
 echo "1. Restart your shell: source ~/.bashrc"
-echo "2. Test your Claude aliases (based on repos selected)"
+echo "2. Test Claude CLI: cl (opens Claude in terminal)"
 echo "3. Run 'jomarchy' to access the management menu"
+echo ""
+echo "Want AI-assisted development tools?"
+echo "  Install the AGENT-TOOLS profile:"
+echo "    • Agent Mail (multi-agent coordination)"
+echo "    • Beads (dependency-aware task planning)"
+echo "    • 43 bash agent tools"
+echo "    • Global + per-repo configuration"
+echo "  Run: jomarchy  (then select 'Install Additional Profiles')"
 echo ""

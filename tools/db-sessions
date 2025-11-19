@@ -1,0 +1,74 @@
+#!/usr/bin/env node
+// View active chat sessions
+// Usage: db-sessions --user <user_id>
+//        db-sessions --recent 10
+//        db-sessions --brand <brand_id>
+
+import { spawn } from 'child_process';
+
+const args = process.argv.slice(2);
+
+if (args.includes('--help') || args.includes('-h')) {
+  console.log('Usage: db-sessions [options]');
+  console.log('\nOptions:');
+  console.log('  --user <id>      Filter by user ID');
+  console.log('  --brand <id>     Filter by brand ID');
+  console.log('  --recent <n>     Show n most recent sessions (default: 10)');
+  console.log('  --active         Only show sessions with activity in last 24h');
+  console.log('\nExamples:');
+  console.log('  db-sessions --recent 5');
+  console.log('  db-sessions --user 123e4567-e89b-12d3-a456-426614174000');
+  console.log('  db-sessions --active');
+  process.exit(0);
+}
+
+const connectionString = process.env.DATABASE_URL || process.env.SUPABASE_DB_URL;
+if (!connectionString) {
+  console.error('✗ DATABASE_URL or SUPABASE_DB_URL environment variable required');
+  process.exit(1);
+}
+
+let where = [];
+let limit = 10;
+
+for (let i = 0; i < args.length; i++) {
+  if (args[i] === '--user') {
+    where.push(`cs.user_id = '${args[++i]}'`);
+  } else if (args[i] === '--brand') {
+    where.push(`cs.brand_id = '${args[++i]}'`);
+  } else if (args[i] === '--recent') {
+    limit = parseInt(args[++i]);
+  } else if (args[i] === '--active') {
+    where.push(`cs.updated_at > NOW() - INTERVAL '24 hours'`);
+  }
+}
+
+const whereClause = where.length > 0 ? `WHERE ${where.join(' AND ')}` : '';
+
+const query = `
+  SELECT
+    cs.id,
+    cs.title,
+    cs.model_id,
+    cs.created_at,
+    cs.updated_at,
+    COUNT(cm.id) as message_count,
+    MAX(cm.created_at) as last_message_at
+  FROM chat_sessions cs
+  LEFT JOIN chat_messages cm ON cs.id = cm.session_id
+  ${whereClause}
+  GROUP BY cs.id, cs.title, cs.model_id, cs.created_at, cs.updated_at
+  ORDER BY cs.updated_at DESC
+  LIMIT ${limit}
+`;
+
+const psql = spawn('psql', [connectionString, '-c', query], { stdio: 'inherit' });
+
+psql.on('error', (error) => {
+  console.error('✗ Failed to execute psql:', error.message);
+  process.exit(1);
+});
+
+psql.on('close', (code) => {
+  process.exit(code);
+});

@@ -250,6 +250,179 @@ Configures Claude Code with MCP servers for enhanced capabilities.
 
 ---
 
+## 🤖 Agentic Coding Environment (DEV Profile)
+
+**A synergistic multi-agent development setup** combining multiple AI coding tools, coordination systems, and lightweight utilities for maximum productivity.
+
+### Philosophy: Bash Tools Over MCP
+
+Following [What if you don't need MCP?](https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/) by Mario Zechner - simple bash tools **replace MCP servers entirely** with 80x token reduction.
+
+**Token Savings:** 32,425 tokens saved by eliminating MCP server overhead
+
+**Why bash over MCP:**
+- Composability: `tool1 | jq | tool2 > output.json`
+- Cross-CLI: Same tools work in Claude Code, OpenCode, Cursor, Aider
+- Zero startup: No server initialization, just execute
+- Portable: Tools are simple bash/node scripts
+
+### Components
+
+#### 1. **Claude Code** (Already Installed)
+Anthropic's official CLI for AI pair programming.
+- Command: `cl` (alias with agent tools loaded)
+- Uses: Primary agentic coding interface
+- Documentation: https://code.claude.com/docs
+
+#### 2. **OpenCode** (Optional)
+Alternative agentic CLI with TypeScript/JavaScript focus.
+- Command: `opencode`
+- Uses: Alternative to Claude Code, good for front-end work
+- Documentation: https://opencode.ai/docs
+- **Installation:** `scripts/install/opencode.sh`
+
+#### 3. **Agent Mail** (Multi-Agent Coordination)
+Message-passing system for agents to coordinate asynchronously.
+- Service: `systemctl --user status agent-mail`
+- URL: http://localhost:8765
+- Uses:
+  - Agents communicate across sessions
+  - File reservation system (prevents conflicts)
+  - Thread-based conversations with audit trail
+  - Searchable message archive
+- **Installation:** `scripts/install/agent-mail.sh`
+
+#### 4. **Beads** (Dependency-Aware Task Planning)
+Lightweight issue database with dependency tracking.
+- Command: `bd`
+- Uses:
+  - `bd ready` - Show tasks ready to work on
+  - `bd create` - Create new tasks
+  - `bd status <id>` - Check task status
+  - Agents can query and update task states
+- Integration: Use `bd-###` as Agent Mail `thread_id` for traceability
+- **Installation:** `scripts/install/beads.sh`
+
+#### 5. **Agent Tools** (35 Generic + Project-Specific)
+Lightweight command-line tools for common operations.
+
+**Generic Tools** (available in all projects):
+- **Agent Mail (11):** am-register, am-inbox, am-send, am-reply, am-ack, am-reserve, am-release, etc.
+- **Database (3):** db-query, db-schema, db-sessions
+- **Development (7):** type-check-fast, lint-staged, migration-status, component-deps, route-list, build-size, env-check
+- **Monitoring (5):** edge-logs, quota-check, job-monitor, error-log, perf-check
+- **Deployment (2):** db-connection-test, cache-clear
+- **Browser (7):** browser-start.js, browser-nav.js, browser-eval.js, browser-screenshot.js, etc.
+
+**Location:** `~/code/jomarchy/tools/`
+
+**Project-Specific Tools Pattern:**
+Projects can add custom tools in `.claude/tools/` which are automatically available when working in that project:
+```
+~/code/myproject/.claude/tools/
+  ├── project-specific-tool-1
+  └── project-specific-tool-2
+```
+
+Your `.bashrc` launcher adds both generic and project-specific tools to PATH automatically.
+
+**Usage:**
+```bash
+# Generic tools work everywhere
+db-query "SELECT * FROM users LIMIT 5"
+am-inbox AgentName --unread
+edge-logs function-name --follow
+
+# Project-specific tools only work in their project
+# (if defined in that project's .claude/tools/)
+```
+
+**Installation:** `scripts/install/agent-tools.sh`
+
+### The Synergy
+
+These tools work together to create a powerful development workflow:
+
+1. **Pick Work** (Beads)
+   ```bash
+   bd ready --json  # Get highest priority task
+   ```
+
+2. **Reserve Files** (Agent Mail)
+   ```bash
+   am-reserve src/**/*.svelte --agent AgentName --ttl 3600 --reason "bd-123"
+   ```
+
+3. **Code with AI** (Claude Code / OpenCode)
+   ```bash
+   cl  # Claude with agent tools loaded
+   # or
+   opencode
+   ```
+
+4. **Coordinate** (Agent Mail)
+   ```bash
+   am-send "Status update" "Completed auth flow" --from Agent1 --to Agent2 --thread bd-123
+   ```
+
+5. **Monitor** (Agent Tools)
+   ```bash
+   edge-logs auth-function --errors
+   db-query "SELECT COUNT(*) FROM users WHERE created_at > NOW() - INTERVAL '1 hour'"
+   ```
+
+6. **Complete** (Beads)
+   ```bash
+   bd close bd-123 --reason "Completed"
+   am-release src/**/*.svelte --agent AgentName
+   ```
+
+### Cross-CLI Compatibility
+
+Agent tools work with ANY agentic CLI:
+- ✅ Claude Code (via `cl` alias)
+- ✅ OpenCode (symlinked to `~/.config/opencode/tool/`)
+- ✅ Cursor (add to settings)
+- ✅ Aider (tools in PATH)
+
+### Configuration
+
+All tools configured via `~/.bashrc`:
+```bash
+# Agent tools path
+export AGENT_TOOLS_PATH="~/code/jomarchy/tools"
+
+# Agent Mail
+export AGENT_MAIL_URL="http://localhost:8765"
+
+# Database (configure for your project)
+export DATABASE_URL="postgresql://..."
+
+# Alias: Claude Code with tools
+alias cl="PATH=$PATH:$AGENT_TOOLS_PATH DATABASE_URL=\"$DATABASE_URL\" claude"
+
+# Project-specific functions (auto-generated from ~/code/)
+ccchim() {
+    (cd ~/code/chimaro && PATH=$PATH:$AGENT_TOOLS_PATH DATABASE_URL="$DATABASE_URL" AGENT_MAIL_URL="$AGENT_MAIL_URL" claude --dangerously-skip-permissions "$@")
+}
+# ... functions for each project in ~/code/
+```
+
+**Project Functions Support Arguments:**
+```bash
+ccchim          # Open chimaro with agent tools
+ccchim -r       # Resume last chimaro session
+ccchim --help   # Show Claude help in chimaro context
+```
+
+### Documentation
+
+Full agent tools reference: `~/code/jomarchy/tools/README.md`
+
+Inject into agent context: `@~/code/jomarchy/tools/README.md`
+
+---
+
 ## 🚀 Claude Desktop Shortcuts (2 shortcuts)
 
 Desktop shortcuts matching terminal aliases:
