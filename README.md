@@ -71,7 +71,7 @@ Jomarchy is a **profile-based installation system** for Omarchy Linux that trans
 ```
 ┌───────────────────────────────────────────────────┐
 │                  Fresh Omarchy                    │
-│            (Hyprland + Waybar + Kitty)            │
+│            (Hyprland + Waybar + Arch)            │
 └─────────────────┬─────────────────────────────────┘
                   │
                   ▼
