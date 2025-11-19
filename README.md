@@ -616,11 +616,7 @@ MIT License
 
 ## Credits
 
-- **Omarchy Linux:** Created by [@KrystalSkull](https://github.com/KrystalSkull)
-- **Agent Mail:** [Dicklesworthstone/mcp_agent_mail](https://github.com/Dicklesworthstone/mcp_agent_mail)
-- **Beads:** [steveyegge/beads](https://github.com/steveyegge/beads)
-- **Browser Tools:** [badlogic/browser-tools](https://github.com/badlogic/browser-tools)
-- **Tools > MCP:** Inspired by [Mario Zechner's "What if you don't need MCP?"](https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/)
+- **Omarchy Linux:** Created by [@DHH](https://github.com/dhh) and Basecamp - [github.com/basecamp/omarchy](https://github.com/basecamp/omarchy)
 - **Jomarchy:** Assembled by [@joewinke](https://github.com/joewinke)
 
 ---
@@ -628,7 +624,7 @@ MIT License
 ## Related Projects
 
 - **jomarchy-agent-tools:** [github.com/joewinke/jomarchy-agent-tools](https://github.com/joewinke/jomarchy-agent-tools) - Standalone AI agent tools installer (works on any Linux)
-- **Omarchy Linux:** [github.com/KrystalSkull/omarchy](https://github.com/KrystalSkull/omarchy) - The Linux distribution this is built for
+- **Omarchy Linux:** [github.com/basecamp/omarchy](https://github.com/basecamp/omarchy) - The Linux distribution this is built for
 - **Chimaro:** AI-powered application platform with unified Beads dashboard
 
 ---
