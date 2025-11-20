@@ -621,6 +621,34 @@ Jomarchy includes a collection of **24 lightweight bash tools** in `~/code/jomar
 - `edge-logs` (Supabase edge functions), `lint-staged` (git)
 - Generic tools for Postgres/Supabase projects
 
+### Session-Aware Statusline
+
+**Each Claude Code session automatically displays its agent identity and status.**
+
+The statusline uses Claude Code's unique `session_id` to track agent identity per session:
+
+```
+Session 1: FreeMarsh  | [P1] task-abc - Building dashboard [🔒2 📬1 ⏱45m]
+Session 2: PaleStar   | idle [📬3]
+Session 3: StrongShore | [P0] task-xyz - Critical bug fix [🔒1]
+```
+
+**How it works:**
+1. Run `/agent:register` in any Claude Code session
+2. Choose your agent identity (or create new one)
+3. Statusline automatically updates and persists for that session
+4. Each session maintains its own independent agent identity
+
+**Statusline indicators:**
+- 🔒N - Active file reservations
+- 📬N - Unread messages in Agent Mail inbox
+- ⏱Xm/Xh - Time until file lock expires
+- N% - Task progress (if tracked in Beads)
+
+**Multi-agent support:** Run 9+ agents simultaneously, each session shows its own identity!
+
+See `~/code/jomarchy-agent-tools/CLAUDE.md` for complete statusline documentation.
+
 ### Installation
 
 Add tools to your PATH during jomarchy DEV profile installation:
