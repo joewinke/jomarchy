@@ -196,10 +196,11 @@ Testing and data management.
 test-route /api/video/generate --method POST --data '{"prompt":"..."}'
 ```
 
-### 🌐 Browser Automation Tools (7 tools)
+### 🌐 Browser Automation Tools (11 tools)
 
-From [badlogic/browser-tools](https://github.com/badlogic/browser-tools) - Chrome DevTools Protocol tools.
+**Custom-built browser automation tools using Chrome DevTools Protocol**
 
+**Core Tools (7):**
 - **browser-start.js** - Launch Chrome with debugging
 - **browser-nav.js** - Navigate to URLs
 - **browser-eval.js** - Execute JavaScript in page
@@ -207,6 +208,12 @@ From [badlogic/browser-tools](https://github.com/badlogic/browser-tools) - Chrom
 - **browser-pick.js** - Interactive element picker
 - **browser-cookies.js** - Display cookies
 - **browser-hn-scraper.js** - Example: Hacker News scraper
+
+**Advanced Tools (4):**
+- **browser-wait.js** - Smart waiting with CDP polling (eliminates race conditions)
+- **browser-snapshot.js** - Structured page tree (1000x token savings: 5KB vs 5MB)
+- **browser-console.js** - Structured console access (debug JS errors with stack traces)
+- **browser-network.js** - Network request monitoring (API testing with timing metrics)
 
 ```bash
 # Examples
@@ -348,6 +355,6 @@ MIT
 
 ## Credits
 
-- Browser tools from [badlogic/browser-tools](https://github.com/badlogic/browser-tools)
+- Browser tools: Custom-built for jomarchy-agent-tools using Chrome DevTools Protocol and Puppeteer
 - Philosophy from [What if you don't need MCP?](https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/) by Mario Zechner
 - Part of the [Jomarchy Agent Tools](https://github.com/joewinke/jomarchy-agent-tools) unified repository

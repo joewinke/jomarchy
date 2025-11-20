@@ -610,11 +610,11 @@ Jomarchy includes a collection of **24 lightweight bash tools** in `~/code/jomar
 - `am-search`, `am-agents`, `am-whoami`
 - Coordinate multi-agent workflows with messaging and file reservations
 
-**Browser Automation (7 tools):**
-- `browser-start.js`, `browser-nav.js`, `browser-eval.js`
-- `browser-screenshot.js`, `browser-pick.js`, `browser-cookies.js`
-- `browser-hn-scraper.js`
-- Based on [badlogic/browser-tools](https://github.com/badlogic/browser-tools)
+**Browser Automation (11 tools):**
+- Core: `browser-start.js`, `browser-nav.js`, `browser-eval.js`
+- Core: `browser-screenshot.js`, `browser-pick.js`, `browser-cookies.js`, `browser-hn-scraper.js`
+- Advanced: `browser-wait.js`, `browser-snapshot.js`, `browser-console.js`, `browser-network.js`
+- Custom-built using Chrome DevTools Protocol and Puppeteer
 
 **Database & Utilities (6 tools):**
 - `db-query`, `db-connection-test`, `db-schema`, `db-sessions`
@@ -753,7 +753,7 @@ See existing `browser-*.js` tools for implementation examples.
 - **Jomarchy-Machines README:** `~/code/jomarchy-machines/README.md`
 - **Omarchy Docs:** https://omarchy.org
 - **Beads Project:** https://github.com/steveyegge/beads
-- **Browser Tools:** https://github.com/badlogic/browser-tools
+- **Jomarchy Agent Tools:** https://github.com/joewinke/jomarchy-agent-tools (custom browser tools + coordination)
 - **MCP Alternative Philosophy:** https://mariozechner.at/posts/2025-11-02-what-if-you-dont-need-mcp/
 
 ---
