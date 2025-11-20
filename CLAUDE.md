@@ -649,6 +649,163 @@ Session 3: StrongShore | [P0] task-xyz - Critical bug fix [🔒1]
 
 See `~/code/jomarchy-agent-tools/CLAUDE.md` for complete statusline documentation.
 
+### Command Reference
+
+**Quick start commands for agent registration and task management.**
+
+#### `/start` - Get to Work Command
+
+**The "just get me working" command** - seamlessly handles registration and task start.
+
+**Usage:**
+```bash
+/start              # Auto-detect recent agent OR auto-create new agent
+/start agent        # Force show agent selection menu
+/start task-abc     # Start specific task (auto-registers if needed)
+```
+
+**How it works:**
+
+1. **Auto-Detection (Default):**
+   - Checks if you're already registered (session file exists)
+   - If not: looks for agents active in last **1 hour**
+   - Recent agents found → shows menu to resume
+   - No recent agents → auto-creates new agent with random name
+   - Sets statusline automatically
+
+2. **Force Menu:**
+   ```bash
+   /start agent
+   ```
+   - Always shows interactive agent selection menu
+   - Even if you're already registered
+   - Useful for switching agents mid-session
+
+3. **Start Specific Task:**
+   ```bash
+   /start jomarchy-abc
+   ```
+   - Auto-registers if needed (using 1-hour detection)
+   - Then starts the specified task immediately
+   - Runs full conflict checks before starting work
+
+**1-Hour Detection Window:**
+- Agents active in last 60 minutes are considered "recent"
+- Balances between convenience (resume recent work) and freshness (don't show stale agents)
+- Adjustable via helper script: `scripts/get-recent-agents`
+
+**Examples:**
+```bash
+# Scenario 1: Fresh session, you worked 30 min ago
+/start
+# → Shows menu: "Resume FreeMarsh (last active 30 min ago)"
+
+# Scenario 2: Fresh session, no recent work
+/start
+# → Auto-creates: "✨ Created new agent: BrightCove"
+
+# Scenario 3: Already registered, want different task
+/start jomarchy-zdl
+# → Skips registration, starts task immediately
+```
+
+#### `/r` - Agent Resume Menu
+
+**Explicit agent selection** - always shows interactive menu.
+
+**Usage:**
+```bash
+/r              # Show all registered agents, choose one
+```
+
+**Purpose:**
+- `/r` is for **"I want to see all agents and choose"**
+- `/start` is for **"just get me working"**
+
+**Behavior:**
+- Lists ALL registered agents (sorted by last_active)
+- Shows details: task, reservations, last active time
+- User selects from menu (no auto-creation)
+- For resuming existing agents only
+
+**Example:**
+```bash
+/r
+# Shows:
+# ┌─ AGENTS ─────────────────────────────────────┐
+# │ 1. FreeMarsh (30 min ago) - Working on vgt  │
+# │ 2. PaleStar (2 hours ago) - idle            │
+# │ 3. StrongShore (5 hours ago) - Working on... │
+# └──────────────────────────────────────────────┘
+# Select agent: [1/2/3]
+```
+
+#### `/agent:register` - Full Registration Flow
+
+**Comprehensive agent setup** - for advanced scenarios.
+
+**Usage:**
+```bash
+/agent:register     # Interactive registration with full options
+```
+
+**When to use:**
+- Need to see full agent list (including old agents)
+- Want explicit control over registration
+- Setting up multi-agent coordination
+
+**vs `/start` and `/r`:**
+
+| Command | Use Case | Auto-Create | Recent Filter |
+|---------|----------|-------------|---------------|
+| `/start` | "Get me working fast" | ✅ Yes (if no recent agents) | 1 hour |
+| `/r` | "Show all agents, I'll choose" | ❌ No | None |
+| `/agent:register` | "Full setup" | ✅ Yes (with confirmation) | None |
+
+#### Command Workflow Recommendations
+
+**Most Common Workflow:**
+```bash
+# 1. Start your session
+/start
+
+# 2. Work on tasks
+# (statusline shows your agent identity)
+
+# 3. Switch tasks
+/start task-xyz
+
+# 4. End session
+# (agent identity preserved for next session)
+```
+
+**Multi-Agent Coordination:**
+```bash
+# Terminal 1 (Frontend work)
+/start              # Resume FreeMarsh
+# Work on UI tasks...
+
+# Terminal 2 (Backend work)
+/r                  # Choose different agent (PaleStar)
+# Work on API tasks...
+
+# Terminal 3 (Testing)
+/start agent        # Choose StrongShore
+# Run tests...
+```
+
+**Troubleshooting:**
+```bash
+# Statusline shows "no agent registered"?
+/start              # Quick fix
+
+# Want to see all agents (not just recent)?
+/r                  # Full agent list
+
+# Need to create new agent explicitly?
+/agent:register     # Interactive setup
+```
+
 ### Installation
 
 Add tools to your PATH during jomarchy DEV profile installation:
