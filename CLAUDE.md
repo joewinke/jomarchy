@@ -297,6 +297,8 @@ After BASE profile installation, a `jomarchy` command is installed system-wide:
 **Usage:**
 ```bash
 jomarchy                  # Interactive management menu
+jomarchy --profiles       # Web app profile manager
+jomarchy --projects       # Project manager (colors, paths, launchers)
 jomarchy --install        # Install additional profiles
 jomarchy --status         # Show installed profiles
 jomarchy --update         # Update from GitHub
@@ -306,6 +308,7 @@ jomarchy --help           # Show help
 **Management Menu Features:**
 - Install Additional Profiles
 - Manage Web App Profiles (organize by Chrome profile)
+- Manage Projects (colors, paths, launcher aliases)
 - Update Jomarchy from GitHub
 - View Installation Summary
 - View Documentation
@@ -331,6 +334,58 @@ All profile installers track their installation status:
 - Prevents duplicate installations
 - Enables intelligent upgrade paths
 - Supports conditional features based on installed profiles
+
+### Project Manager
+
+The Project Manager creates colored window borders and bash aliases for quick project navigation.
+
+**Access:**
+```bash
+jomarchy --projects    # Direct access via CLI
+jomarchy              # Management menu → Manage Projects
+```
+
+**Features:**
+- View configured projects with colored preview
+- Add projects interactively (scan ~/code or manual entry)
+- Edit project colors, ports, paths
+- Remove projects with confirmation
+- Import from existing .bashrc PROJECT_CONFIG
+- Regenerate bash functions and Hyprland rules
+
+**Configuration Files:**
+
+| File | Purpose |
+|------|---------|
+| `~/.config/jomarchy/projects.conf` | Project definitions (single source of truth) |
+| `~/.local/share/jomarchy/generated/project-functions.bash` | Auto-generated bash aliases |
+| `~/.local/share/jomarchy/generated/project-rules.hypr` | Auto-generated Hyprland window rules |
+
+**Config Format (`projects.conf`):**
+```
+# KEY|NAME|PATH|PORT|DB_ENV_VAR|ACTIVE_COLOR|INACTIVE_COLOR
+chimaro|CHIMARO|~/code/chimaro|3500|DATABASE_URL|00d4aa|00a080
+jomarchy|JOMARCHY|~/code/jomarchy|||ffdd00|ccaa00
+```
+
+**Generated Aliases:**
+- `j<key>` - Launch project (code editor + claude + npm dev)
+- `j<key> code` - Open code editor only
+- `j<key> claude` - Open Claude Code only
+- `j<key> npm` - Start dev server only
+- `cc<key>` - Quick Claude Code launcher
+- `jcolors` - Reapply all border colors
+- `jhelp` - Show available projects
+
+**Example:**
+```bash
+jchimaro         # Open VS Code, Claude, start npm dev server
+jjomarchy claude # Open Claude Code for jomarchy
+ccjat            # Quick Claude Code for jat
+```
+
+**Color Palette:**
+Eight preset colors available (Cyan, Purple, Orange, Green, Red, Yellow, Blue, Pink) plus custom hex input.
 
 ## Key Design Patterns
 
