@@ -21,17 +21,66 @@ readonly GENERATED_HYPR="${GENERATED_DIR}/project-rules.hypr"
 # SHORT_ALIAS is optional - if empty, uses first letter of key (first-come-first-served)
 
 # Color palette for new projects (hex colors without #)
-# Format: ACTIVE|INACTIVE|NAME
+# Format: ACTIVE|INACTIVE|NAME|VSCODE_THEME
 readonly -a COLOR_PALETTE=(
-    "00d4aa|00a080|Cyan (Teal)"
-    "bb66ff|9944dd|Purple"
-    "ff9933|dd7711|Orange"
-    "44ff44|22cc22|Green"
-    "ff5555|cc3333|Red"
-    "ffdd00|ccaa00|Yellow"
-    "5588ff|3366dd|Blue"
-    "ff6699|cc4477|Pink"
+    "00d4aa|00a080|Cyan (Teal)|Monokai Dimmed"
+    "bb66ff|9944dd|Purple|Dracula"
+    "ff9933|dd7711|Orange|Kimbie Dark"
+    "44ff44|22cc22|Green|Monokai"
+    "ff5555|cc3333|Red|Tomorrow Night Red"
+    "ffdd00|ccaa00|Yellow|Solarized Light"
+    "5588ff|3366dd|Blue|One Dark Pro"
+    "ff6699|cc4477|Pink|SynthWave '84"
 )
+
+# Get VS Code theme for a given active color
+_get_vscode_theme_for_color() {
+    local active_color="$1"
+    for entry in "${COLOR_PALETTE[@]}"; do
+        IFS='|' read -r active inactive name theme <<< "$entry"
+        if [[ "$active" == "$active_color" ]]; then
+            echo "$theme"
+            return
+        fi
+    done
+    # Default theme if color not found
+    echo "Default Dark+"
+}
+
+# Update VS Code settings.json with the theme for a project
+_update_vscode_theme() {
+    local project_path="$1"
+    local active_color="$2"
+
+    local theme
+    theme=$(_get_vscode_theme_for_color "$active_color")
+
+    local vscode_dir="${project_path}/.vscode"
+    local settings_file="${vscode_dir}/settings.json"
+
+    # Create .vscode directory if needed
+    mkdir -p "$vscode_dir"
+
+    if [[ -f "$settings_file" ]]; then
+        # Update existing settings.json
+        if grep -q '"workbench.colorTheme"' "$settings_file"; then
+            # Replace existing theme
+            sed -i "s/\"workbench.colorTheme\": *\"[^\"]*\"/\"workbench.colorTheme\": \"$theme\"/" "$settings_file"
+        else
+            # Add theme to existing settings (after first {)
+            sed -i "s/{/{\\n  \"workbench.colorTheme\": \"$theme\",/" "$settings_file"
+        fi
+    else
+        # Create new settings.json
+        cat > "$settings_file" << EOF
+{
+  "workbench.colorTheme": "$theme"
+}
+EOF
+    fi
+
+    echo -e "${GREEN}✓${NC} Set VS Code theme to: $theme"
+}
 
 # ============================================================================
 # UTILITY FUNCTIONS
@@ -322,6 +371,69 @@ _jat_apply_colors() {
     done
 }
 
+# Apply colors to windows whose title contains a path substring (case-insensitive)
+_jat_apply_colors_by_path() {
+    local path_substring="$1"
+    local active_color="$2"
+    local inactive_color="$3"
+
+    # Use ascii_downcase for case-insensitive matching
+    hyprctl clients -j 2>/dev/null | jq -r ".[] | select(.title | ascii_downcase | contains(\"${path_substring,,}\")) | .address" | while read -r addr; do
+        [[ -z "$addr" ]] && continue
+        hyprctl dispatch setprop "address:$addr" activebordercolor "rgb($active_color)" &>/dev/null
+        hyprctl dispatch setprop "address:$addr" inactivebordercolor "rgb($inactive_color)" &>/dev/null
+    done
+}
+
+# Apply colors to the most recently opened window of a given class
+_jat_apply_colors_by_class() {
+    local window_class="$1"
+    local active_color="$2"
+    local inactive_color="$3"
+
+    hyprctl clients -j 2>/dev/null | jq -r ".[] | select(.class == \"$window_class\") | .address" | while read -r addr; do
+        [[ -z "$addr" ]] && continue
+        hyprctl dispatch setprop "address:$addr" activebordercolor "rgb($active_color)" &>/dev/null
+        hyprctl dispatch setprop "address:$addr" inactivebordercolor "rgb($inactive_color)" &>/dev/null
+    done
+}
+
+# Wait for VS Code window to appear, then apply colors (runs in background)
+# $1: project key (for path matching)
+# $2: active color
+# $3: inactive color
+# $4: max wait time in seconds (default 10)
+_jat_wait_for_vscode_and_apply() {
+    local project_key="$1"
+    local active_color="$2"
+    local inactive_color="$3"
+    local max_wait="${4:-10}"
+    local waited=0
+    local interval=0.5
+
+    # Run in background subshell
+    (
+        while (( waited < max_wait )); do
+            # Check if any code-oss/Code/vscodium window exists with the project path in title
+            local found
+            found=$(hyprctl clients -j 2>/dev/null | jq -r ".[] | select((.class == \"code-oss\" or .class == \"Code\" or .class == \"vscodium\") and (.title | ascii_downcase | contains(\"${project_key,,}\"))) | .address" | head -1)
+
+            if [[ -n "$found" ]]; then
+                # Found the window, apply colors to all matching
+                hyprctl clients -j 2>/dev/null | jq -r ".[] | select((.class == \"code-oss\" or .class == \"Code\" or .class == \"vscodium\") and (.title | ascii_downcase | contains(\"${project_key,,}\"))) | .address" | while read -r addr; do
+                    [[ -z "$addr" ]] && continue
+                    hyprctl dispatch setprop "address:$addr" activebordercolor "rgb($active_color)" &>/dev/null
+                    hyprctl dispatch setprop "address:$addr" inactivebordercolor "rgb($inactive_color)" &>/dev/null
+                done
+                break
+            fi
+
+            sleep "$interval"
+            waited=$(echo "$waited + $interval" | bc)
+        done
+    ) &
+}
+
 # Core project launcher
 # $1: project key
 # $2: mode (all|code|claude|npm)
@@ -345,11 +457,19 @@ CORE
             cd "${expanded_path}" || return 1
             case "\$mode" in
                 all)
-                    code .
+                    code . &
                     ${port:+npm run dev &}
+                    # Apply colors to terminal windows immediately
+                    _jat_apply_colors "${name}:" "${active_color}" "${inactive_color}"
+                    # Wait for VS Code in background and apply colors when it appears
+                    _jat_wait_for_vscode_and_apply "${key}" "${active_color}" "${inactive_color}"
                     claude
                     ;;
-                code) code . ;;
+                code)
+                    code . &
+                    # Wait for VS Code in background and apply colors when it appears
+                    _jat_wait_for_vscode_and_apply "${key}" "${active_color}" "${inactive_color}"
+                    ;;
                 claude) claude ;;
                 npm) ${port:+npm run dev} ;;
             esac
@@ -682,7 +802,10 @@ HEADER
 
     echo -e "\n${GREEN}✓ Project '$key' added successfully!${NC}"
 
-    # Step 7: Regenerate
+    # Step 7: Update VS Code theme
+    _update_vscode_theme "$path" "$active_color"
+
+    # Step 8: Regenerate
     if gum confirm "Regenerate bash functions and Hyprland rules now?"; then
         regenerate_all
     else
@@ -829,7 +952,12 @@ edit_project() {
 
     echo -e "\n${GREEN}✓ Project '$edit_key' updated successfully!${NC}"
 
-    # Step 5: Regenerate
+    # Step 5: Update VS Code theme if colors changed
+    if [[ "$new_active" != "$cur_active" ]]; then
+        _update_vscode_theme "$new_path" "$new_active"
+    fi
+
+    # Step 6: Regenerate
     if gum confirm "Regenerate bash functions and Hyprland rules now?"; then
         regenerate_all
     else
@@ -907,6 +1035,108 @@ remove_project() {
     else
         echo -e "${YELLOW}Remember to run 'Regenerate All' to remove the aliases.${NC}"
     fi
+}
+
+# ============================================================================
+# PROGRAMMATIC PROJECT ADDITION (for automation)
+# ============================================================================
+
+# Auto-add a project without interactive prompts
+# Used by bash-customizations-local.sh during repo cloning
+# $1: project key (lowercase repo name)
+# $2: project path (full path, not ~)
+# Returns: 0 on success, 1 on skip/error
+auto_add_project() {
+    local key="$1"
+    local path="$2"
+
+    # Validate inputs
+    if [[ -z "$key" || -z "$path" ]]; then
+        echo -e "${RED}Error: auto_add_project requires key and path${NC}" >&2
+        return 1
+    fi
+
+    # Normalize key to lowercase
+    key="${key,,}"
+
+    # Skip if project already exists
+    if get_project "$key" &>/dev/null; then
+        echo -e "  ${YELLOW}⊘${NC} Project '$key' already configured, skipping"
+        return 1
+    fi
+
+    # Validate key format
+    if [[ ! "$key" =~ ^[a-z][a-z0-9_-]*$ ]]; then
+        echo -e "  ${RED}✗${NC} Invalid key format: $key" >&2
+        return 1
+    fi
+
+    _ensure_config_dirs
+
+    # Auto-detect port from package.json
+    local port=""
+    local package_json="${path}/package.json"
+    if [[ -f "$package_json" ]]; then
+        # Try to extract port from scripts.dev (e.g., "dev": "next dev -p 3500")
+        port=$(grep -oP '(?<=-p\s)\d+' "$package_json" 2>/dev/null | head -1)
+        # If not found, try VITE/Astro style (e.g., --port 3500)
+        if [[ -z "$port" ]]; then
+            port=$(grep -oP '(?<=--port\s)\d+' "$package_json" 2>/dev/null | head -1)
+        fi
+    fi
+
+    # Auto-assign color from palette based on project count
+    local project_count
+    project_count=$(count_projects)
+    local palette_index=$((project_count % ${#COLOR_PALETTE[@]}))
+    local color_entry="${COLOR_PALETTE[$palette_index]}"
+    local active_color inactive_color
+    IFS='|' read -r active_color inactive_color _ _ <<< "$color_entry"
+
+    # Generate display name (uppercase key)
+    local name="${key^^}"
+
+    # Database env var (assume DATABASE_URL if package.json exists with db-related deps)
+    local db_var=""
+    if [[ -f "$package_json" ]]; then
+        if grep -qE '"(prisma|@prisma/client|drizzle|pg|postgres|supabase)"' "$package_json" 2>/dev/null; then
+            db_var="DATABASE_URL"
+        fi
+    fi
+
+    # Create config file with header if it doesn't exist
+    if [[ ! -f "$PROJECTS_CONFIG" ]]; then
+        cat > "$PROJECTS_CONFIG" << 'HEADER'
+# Project Configuration for Jomarchy
+# Format: KEY|NAME|PATH|PORT|DB_ENV_VAR|ACTIVE_COLOR|INACTIVE_COLOR|SHORT_ALIAS
+#
+# KEY: lowercase identifier (used for j<key> and cc<key> aliases)
+# NAME: display name (used in window titles, e.g., "CHIMARO:")
+# PATH: project path (~ expanded)
+# PORT: dev server port (empty if no server)
+# DB_ENV_VAR: env var name for database URL (empty if none)
+# ACTIVE_COLOR: hex color for active border (without #)
+# INACTIVE_COLOR: hex color for inactive border
+# SHORT_ALIAS: optional custom single letter for j<X>/cc<X> aliases
+#              (first-come-first-served if not specified)
+
+HEADER
+    fi
+
+    # Build config line (8 fields, last empty for auto short alias)
+    local config_line="${key}|${name}|${path}|${port}|${db_var}|${active_color}|${inactive_color}|"
+
+    # Append to config
+    echo "$config_line" >> "$PROJECTS_CONFIG"
+
+    # Display color swatch
+    local color_display
+    color_display=$(printf "\e[48;2;%d;%d;%dm  \e[0m" \
+        "$((16#${active_color:0:2}))" "$((16#${active_color:2:2}))" "$((16#${active_color:4:2}))")
+
+    echo -e "  ${GREEN}✓${NC} Added '$key' ${color_display} ${port:+(port: $port)}"
+
+    return 0
 }
 
 # ============================================================================
