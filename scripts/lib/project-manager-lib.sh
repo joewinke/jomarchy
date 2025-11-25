@@ -817,6 +817,223 @@ remove_project() {
 }
 
 # ============================================================================
+# MIGRATION FUNCTIONS
+# ============================================================================
+
+# Import projects from existing PROJECT_CONFIG in .bashrc
+# Converts old format to new projects.conf format
+import_from_bashrc() {
+    local bashrc="$HOME/.bashrc"
+
+    echo -e "\n${BLUE}=== Import from .bashrc ===${NC}\n"
+
+    # Step 1: Check if .bashrc exists
+    if [[ ! -f "$bashrc" ]]; then
+        echo -e "${RED}Error: ~/.bashrc not found${NC}"
+        return 1
+    fi
+
+    # Step 2: Check if PROJECT_CONFIG exists in .bashrc
+    if ! grep -q "^declare -A PROJECT_CONFIG" "$bashrc"; then
+        echo -e "${YELLOW}No PROJECT_CONFIG found in ~/.bashrc${NC}"
+        echo -e "${CYAN}Nothing to import.${NC}"
+        return 1
+    fi
+
+    echo -e "${GREEN}✓ Found PROJECT_CONFIG in ~/.bashrc${NC}\n"
+
+    # Step 3: Parse PROJECT_CONFIG entries
+    # Old format: [key]="NAME|PATH|PORT|DATABASE_URL|rgb(active)|rgb(inactive)"
+    # New format: KEY|NAME|PATH|PORT|DB_ENV_VAR|ACTIVE_COLOR|INACTIVE_COLOR
+
+    local temp_config
+    temp_config=$(mktemp)
+
+    # Add header
+    cat > "$temp_config" << 'HEADER'
+# Jomarchy Project Configuration
+# Format: KEY|NAME|PATH|PORT|DB_ENV_VAR|ACTIVE_COLOR|INACTIVE_COLOR
+# Migrated from ~/.bashrc PROJECT_CONFIG
+#
+# Colors are hex without # (e.g., ff5555 for red)
+# Leave PORT or DB_ENV_VAR empty if not needed
+
+HEADER
+
+    local import_count=0
+    local skipped_count=0
+
+    echo -e "${CYAN}Parsing projects...${NC}\n"
+
+    # Extract and convert each project entry
+    # Match lines like: [chimaro]="CHIMARO|~/code/chimaro|3500|postgres://...|rgb(00d4aa)|rgb(00a080)"
+    while IFS= read -r line; do
+        # Skip if line doesn't match project entry pattern
+        [[ ! "$line" =~ ^\[([a-z0-9_-]+)\]=\"(.*)\"$ ]] && continue
+
+        local key="${BASH_REMATCH[1]}"
+        local value="${BASH_REMATCH[2]}"
+
+        # Parse the pipe-delimited value
+        # Format: NAME|PATH|PORT|DATABASE_URL|rgb(active)|rgb(inactive)
+        IFS='|' read -r name path port db_url active_rgb inactive_rgb <<< "$value"
+
+        # Extract hex colors from rgb() format
+        local active_color inactive_color
+
+        if [[ "$active_rgb" =~ rgb\(([0-9a-fA-F]{6})\) ]]; then
+            active_color="${BASH_REMATCH[1],,}"  # lowercase
+        else
+            active_color="5588ff"  # default blue
+        fi
+
+        if [[ "$inactive_rgb" =~ rgb\(([0-9a-fA-F]{6})\) ]]; then
+            inactive_color="${BASH_REMATCH[1],,}"  # lowercase
+        else
+            inactive_color="3366dd"  # default dark blue
+        fi
+
+        # Determine DB env var name
+        # If there's a database URL, use DATABASE_URL as the env var name
+        # (Actual URLs should be stored in secrets.env, not the config)
+        local db_var=""
+        if [[ -n "$db_url" && "$db_url" != "postgresql://"* && "$db_url" != "postgres://"* ]]; then
+            # It's already an env var name
+            db_var="$db_url"
+        elif [[ -n "$db_url" ]]; then
+            # It's a URL - we'll use DATABASE_URL as the env var
+            db_var="DATABASE_URL"
+        fi
+
+        # Build new format line
+        local new_line="${key}|${name}|${path}|${port}|${db_var}|${active_color}|${inactive_color}"
+
+        echo "$new_line" >> "$temp_config"
+
+        # Display what we're importing
+        printf "  ${GREEN}✓${NC} %-12s %-12s %s\n" "$key" "$name" "$path"
+        ((import_count++))
+
+    done < <(grep -E '^\s*\[[a-z0-9_-]+\]="' "$bashrc" | sed 's/^[[:space:]]*//')
+
+    echo -e "\n${GREEN}Parsed $import_count project(s)${NC}"
+
+    if [[ $import_count -eq 0 ]]; then
+        echo -e "${YELLOW}No valid project entries found to import.${NC}"
+        rm -f "$temp_config"
+        return 1
+    fi
+
+    # Step 4: Preview the conversion
+    echo -e "\n${CYAN}Preview of converted config:${NC}\n"
+    echo "─────────────────────────────────────────────────────────────────"
+    cat "$temp_config"
+    echo "─────────────────────────────────────────────────────────────────"
+
+    # Step 5: Confirm import
+    if ! gum confirm "Import these $import_count projects to ~/.config/jomarchy/projects.conf?"; then
+        echo -e "${YELLOW}Import cancelled.${NC}"
+        rm -f "$temp_config"
+        return 1
+    fi
+
+    # Step 6: Create backup if config already exists
+    _ensure_config_dirs
+    if [[ -f "$PROJECTS_CONFIG" ]]; then
+        local backup="${PROJECTS_CONFIG}.bak.$(date +%s)"
+        cp "$PROJECTS_CONFIG" "$backup"
+        echo -e "${CYAN}Backed up existing config to: $backup${NC}"
+    fi
+
+    # Step 7: Move new config into place
+    mv "$temp_config" "$PROJECTS_CONFIG"
+    echo -e "${GREEN}✓ Imported $import_count projects to $PROJECTS_CONFIG${NC}"
+
+    # Step 8: Offer to comment out old .bashrc config
+    echo -e ""
+    if gum confirm "Comment out the old PROJECT_CONFIG in ~/.bashrc?"; then
+        _comment_out_old_bashrc_config
+    else
+        echo -e "${YELLOW}Old config left in ~/.bashrc (you may want to remove it manually)${NC}"
+    fi
+
+    # Step 9: Check for database URLs that need to be moved to secrets
+    local has_db_urls=false
+    while IFS= read -r line; do
+        [[ ! "$line" =~ ^\[([a-z0-9_-]+)\]=\"(.*)\"$ ]] && continue
+        local value="${BASH_REMATCH[2]}"
+        IFS='|' read -r _ _ _ db_url _ _ <<< "$value"
+        if [[ "$db_url" =~ ^postgres(ql)?:// ]]; then
+            has_db_urls=true
+            break
+        fi
+    done < <(grep -E '^\s*\[[a-z0-9_-]+\]="' "$bashrc")
+
+    if [[ "$has_db_urls" == "true" ]]; then
+        echo -e "\n${YELLOW}⚠  Your old config contained database URLs.${NC}"
+        echo -e "${YELLOW}   These should be moved to: ~/.config/jomarchy/secrets.env${NC}"
+        echo -e "${YELLOW}   Example: DATABASE_URL=\"postgresql://...\"${NC}"
+        echo -e "${CYAN}   Projects will use the DATABASE_URL env var instead.${NC}"
+    fi
+
+    # Step 10: Regenerate
+    echo -e ""
+    if gum confirm "Regenerate bash functions and Hyprland rules now?"; then
+        regenerate_all
+    else
+        echo -e "${YELLOW}Remember to run 'Regenerate All' to apply the imported projects.${NC}"
+    fi
+
+    echo -e "\n${GREEN}✓ Migration complete!${NC}"
+}
+
+# Helper function to comment out old PROJECT_CONFIG in .bashrc
+_comment_out_old_bashrc_config() {
+    local bashrc="$HOME/.bashrc"
+    local backup="${bashrc}.bak.$(date +%s)"
+
+    # Create backup
+    cp "$bashrc" "$backup"
+    echo -e "${CYAN}Backed up ~/.bashrc to: $backup${NC}"
+
+    # Find start and end of PROJECT_CONFIG block
+    # We need to comment out from "declare -A PROJECT_CONFIG" to the closing ")"
+
+    local temp_bashrc
+    temp_bashrc=$(mktemp)
+
+    local in_config_block=false
+    local commented_lines=0
+
+    while IFS= read -r line || [[ -n "$line" ]]; do
+        if [[ "$line" =~ ^declare\ -A\ PROJECT_CONFIG ]]; then
+            # Start of config block
+            in_config_block=true
+            echo "# [MIGRATED TO jomarchy] $line" >> "$temp_bashrc"
+            ((commented_lines++))
+        elif [[ "$in_config_block" == "true" ]]; then
+            # Inside config block
+            echo "# [MIGRATED TO jomarchy] $line" >> "$temp_bashrc"
+            ((commented_lines++))
+
+            # Check if this is the closing parenthesis
+            if [[ "$line" =~ ^\) ]]; then
+                in_config_block=false
+            fi
+        else
+            # Outside config block - keep as is
+            echo "$line" >> "$temp_bashrc"
+        fi
+    done < "$bashrc"
+
+    # Replace original
+    mv "$temp_bashrc" "$bashrc"
+
+    echo -e "${GREEN}✓ Commented out $commented_lines lines in ~/.bashrc${NC}"
+    echo -e "${CYAN}Lines marked with '# [MIGRATED TO jomarchy]' can be safely deleted later.${NC}"
+}
+
+# ============================================================================
 # MAIN MENU (called by jomarchy.sh)
 # ============================================================================
 
@@ -862,8 +1079,7 @@ project_manager_run() {
                 regenerate_all
                 ;;
             "Import from .bashrc")
-                # Placeholder for import_from_bashrc (will be in migration task)
-                echo -e "${YELLOW}Import functionality coming in next update.${NC}"
+                import_from_bashrc
                 ;;
             "Exit")
                 echo -e "\n${GREEN}Thanks for using Project Manager!${NC}"
