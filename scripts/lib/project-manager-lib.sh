@@ -16,8 +16,9 @@ readonly GENERATED_BASH="${GENERATED_DIR}/project-functions.bash"
 readonly GENERATED_HYPR="${GENERATED_DIR}/project-rules.hypr"
 
 # Config file format:
-# KEY|NAME|PATH|PORT|DB_ENV_VAR|ACTIVE_COLOR|INACTIVE_COLOR
-# Example: chimaro|CHIMARO|~/code/chimaro|3500|DATABASE_URL|00d4aa|00a080
+# KEY|NAME|PATH|PORT|DB_ENV_VAR|ACTIVE_COLOR|INACTIVE_COLOR|SHORT_ALIAS
+# Example: chimaro|CHIMARO|~/code/chimaro|3500|DATABASE_URL|00d4aa|00a080|c
+# SHORT_ALIAS is optional - if empty, uses first letter of key (first-come-first-served)
 
 # Color palette for new projects (hex colors without #)
 # Format: ACTIVE|INACTIVE|NAME
@@ -235,6 +236,43 @@ generate_bash_functions() {
         return 1
     fi
 
+    # Pre-compute short alias assignments (first-come-first-served)
+    # Store as: key=short_alias (one per line) in temp file
+    local short_alias_file
+    short_alias_file=$(mktemp)
+
+    local -A used_shorts=()
+
+    while IFS='|' read -r key name path port db_var active_color inactive_color custom_short; do
+        [[ -z "$key" ]] && continue
+
+        local assigned=""
+
+        # Check for user-specified custom short alias (8th field)
+        if [[ -n "$custom_short" && -z "${used_shorts[$custom_short]}" ]]; then
+            assigned="$custom_short"
+            used_shorts["$custom_short"]=1
+        fi
+
+        # If no custom short or it was taken, try first letter
+        if [[ -z "$assigned" ]]; then
+            local first="${key:0:1}"
+            if [[ -z "${used_shorts[$first]}" ]]; then
+                assigned="$first"
+                used_shorts["$first"]=1
+            fi
+        fi
+
+        # Write assignment to file (empty if collision)
+        echo "${key}=${assigned}" >> "$short_alias_file"
+    done < <(get_projects)
+
+    # Helper function to get short alias for a key
+    _get_short() {
+        local key="$1"
+        grep "^${key}=" "$short_alias_file" | cut -d'=' -f2
+    }
+
     # Write directly to output file, building content as we go
     {
         # Header
@@ -295,7 +333,7 @@ _jat_launch() {
 CORE
 
         # Generate case entries for each project
-        while IFS='|' read -r key name path port db_var active_color inactive_color; do
+        while IFS='|' read -r key name path port db_var active_color inactive_color custom_short; do
             [[ -z "$key" ]] && continue
 
             # Expand ~ in path
@@ -340,7 +378,7 @@ jcolors() {
 DEFAULT_CASE
 
         # Generate color apply calls
-        while IFS='|' read -r key name path port db_var active_color inactive_color; do
+        while IFS='|' read -r key name path port db_var active_color inactive_color custom_short; do
             [[ -z "$key" ]] && continue
             echo "    _jat_apply_colors \"${name}:\" \"${active_color}\" \"${inactive_color}\""
         done < <(get_projects)
@@ -361,10 +399,16 @@ jhelp() {
     echo -e "Available projects:"
 JCOLORS_END
 
-        # Generate help list
-        while IFS='|' read -r key name path port db_var active_color inactive_color; do
+        # Generate help list with short aliases only if assigned
+        while IFS='|' read -r key name path port db_var active_color inactive_color custom_short; do
             [[ -z "$key" ]] && continue
-            echo "    printf \"  %-8s %-12s %s\\n\" \"j${key}\" \"(${name})\" \"${path}\""
+            local short
+            short=$(_get_short "$key")
+            if [[ -n "$short" ]]; then
+                echo "    printf \"  %-12s %-6s %-12s %s\\n\" \"j${key}\" \"(j${short})\" \"(${name})\" \"${path}\""
+            else
+                echo "    printf \"  %-12s %-6s %-12s %s\\n\" \"j${key}\" \"\" \"(${name})\" \"${path}\""
+            fi
         done < <(get_projects)
 
         cat << 'HELP_END'
@@ -379,15 +423,27 @@ JCOLORS_END
 
 HELP_END
 
-        # Generate aliases
-        while IFS='|' read -r key name path port db_var active_color inactive_color; do
+        # Generate aliases with short alias from pre-computed file
+        while IFS='|' read -r key name path port db_var active_color inactive_color custom_short; do
             [[ -z "$key" ]] && continue
+
             echo "# ${name}"
             echo "j${key}() { _jat_launch \"${key}\" \"\${1:-all}\"; }"
             echo "cc${key}() { _jat_claude \"${key}\"; }"
+
+            # Get pre-computed short alias
+            local short
+            short=$(_get_short "$key")
+            if [[ -n "$short" ]]; then
+                echo "j${short}() { _jat_launch \"${key}\" \"\${1:-all}\"; }"
+                echo "cc${short}() { _jat_claude \"${key}\"; }"
+            fi
         done < <(get_projects)
 
     } > "$GENERATED_BASH"
+
+    # Cleanup temp file
+    rm -f "$short_alias_file"
 
     chmod +x "$GENERATED_BASH"
     echo -e "${GREEN}✓ Generated: $GENERATED_BASH${NC}"
@@ -571,7 +627,23 @@ add_project() {
     local active_color inactive_color
     IFS='|' read -r active_color inactive_color <<< "$colors"
 
-    # Step 5: Confirm
+    # Step 5: Optional custom short alias
+    local short_alias
+    local default_short="${key:0:1}"
+    echo -e "\n${CYAN}Short alias (used for j${default_short}, cc${default_short}):${NC}"
+    echo -e "${YELLOW}Default: ${default_short} (first letter). Leave empty for default, or enter custom.${NC}"
+    echo -e "${YELLOW}Note: If another project uses that letter, you won't get a short alias.${NC}"
+    short_alias=$(gum input --header="Custom short alias (single letter, or empty for default):" --placeholder="e.g., x")
+
+    # Validate short alias if provided
+    if [[ -n "$short_alias" ]]; then
+        if [[ ! "$short_alias" =~ ^[a-z]$ ]]; then
+            echo -e "${YELLOW}Invalid short alias (must be single lowercase letter). Using default.${NC}"
+            short_alias=""
+        fi
+    fi
+
+    # Step 6: Confirm
     echo -e "\n${BLUE}=== New Project Summary ===${NC}"
     echo -e "  Key:      ${GREEN}$key${NC}"
     echo -e "  Name:     ${GREEN}$name${NC}"
@@ -581,24 +653,26 @@ add_project() {
     printf "  Colors:   Active: \e[48;2;%d;%d;%dm    \e[0m  Inactive: \e[48;2;%d;%d;%dm    \e[0m\n" \
         "$((16#${active_color:0:2}))" "$((16#${active_color:2:2}))" "$((16#${active_color:4:2}))" \
         "$((16#${inactive_color:0:2}))" "$((16#${inactive_color:2:2}))" "$((16#${inactive_color:4:2}))"
+    echo -e "  Short:    ${GREEN}${short_alias:-${default_short} (default)}${NC}"
 
     if ! gum confirm "Add this project?"; then
         echo -e "${YELLOW}Cancelled.${NC}"
         return 1
     fi
 
-    # Step 6: Save to config
-    local config_line="${key}|${name}|${path}|${port}|${db_var}|${active_color}|${inactive_color}"
+    # Step 7: Save to config (8 fields, last is optional short alias)
+    local config_line="${key}|${name}|${path}|${port}|${db_var}|${active_color}|${inactive_color}|${short_alias}"
 
     # Create config file with header if it doesn't exist
     if [[ ! -f "$PROJECTS_CONFIG" ]]; then
         cat > "$PROJECTS_CONFIG" << 'HEADER'
 # Jomarchy Project Configuration
-# Format: KEY|NAME|PATH|PORT|DB_ENV_VAR|ACTIVE_COLOR|INACTIVE_COLOR
-# Example: chimaro|CHIMARO|~/code/chimaro|3500|DATABASE_URL|00d4aa|00a080
+# Format: KEY|NAME|PATH|PORT|DB_ENV_VAR|ACTIVE_COLOR|INACTIVE_COLOR|SHORT_ALIAS
+# Example: chimaro|CHIMARO|~/code/chimaro|3500|DATABASE_URL|00d4aa|00a080|c
 #
 # Colors are hex without # (e.g., ff5555 for red)
-# Leave PORT or DB_ENV_VAR empty if not needed
+# Leave PORT, DB_ENV_VAR, or SHORT_ALIAS empty if not needed
+# SHORT_ALIAS: single letter for jX/ccX aliases (first-come-first-served if collision)
 
 HEADER
     fi
@@ -647,16 +721,16 @@ edit_project() {
     local edit_key
     edit_key=$(echo "$selected" | sed 's/ (.*$//')
 
-    # Get current values
+    # Get current values (8 fields including optional short alias)
     local current_line
     current_line=$(get_project "$edit_key")
 
-    local cur_key cur_name cur_path cur_port cur_db cur_active cur_inactive
-    IFS='|' read -r cur_key cur_name cur_path cur_port cur_db cur_active cur_inactive <<< "$current_line"
+    local cur_key cur_name cur_path cur_port cur_db cur_active cur_inactive cur_short
+    IFS='|' read -r cur_key cur_name cur_path cur_port cur_db cur_active cur_inactive cur_short <<< "$current_line"
 
     # Step 2: Select what to edit
     local edit_choice
-    edit_choice=$(echo -e "Name ($cur_name)\nPath ($cur_path)\nPort (${cur_port:-none})\nDatabase var (${cur_db:-none})\nColors\nAll fields" | \
+    edit_choice=$(echo -e "Name ($cur_name)\nPath ($cur_path)\nPort (${cur_port:-none})\nDatabase var (${cur_db:-none})\nColors\nShort alias (${cur_short:-${cur_key:0:1}})\nAll fields" | \
         gum choose --header="What would you like to edit?")
 
     [[ -z "$edit_choice" ]] && return 1
@@ -667,6 +741,7 @@ edit_project() {
     local new_db="$cur_db"
     local new_active="$cur_active"
     local new_inactive="$cur_inactive"
+    local new_short="$cur_short"
 
     case "$edit_choice" in
         "Name"*)
@@ -689,6 +764,16 @@ edit_project() {
             colors=$(pick_color "$cur_active" "$cur_inactive")
             IFS='|' read -r new_active new_inactive <<< "$colors"
             ;;
+        "Short alias"*)
+            echo -e "\n${CYAN}Current short alias: ${cur_short:-${cur_key:0:1} (default)}${NC}"
+            echo -e "${YELLOW}Enter single letter, or empty for default (first letter of key).${NC}"
+            new_short=$(gum input --header="New short alias:" --value="$cur_short" --placeholder="e.g., x")
+            # Validate
+            if [[ -n "$new_short" && ! "$new_short" =~ ^[a-z]$ ]]; then
+                echo -e "${YELLOW}Invalid short alias (must be single lowercase letter). Keeping current.${NC}"
+                new_short="$cur_short"
+            fi
+            ;;
         "All fields")
             new_name=$(gum input --header="Display name:" --value="$cur_name")
             [[ -z "$new_name" ]] && new_name="$cur_name"
@@ -704,6 +789,13 @@ edit_project() {
             local colors
             colors=$(pick_color "$cur_active" "$cur_inactive")
             IFS='|' read -r new_active new_inactive <<< "$colors"
+
+            echo -e "\n${CYAN}Short alias (current: ${cur_short:-${cur_key:0:1}}):${NC}"
+            new_short=$(gum input --header="Short alias (single letter or empty for default):" --value="$cur_short")
+            if [[ -n "$new_short" && ! "$new_short" =~ ^[a-z]$ ]]; then
+                echo -e "${YELLOW}Invalid short alias. Keeping current.${NC}"
+                new_short="$cur_short"
+            fi
             ;;
     esac
 
@@ -717,6 +809,7 @@ edit_project() {
     [[ "$new_db" != "$cur_db" ]] && echo -e "  DB Var: ${RED}${cur_db:-─}${NC} → ${GREEN}${new_db:-─}${NC}" && changed=true
     [[ "$new_active" != "$cur_active" || "$new_inactive" != "$cur_inactive" ]] && \
         echo -e "  Colors: Changed" && changed=true
+    [[ "$new_short" != "$cur_short" ]] && echo -e "  Short:  ${RED}${cur_short:-─}${NC} → ${GREEN}${new_short:-─}${NC}" && changed=true
 
     if [[ "$changed" == "false" ]]; then
         echo -e "${YELLOW}No changes made.${NC}"
@@ -728,8 +821,8 @@ edit_project() {
         return 1
     fi
 
-    # Step 4: Update config file
-    local new_line="${edit_key}|${new_name}|${new_path}|${new_port}|${new_db}|${new_active}|${new_inactive}"
+    # Step 4: Update config file (8 fields)
+    local new_line="${edit_key}|${new_name}|${new_path}|${new_port}|${new_db}|${new_active}|${new_inactive}|${new_short}"
 
     # Use sed to replace the line (escape pipe in pattern since it's a delimiter)
     sed -i "s|^${edit_key}\\|.*$|${new_line}|" "$PROJECTS_CONFIG"
