@@ -8,6 +8,7 @@
 # Management Mode (after install):
 #   jomarchy                  # Interactive menu
 #   jomarchy --profiles       # Web app profile manager
+#   jomarchy --projects       # Project manager (colors, paths, launchers)
 #   jomarchy --install        # Install additional profiles
 #   jomarchy --update         # Update jomarchy
 #   jomarchy --status         # Show installed profiles
@@ -73,6 +74,7 @@ show_management_menu() {
         choice=$(gum choose \
             "Install Additional Profiles" \
             "Manage Web App Profiles" \
+            "Manage Projects" \
             "Update Jomarchy" \
             "View Installation Summary" \
             "View Documentation" \
@@ -84,6 +86,9 @@ show_management_menu() {
                 ;;
             "Manage Web App Profiles")
                 run_webapp_profile_manager
+                ;;
+            "Manage Projects")
+                run_project_manager
                 ;;
             "Update Jomarchy")
                 update_jomarchy
@@ -170,6 +175,17 @@ run_webapp_profile_manager() {
     fi
 }
 
+# Run project manager
+run_project_manager() {
+    if [[ -f "$SCRIPT_DIR/scripts/lib/project-manager-lib.sh" ]]; then
+        source "$SCRIPT_DIR/scripts/lib/project-manager-lib.sh"
+        project_manager_run
+    else
+        echo -e "${RED}Error: Project manager not found${NC}"
+        echo "Please ensure jomarchy is properly installed"
+    fi
+}
+
 # Update jomarchy
 update_jomarchy() {
     echo ""
@@ -234,6 +250,9 @@ handle_cli_flags() {
         --profiles)
             run_webapp_profile_manager
             ;;
+        --projects)
+            run_project_manager
+            ;;
         --install)
             run_profile_installer
             ;;
@@ -250,6 +269,7 @@ handle_cli_flags() {
             echo "Usage:"
             echo "  jomarchy               # Interactive management menu"
             echo "  jomarchy --profiles    # Web app profile manager"
+            echo "  jomarchy --projects    # Project manager (colors, paths, launchers)"
             echo "  jomarchy --install     # Install additional profiles"
             echo "  jomarchy --update      # Update jomarchy"
             echo "  jomarchy --status      # Show installation summary"
