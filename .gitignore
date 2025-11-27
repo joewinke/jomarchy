@@ -1,4 +1,13 @@
+# Claude Code session-specific files (per-developer, don't commit)
+.claude/agent-*.txt
+.claude/agent-*-activity.jsonl
+
+# MCP server configuration (may contain sensitive API keys)
 .mcp.json
+
+# Beads: JSONL files are source of truth (tracked via git)
+# .beads/.gitignore handles SQLite exclusion automatically
+
 node_modules/
 package-lock.json
 *.log
