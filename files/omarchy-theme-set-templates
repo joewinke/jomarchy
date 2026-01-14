@@ -1,0 +1,81 @@
+#!/bin/bash
+# Patched version that doesn't require Python yq
+
+# Set default OMARCHY_PATH if not set
+OMARCHY_PATH="${OMARCHY_PATH:-$HOME/.local/share/omarchy}"
+
+TEMPLATES_DIR="$OMARCHY_PATH/default/themed"
+USER_TEMPLATES_DIR="$HOME/.config/omarchy/themed"
+NEXT_THEME_DIR="$HOME/.config/omarchy/current/next-theme"
+COLORS_FILE="$NEXT_THEME_DIR/colors.toml"
+
+# Convert hex color to decimal RGB (e.g., "#1e1e2e" -> "30,30,46")
+hex_to_rgb() {
+  local hex="${1#\#}"
+  printf "%d,%d,%d" "0x${hex:0:2}" "0x${hex:2:2}" "0x${hex:4:2}"
+}
+
+# Only generate dynamic templates for themes with a colors.toml definition
+if [[ -f $COLORS_FILE ]]; then
+  sed_script=$(mktemp)
+
+  # Generate substitutions by parsing TOML directly (no yq needed)
+  while IFS='=' read -r key value; do
+    # Skip empty lines and comments
+    [[ -z "$key" || "$key" =~ ^[[:space:]]*# ]] && continue
+
+    # Clean up key and value
+    key=$(echo "$key" | xargs)
+    value=$(echo "$value" | xargs | tr -d '"')
+
+    # Skip if still empty
+    [[ -z "$key" || -z "$value" ]] && continue
+
+    # Standard substitution
+    echo "s|{{ ${key} }}|${value}|g" >> "$sed_script"
+
+    # Strip substitution (remove leading #)
+    value_strip="${value#\#}"
+    echo "s|{{ ${key}_strip }}|${value_strip}|g" >> "$sed_script"
+
+    # RGB substitution for hex colors
+    if [[ $value =~ ^# ]]; then
+      rgb=$(hex_to_rgb "$value")
+      echo "s|{{ ${key}_rgb }}|${rgb}|g" >> "$sed_script"
+    fi
+  done < "$COLORS_FILE"
+
+  shopt -s nullglob
+
+  # Process user templates (always override - user customizations take priority)
+  for tpl in "$USER_TEMPLATES_DIR"/*.tpl; do
+    filename=$(basename "$tpl" .tpl)
+    output_path="$NEXT_THEME_DIR/$filename"
+    sed -f "$sed_script" "$tpl" > "$output_path"
+  done
+
+  # Process built-in templates (only if output doesn't exist from theme or user)
+  for tpl in "$TEMPLATES_DIR"/*.tpl; do
+    filename=$(basename "$tpl" .tpl)
+    output_path="$NEXT_THEME_DIR/$filename"
+
+    # Don't overwrite configs that already exist (from theme folder or user template)
+    if [[ ! -f $output_path ]]; then
+      sed -f "$sed_script" "$tpl" > "$output_path"
+    fi
+  done
+
+  # Also process any theme files that contain {{ }} template patterns
+  # (these are copied directly from theme folder but still need substitution)
+  for file in "$NEXT_THEME_DIR"/*; do
+    [[ -d "$file" ]] && continue  # Skip directories
+    [[ "$file" == *.png ]] && continue  # Skip images
+
+    # Check if file contains template patterns
+    if grep -q '{{ ' "$file" 2>/dev/null; then
+      sed -i -f "$sed_script" "$file"
+    fi
+  done
+
+  rm "$sed_script"
+fi

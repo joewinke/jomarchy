@@ -91,7 +91,30 @@ else
 fi
 
 # ============================================================================
-# 2. Add Comprehensive Waybar Styling
+# 2. Add fallback @selected-text color (for themes that don't define it)
+# ============================================================================
+
+echo "Ensuring @selected-text fallback color exists..."
+
+if grep -q "@define-color selected-text" "$WAYBAR_STYLE" 2>/dev/null; then
+    echo "  ⊘ Fallback color already defined, skipping"
+else
+    # Insert fallback after @import line
+    if grep -q "@import" "$WAYBAR_STYLE" 2>/dev/null; then
+        sed -i '/@import/a\
+\
+/* Fallback accent color if theme does not define selected-text */\
+@define-color selected-text #7dcfff;' "$WAYBAR_STYLE"
+        echo "  ✓ Added fallback @selected-text color (#7dcfff cyan)"
+    else
+        echo "  ⚠ No @import found, skipping fallback insertion"
+    fi
+fi
+
+echo ""
+
+# ============================================================================
+# 3. Add Comprehensive Waybar Styling
 # ============================================================================
 
 echo "Adding comprehensive Waybar styling..."
@@ -217,7 +240,7 @@ fi
 echo ""
 
 # ============================================================================
-# 3. Update Clock Format in config.jsonc
+# 4. Update Clock Format in config.jsonc
 # ============================================================================
 
 echo "Updating clock format..."
@@ -249,7 +272,7 @@ fi
 echo ""
 
 # ============================================================================
-# 4. Ensure hyprland/window module is in config
+# 5. Ensure hyprland/window module is in config
 # ============================================================================
 
 echo "Checking window title module..."

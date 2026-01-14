@@ -589,6 +589,7 @@ generate_hyprland_rules() {
 #
 # Window border color rules for project windows
 # Colors are applied based on window title prefix
+# Syntax: Hyprland 0.53+ (windowrule with match:title)
 
 HEADER
 
@@ -599,9 +600,9 @@ HEADER
     while IFS='|' read -r key name path port db_var active_color inactive_color; do
         [[ -z "$key" ]] && continue
 
-        # Border color rule
+        # Border color rule (Hyprland 0.53+ syntax)
         echo "# ${name}" >> "$temp_file"
-        echo "windowrulev2 = bordercolor rgb(${active_color}) rgb(${inactive_color}), title:^(${name}:)" >> "$temp_file"
+        echo "windowrule = bordercolor rgb(${active_color}) rgb(${inactive_color}), match:title ^(${name}:)" >> "$temp_file"
         echo "" >> "$temp_file"
 
         # Collect prefix for combined rule
@@ -612,10 +613,10 @@ HEADER
         fi
     done < <(get_projects)
 
-    # Combined border size rule
+    # Combined border size rule (Hyprland 0.53+ syntax)
     if [[ -n "$all_prefixes" ]]; then
         echo "# Apply thicker borders to all project windows" >> "$temp_file"
-        echo "windowrulev2 = bordersize 3, title:^(${all_prefixes})" >> "$temp_file"
+        echo "windowrule = bordersize 3, match:title ^(${all_prefixes})" >> "$temp_file"
     fi
 
     # Move to final location

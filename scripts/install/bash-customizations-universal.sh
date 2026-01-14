@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Bash Customizations - Universal
-# Sets up standard directory structure and Claude alias for all systems
+# Sets up standard directory structure and utilities for all systems
 
 set -e  # Exit on error
 
@@ -29,42 +29,6 @@ if [ ! -f ~/.bashrc ]; then
     echo -e "${YELLOW}Warning: ~/.bashrc not found, creating it${NC}"
     touch ~/.bashrc
 fi
-
-# Add Claude aliases to .bashrc
-echo -e "${BLUE}Adding Claude aliases to ~/.bashrc...${NC}"
-
-# Check if aliases already exist
-CL_EXISTS=$(grep -q "^alias cl=" ~/.bashrc && echo "yes" || echo "no")
-CP_EXISTS=$(grep -q "^alias cp=" ~/.bashrc && echo "yes" || echo "no")
-
-if [ "$CL_EXISTS" = "yes" ] || [ "$CP_EXISTS" = "yes" ]; then
-    echo -e "${YELLOW}→${NC} Claude aliases already exist in ~/.bashrc"
-    [ "$CL_EXISTS" = "yes" ] && grep "^alias cl=" ~/.bashrc | sed 's/^/   /'
-    [ "$CP_EXISTS" = "yes" ] && grep "^alias cp=" ~/.bashrc | sed 's/^/   /'
-    echo ""
-    read -p "   Replace with new definitions? (y/n) " -n 1 -r
-    echo ""
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        # Remove old definitions
-        sed -i '/^alias cl=/d' ~/.bashrc
-        sed -i '/^alias cp=/d' ~/.bashrc
-        echo -e "${BLUE}→${NC} Removed old definitions"
-    else
-        echo -e "${YELLOW}→${NC} Keeping existing definitions"
-        echo ""
-        echo -e "${GREEN}Setup complete!${NC}"
-        exit 0
-    fi
-fi
-
-# Add the aliases
-echo "" >> ~/.bashrc
-echo "# Claude Code - Universal projects" >> ~/.bashrc
-echo "alias cl='cd ~/code/linux && claude --dangerously-skip-permissions'" >> ~/.bashrc
-echo "alias cp='cd ~/code/personal && claude --dangerously-skip-permissions'" >> ~/.bashrc
-
-echo -e "${GREEN}✓${NC} Added cl and cp aliases to ~/.bashrc"
-echo ""
 
 # Add tget alias for Tailscale (if installed)
 if command -v tailscale &> /dev/null; then
@@ -115,13 +79,11 @@ echo "What was installed:"
 echo ""
 echo "1. Directory: ~/code/linux"
 echo "2. Directory: ~/code/personal"
-echo "3. Alias: cl (cd to ~/code/linux + launch Claude with YOLO mode)"
-echo "4. Alias: cp (cd to ~/code/personal + launch Claude with YOLO mode)"
 if command -v tailscale &> /dev/null; then
-    echo "5. Alias: tget (Tailscale file download to ~/Downloads/)"
+    echo "3. Alias: tget (Tailscale file download to ~/Downloads/)"
 fi
 if [ -L ~/.local/bin/jomarchy ] || [ -f ~/.local/bin/jomarchy ]; then
-    echo "6. Command: jomarchy (interactive management menu)"
+    echo "4. Command: jomarchy (interactive management menu)"
 fi
 echo ""
 echo "To use immediately, run: source ~/.bashrc"
