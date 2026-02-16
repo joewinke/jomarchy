@@ -88,7 +88,9 @@ install_pacman \
     yt-dlp \
     tailscale \
     nwg-displays \
-    ttf-jetbrains-mono
+    ttf-jetbrains-mono \
+    tesseract \
+    tesseract-data-eng
 
 echo ""
 
@@ -118,4 +120,6 @@ echo ""
 echo "4. Claude Code: Run 'claude --version' to verify installation"
 echo ""
 echo "5. Sublime Text: Launch with 'subl' command"
+echo ""
+echo "6. Tesseract OCR: Used by screen-ocr script (Ctrl+Shift+Print)"
 echo ""
