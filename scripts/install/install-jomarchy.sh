@@ -44,6 +44,7 @@ SELECTED_COMPONENTS=$(gum choose --no-limit \
     "━━━ DESKTOP APPS (shortcuts and integrations) ━━━" \
     "  Chrome extensions (Copy on Select, Dark Reader, 1Password)" \
     "  ChezWizper (voice transcription via Super+R)" \
+    "  Voxtype (dictation via Super+Ctrl+X, GPU-accelerated)" \
     "  Claude desktop shortcuts (Linux, Personal)" \
     "  Claude Code browser tools (Chrome DevTools integration)" \
     "━━━ WEB APPS (browser-based applications) ━━━" \
@@ -95,6 +96,13 @@ if echo "$SELECTED_COMPONENTS" | grep -q "  ChezWizper"; then
     if [ -f "$SCRIPT_DIR/chezwizper.sh" ]; then
         echo -e "${GREEN}→${NC} Running chezwizper.sh..."
         bash "$SCRIPT_DIR/chezwizper.sh"
+    fi
+fi
+
+if echo "$SELECTED_COMPONENTS" | grep -q "  Voxtype"; then
+    if [ -f "$SCRIPT_DIR/voxtype.sh" ]; then
+        echo -e "${GREEN}→${NC} Running voxtype.sh..."
+        bash "$SCRIPT_DIR/voxtype.sh"
     fi
 fi
 
@@ -172,6 +180,7 @@ echo "What was installed:"
 echo ""
 echo "✓ Core packages (Firefox, claude-code, Sublime, Tailscale, ChezWizper, etc.)"
 echo "✓ ChezWizper voice transcription (Super+R)"
+echo "✓ Voxtype dictation with GPU acceleration (Super+Ctrl+X)"
 echo "✓ 10 universal web apps"
 echo "✓ 3 Chrome extensions"
 echo "✓ Email/Calendar/Drive keybinds (Super+Shift+E/C/D - if configured)"
