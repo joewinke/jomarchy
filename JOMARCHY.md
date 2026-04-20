@@ -20,7 +20,6 @@ This document defines the complete Jomarchy installation system and all availabl
 - `chromium` - Pre-installed by Omarchy (omarchy-chromium package)
 
 ### Utilities
-- `ydotool` - Input automation (required for ChezWizper)
 - `yt-dlp` - YouTube downloader
 - `tailscale` - Mesh VPN
 - `nwg-displays` - Display configuration tool
@@ -31,30 +30,6 @@ This document defines the complete Jomarchy installation system and all availabl
 - `gimp` - Image manipulation program
 
 **Installation:** `scripts/install/essential-packages.sh`
-
----
-
-## 🎤 ChezWizper Voice Transcription
-
-**Super+R** for voice-to-text transcription
-
-### Installation Method
-Build from source (fork includes Waybar integration):
-```bash
-git clone https://github.com/joewinke/ChezWizper.git
-cd ChezWizper
-git checkout add-waybar-integration
-make install
-```
-
-### What's Included
-- Binary: `/usr/local/bin/chezwizper`
-- systemd services: `chezwizper.service`, `chezwizper-waybar.service`
-- Waybar integration: 6 scripts (status, monitor, history, smart-toggle, copy-last, preview)
-- Hyprland keybinding: Super+R
-- Walker/dmenu history browser
-
-**Installation:** `scripts/install/chezwizper.sh`
 
 ---
 
@@ -126,7 +101,7 @@ Automatically detects and configures workspaces based on monitor count:
 ### Visual Enhancements
 - Custom clock format (mm-dd dow HH:MM)
 - Window title rewriting for clean app names
-- ChezWizper integration (6 scripts + CSS animations)
+- Voxtype status integration
 
 **Installation:** `scripts/install/waybar-customizations-universal.sh` ✅
 
@@ -183,7 +158,7 @@ Minimal custom keybindings (verify Omarchy 3.1 compatibility):
 
 - **F4**: Global file search
 - **Super+Z**: Toggle zoom magnification
-- **Super+R**: ChezWizper voice transcription
+- **Super+Ctrl+X**: Voxtype voice dictation (toggle)
 - **Super+L**: Enable screensaver/lock
 
 ### Email/Calendar/Drive Keybinds
@@ -469,7 +444,7 @@ This will execute all BASE profile installation scripts in the correct order.
 
 A fully functional Omarchy system with:
 - Development environment (VSCodium, Node.js, Claude Code)
-- Voice transcription (ChezWizper with Waybar)
+- Voice dictation (Voxtype, GPU-accelerated, Super+Ctrl+X)
 - Essential web apps for productivity
 - Custom keybindings and scripts
 - Beautiful Waybar integration

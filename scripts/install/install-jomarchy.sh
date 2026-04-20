@@ -43,7 +43,6 @@ SELECTED_COMPONENTS=$(gum choose --no-limit \
     "  Utility keybindings (Super+Z zoom, F4 file search, Super+L screensaver)" \
     "━━━ DESKTOP APPS (shortcuts and integrations) ━━━" \
     "  Chrome extensions (Copy on Select, Dark Reader, 1Password)" \
-    "  ChezWizper (voice transcription via Super+R)" \
     "  Voxtype (dictation via Super+Ctrl+X, GPU-accelerated)" \
     "  Claude desktop shortcuts (Linux, Personal)" \
     "  Claude Code browser tools (Chrome DevTools integration)" \
@@ -63,11 +62,9 @@ echo -e "${BLUE}=== Phase 1: Core System ===${NC}"
 echo ""
 
 # Check if any essential packages were selected
-if echo "$SELECTED_COMPONENTS" | grep -qE "(  Firefox|  Sublime Text|  Claude Code|  yt-dlp|  Tailscale|  nwg-displays|  JetBrains Mono|  ChezWizper)"; then
+if echo "$SELECTED_COMPONENTS" | grep -qE "(  Firefox|  Sublime Text|  Claude Code|  yt-dlp|  Tailscale|  nwg-displays|  JetBrains Mono)"; then
     if [ -f "$SCRIPT_DIR/essential-packages.sh" ]; then
         echo -e "${GREEN}→${NC} Running essential-packages.sh..."
-        # TODO: Make essential-packages.sh accept parameters for selective installation
-        # For now, it installs all packages if any are selected (ydotool auto-included for ChezWizper)
         bash "$SCRIPT_DIR/essential-packages.sh"
     fi
 fi
@@ -89,13 +86,6 @@ if echo "$SELECTED_COMPONENTS" | grep -q "  Chrome extensions"; then
     if [ -f "$SCRIPT_DIR/chrome-extensions.sh" ]; then
         echo -e "${GREEN}→${NC} Running chrome-extensions.sh..."
         bash "$SCRIPT_DIR/chrome-extensions.sh"
-    fi
-fi
-
-if echo "$SELECTED_COMPONENTS" | grep -q "  ChezWizper"; then
-    if [ -f "$SCRIPT_DIR/chezwizper.sh" ]; then
-        echo -e "${GREEN}→${NC} Running chezwizper.sh..."
-        bash "$SCRIPT_DIR/chezwizper.sh"
     fi
 fi
 
@@ -178,14 +168,13 @@ fi
 
 echo "What was installed:"
 echo ""
-echo "✓ Core packages (Firefox, claude-code, Sublime, Tailscale, ChezWizper, etc.)"
-echo "✓ ChezWizper voice transcription (Super+R)"
+echo "✓ Core packages (Firefox, claude-code, Sublime, Tailscale, etc.)"
 echo "✓ Voxtype dictation with GPU acceleration (Super+Ctrl+X)"
 echo "✓ 10 universal web apps"
 echo "✓ 3 Chrome extensions"
 echo "✓ Email/Calendar/Drive keybinds (Super+Shift+E/C/D - if configured)"
 echo "✓ Intelligent multi-monitor workspace configuration (1-3 monitors)"
-echo "✓ Waybar customizations (clock, ChezWizper, color-coded workspaces)"
+echo "✓ Waybar customizations (clock, Voxtype status, color-coded workspaces)"
 echo "✓ Custom scripts (toggle-zoom Super+Z, file-search F4)"
 echo "✓ Hyprsunset blue light filter (auto-adjusts by time)"
 echo "✓ Bash customizations (cl, cp aliases + ~/code/{linux,personal})"
@@ -196,7 +185,7 @@ echo ""
 echo "Next steps:"
 echo ""
 echo "1. Restart your shell: source ~/.bashrc"
-echo "2. Test ChezWizper: Press Super+R"
+echo "2. Test Voxtype: Press Super+Ctrl+X"
 echo "3. Review: cat ~/code/jomarchy/JOMARCHY.md"
 echo ""
 echo "For development tools, run: jomarchy --install (select DEV profile)"

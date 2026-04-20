@@ -137,7 +137,7 @@ Fresh Linux installations face three challenges:
 ### Core Profile
 
 **BASE** - Universal foundation (recommended for everyone)
-- Essential packages (Sublime Text, yt-dlp, Tailscale, ChezWizper voice transcription)
+- Essential packages (Sublime Text, yt-dlp, Tailscale, Voxtype voice dictation)
 - Bash customizations (`cl`, `cp` aliases for Claude Code)
 - Waybar theme-aware styling with intelligent workspace detection
 - Custom scripts (Super+Z zoom, F4 file search, Hyprsunset blue light filter)
@@ -214,7 +214,7 @@ cd ~/code/jomarchy
 - Tailscale - VPN/mesh network
 - nwg-displays - Multi-monitor display manager
 - JetBrains Mono - Programming font
-- ChezWizper - Voice transcription with Super+R
+- Voxtype - GPU-accelerated voice dictation with Super+Ctrl+X
 
 **Bash Customizations:**
 ```bash
@@ -240,6 +240,12 @@ tget                  # Alias: Tailscale file download to ~/Downloads/
 - **Active workspace highlighting** - Theme accent colors with transparency
 - Updates `~/.config/waybar/config.jsonc`, `~/.config/waybar/style.css`
 - Updates `~/.config/hypr/monitors.conf`, `~/.config/hypr/workspace-layouts.conf`
+- **Multi-monitor workspace keybindings** (monitor-aware):
+  - **Ctrl+1-0** → Switch current monitor to workspace (auto-offsets: left=N, center=N+10, right=N+20)
+  - **Ctrl+Alt+Left/Right** → Navigate to prev/next workspace on current monitor
+  - **Super+Shift+1-0** → Move window to workspace (enhanced Omarchy - monitor-aware)
+  - **Ctrl+Shift+Left/Right** → Move window to prev/next workspace on current monitor
+  - **Ctrl+Super+Shift+Left/Right** → Move window to left/right monitor
 
 **Custom Scripts (Automatic):**
 - `toggle-zoom` - **Super+Z** for 2x screen magnification
@@ -248,7 +254,7 @@ tget                  # Alias: Tailscale file download to ~/Downloads/
   - 6:30 AM: Normal daylight (6500K)
   - 7:00 PM: Sunset warmth (5000K)
   - 9:00 PM: Bedtime mode (3400K)
-- **Jomarchy screensaver** - Custom ASCII art branding (activated with **Super+L**)
+- **Jomarchy screensaver** - Custom ASCII art branding (activated with **Super+Shift+L**)
 - **Email/Calendar/Drive Keybinds** - Configure keybinds for your preferred email provider:
   - **Super+Shift+E** → Email
   - **Super+Shift+C** → Calendar
@@ -260,10 +266,10 @@ tget                  # Alias: Tailscale file download to ~/Downloads/
 - Copy on Select - Auto-copy highlighted text
 - 1Password - Password manager
 
-**ChezWizper Voice Transcription:**
-- **Super+R** to activate
+**Voxtype Voice Dictation:**
+- **Super+Ctrl+X** to toggle
 - Waybar indicator shows when active
-- Works system-wide
+- GPU-accelerated (Vulkan/Radeon), ~2-3s transcription
 
 **Desktop Application Shortcuts:**
 - Claude.ai (Linux) - Desktop shortcut for ~/code/linux projects
@@ -495,7 +501,7 @@ Jomarchy auto-detects your monitor setup and configures Hyprland workspaces:
 ## 🚀 Next Steps After Installation
 
 1. **Restart shell:** `source ~/.bashrc`
-2. **Test ChezWizper:** Press `Super+R`
+2. **Test Voxtype:** Press `Super+Ctrl+X`
 3. **Organize web apps:** Run `jomarchy --profiles`
 4. **Test Claude aliases:** `cl` (linux projects), `cp` (personal projects)
 5. **Launch file search:** Press `F4`

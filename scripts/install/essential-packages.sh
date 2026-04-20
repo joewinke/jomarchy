@@ -84,7 +84,6 @@ echo ""
 # Utilities (pacman)
 echo -e "${BLUE}[2/3] Utilities${NC}"
 install_pacman \
-    ydotool \
     yt-dlp \
     tailscale \
     nwg-displays \
@@ -112,14 +111,11 @@ echo ""
 echo "1. Tailscale: Enable and start the service:"
 echo "   sudo systemctl enable --now tailscaled"
 echo ""
-echo "2. ydotool: Required for ChezWizper (voice transcription)"
-echo "   Service will be configured during ChezWizper installation"
+echo "2. JetBrains Mono font: Run fonts.sh to set as default"
 echo ""
-echo "3. JetBrains Mono font: Run fonts.sh to set as default"
+echo "3. Claude Code: Run 'claude --version' to verify installation"
 echo ""
-echo "4. Claude Code: Run 'claude --version' to verify installation"
+echo "4. Sublime Text: Launch with 'subl' command"
 echo ""
-echo "5. Sublime Text: Launch with 'subl' command"
-echo ""
-echo "6. Tesseract OCR: Used by screen-ocr script (Ctrl+Shift+Print)"
+echo "5. Tesseract OCR: Used by screen-ocr script (Ctrl+Shift+Print)"
 echo ""

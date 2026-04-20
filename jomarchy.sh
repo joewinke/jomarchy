@@ -81,7 +81,6 @@ show_management_menu() {
         choice=$(gum choose \
             "Install Additional Profiles" \
             "Manage Web App Profiles" \
-            "Manage Projects" \
             "Update Jomarchy" \
             "View Installation Summary" \
             "View Documentation" \
@@ -93,9 +92,6 @@ show_management_menu() {
                 ;;
             "Manage Web App Profiles")
                 run_webapp_profile_manager
-                ;;
-            "Manage Projects")
-                run_project_manager
                 ;;
             "Update Jomarchy")
                 update_jomarchy
@@ -182,17 +178,6 @@ run_webapp_profile_manager() {
     fi
 }
 
-# Run project manager
-run_project_manager() {
-    if [[ -f "$SCRIPT_DIR/scripts/lib/project-manager-lib.sh" ]]; then
-        source "$SCRIPT_DIR/scripts/lib/project-manager-lib.sh"
-        project_manager_run
-    else
-        echo -e "${RED}Error: Project manager not found${NC}"
-        echo "Please ensure jomarchy is properly installed"
-    fi
-}
-
 # Update jomarchy
 update_jomarchy() {
     echo ""
@@ -256,9 +241,6 @@ handle_cli_flags() {
     case "$1" in
         --profiles)
             run_webapp_profile_manager
-            ;;
-        --projects)
-            run_project_manager
             ;;
         --install)
             run_profile_installer
@@ -354,7 +336,7 @@ echo ""
 
 # Use gum choose for multi-select
 SELECTED=$(gum choose --no-limit \
-    "BASE - Core system (browsers, text editor, web apps, ChezWizper)" \
+    "BASE - Core system (browsers, text editor, web apps, Voxtype)" \
     "DEV - Software development (VSCodium, Node, CLIs, dev web apps)" \
     "AGENT-TOOLS - AI development (Agent Mail, Beads, 43 bash tools, global/per-repo config)" \
     "MEDIA - Creative tools (GIMP, Inkscape, OBS, Blender, Audacity, Kdenlive)" \
